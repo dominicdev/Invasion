@@ -65,7 +65,7 @@ function functions.transactionCallback( event )
         elseif productID == products.three then  
             coinnum = coinnum + 1500
         end
-        path = system.pathForFile("records.sqlite", system.ResourceDirectory)
+        path = system.pathForFile("records.sqlite", system.DocumentsDirectory)
         db = sqlite3.open( path ) 
         local tablesave_1 = [[UPDATE item SET coin=']].. coinnum ..[[' WHERE id = 1]]
         db:exec( tablesave_1 )
@@ -448,7 +448,7 @@ local function onSceneTouch(event)
 
     if switch.id == "buy" then
    
-        path = system.pathForFile("records.sqlite", system.ResourceDirectory)
+        path = system.pathForFile("records.sqlite", system.DocumentsDirectory)
         db = sqlite3.open( path ) 
         --print(path)
         local tablesetup = "CREATE TABLE IF NOT EXISTS item (id INTEGER PRIMARY KEY, car, barrel,laser,coin,lives);"
@@ -550,7 +550,7 @@ storyboard.purgeAll()
 storyboard.removeAll() 
 iap = "close"
 goto = ""
-path_ = system.pathForFile("records.sqlite", system.ResourceDirectory )
+path_ = system.pathForFile("records.sqlite", system.DocumentsDirectory )
 db = sqlite3.open( path_ ) 
 
 sql = "SELECT * FROM item";

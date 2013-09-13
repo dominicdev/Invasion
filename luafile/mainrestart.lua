@@ -43,7 +43,7 @@ powers = {
             barrel= nil,
             }
 adshow.loading("hide") 
-local path = system.pathForFile("records.sqlite",system.ResourceDirectory  )
+local path = system.pathForFile("records.sqlite",system.DocumentsDirectory  )
 db = sqlite3.open( path )  
 sql = "SELECT * FROM item";
 

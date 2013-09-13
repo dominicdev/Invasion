@@ -144,7 +144,7 @@ end
 local x_ = 0
 local y_ = 0
 
-local path = system.pathForFile("records.sqlite",system.ResourceDirectory  )
+local path = system.pathForFile("records.sqlite",system.DocumentsDirectory  )
 db = external.sqlite3.open( path ) 
 
 count = 0
