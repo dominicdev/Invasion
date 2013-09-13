@@ -885,9 +885,10 @@ end
 audio.play(external.sfx.sound_3)
 end
 
-local function spriteListener (event)
+function functions.spriteListener (event)
 if event.phase == "end" then   
 event.sprite:removeSelf()
+event.sprite = nil
 end
 end
 
@@ -908,18 +909,23 @@ if event.phase == "began" then
     flash[number_.flasher]:play()
     flash[number_.flasher].alpha = 0.5
     group[5]:insert(flash[number_.flasher])
-    flash[number_.flasher]:addEventListener( "sprite", spriteListener )
+    flash[number_.flasher]:addEventListener( "sprite", functions.spriteListener )
     
     if hit.damage == 0 and hit.myname == "runnerers" then
         number_.score = number_.score + 50
         dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
         dead[number_.deadmon].x = x1
         dead[number_.deadmon].y = y1
-        dead[number_.deadmon]:prepare("dead_2")
+        if holder == "runner 2" then
+            dead[number_.deadmon]:prepare("dead_2")  
+        elseif holder == "runner 1" then 
+            dead[number_.deadmon]:prepare("dead_3")  
+        end
+        
 
         dead[number_.deadmon]:play()
         group[2]:insert(dead[number_.deadmon])
-        dead[number_.deadmon]:addEventListener( "sprite", spriteListener )
+        dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
         if event.target.name == "mover" then
            number_.movnum = number_.movnum - 1
         end
@@ -937,12 +943,13 @@ if event.phase == "began" then
         dead[number_.deadmon]:prepare("dead_1")  
         dead[number_.deadmon]:play()
         group[2]:insert(dead[number_.deadmon])
-        dead[number_.deadmon]:addEventListener( "sprite", spriteListener )
+        dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
         event.target:removeSelf() 
         event.target.myname = nil
         number_.mastermon = number_.mastermon - 1
         game_.killed = game_.killed + 1 
         audio.play(external.sfx.splat)
+        
     elseif hit.damage == 0 and hit.myname == "bossing" then
         
         if boss.bol_ == true then
@@ -968,7 +975,7 @@ if event.phase == "began" then
         dead[number_.deadmon]:prepare("explode")  
         dead[number_.deadmon]:play()
         group[2]:insert(dead[number_.deadmon])
-        dead[number_.deadmon]:addEventListener( "sprite", spriteListener )
+        dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
         event.target:removeSelf() 
         event.target.myname = nil
         audio.play(external.sfx.sound_1)
@@ -984,7 +991,7 @@ if event.phase == "began" then
         dead[number_.deadmon]:prepare("dead_1")  
         dead[number_.deadmon]:play()
         group[2]:insert(dead[number_.deadmon])
-        dead[number_.deadmon]:addEventListener( "sprite", spriteListener )
+        dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
         event.target:removeSelf() 
         event.target.myname = nil
         number_.bignum = number_.bignum - 1
@@ -1000,7 +1007,7 @@ if event.phase == "began" then
         dead[number_.deadmon]:prepare("humandead")  
         dead[number_.deadmon]:play()
         group[2]:insert(dead[number_.deadmon])
-        dead[number_.deadmon]:addEventListener( "sprite", spriteListener )
+        dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
         event.target:removeSelf() 
         event.target.myname = nil
         audio.play( external.sfx.humanfail) 
@@ -2106,7 +2113,7 @@ explodemon[number_.exnum].y = locy
 explodemon[number_.exnum]:prepare("explode")
 explodemon[number_.exnum]:play()
 group[2]:insert(explodemon[number_.exnum])
-explodemon[number_.exnum]:addEventListener( "sprite", spriteListener )
+explodemon[number_.exnum]:addEventListener( "sprite", functions.spriteListener )
 
 end
 
@@ -2120,7 +2127,7 @@ explodemon[number_.exnum].y = locy
 explodemon[number_.exnum]:prepare("explode")
 explodemon[number_.exnum]:play()
 group[2]:insert(explodemon[number_.exnum])
-explodemon[number_.exnum]:addEventListener( "sprite", spriteListener )
+explodemon[number_.exnum]:addEventListener( "sprite", functions.spriteListener )
 
 print("bang")
 end
@@ -2585,7 +2592,7 @@ function taptutorial(event)
         flash[number_.flasher]:prepare("flash")
         flash[number_.flasher]:play()
         group[3]:insert(flash[number_.flasher])
-        flash[number_.flasher]:addEventListener( "sprite", spriteListener )
+        flash[number_.flasher]:addEventListener( "sprite", functions.spriteListener )
 
         dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
         dead[number_.deadmon].x = x1
@@ -2593,7 +2600,7 @@ function taptutorial(event)
         dead[number_.deadmon]:prepare("dead_2")
         dead[number_.deadmon]:play()
         group[2]:insert(dead[number_.deadmon])
-        dead[number_.deadmon]:addEventListener( "sprite", spriteListener )
+        dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
         event.target:removeSelf() 
         event.target.myname = nil 
         finger:removeSelf()

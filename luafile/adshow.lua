@@ -235,7 +235,16 @@ end
 
 --flurry 
 local analytics = require "analytics"
-local application_key = "VDZQ4KQXDTWZGSCK7VKZ"
+local application_key
+local environment = system.getInfo( "platformName" )
+if environment == "simulator" then
+    print( "You're in the simulator." )
+elseif environment == "Android" then
+    application_key = "VDZQ4KQXDTWZGSCK7VKZ"
+elseif environment == "iPhone OS" then
+    application_key = "9S8NM34YBGMZG3KCSKQT"
+end
+
 analytics.init(application_key )
 function adshow.callflurry (action)
         analytics.logEvent(action)
