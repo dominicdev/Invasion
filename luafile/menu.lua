@@ -515,7 +515,7 @@ if (scenefrom.scenename == "gametype") or (scenefrom.scenename == "highscore") o
 else
     external.adshow.loading("hide")
 end
-timer.performWithDelay( 2500, function() 
+timer.performWithDelay( 1000, function() 
     if external.adshow.sqlload == false then
         external.adshow.loadsql  ()
         external.adshow.sqlload = true
@@ -562,7 +562,6 @@ end
 function scene:destroyScene( event )  
 group[1]:removeSelf()
 group[1] = nil
-
 end
 
 scene:addEventListener( "createScene", scene )
