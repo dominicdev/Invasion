@@ -236,20 +236,20 @@ scroller.x = (w/2) - 10
 scroller.y = scroller.y  + h - 30
 
 
-texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\nDeveloper:\nDominic Wagas\n\nGraphic Artist:\nBea Jimenez :D\n\n", 10, 10,640, 0,  "BadaBoom BB", 25,{ 0, 0, 0, 255 });
+texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\nDeveloper:\nDominic Wagas\n\nGraphic Artist:\nBea Jimenez :D\n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
 texting:setReferencePoint(display.BottomCenterReferencePoint);
 texting.x =  texting.width/2 + 20 
 texting.y = scroller.y + 120;    
-texting:setTextColor( 0, 204, 255 )
+texting:setTextColor( 51, 51, 51 )
 color = 
 {
     highlight = 
     {
-        r =0, g = 0, b = 0, a = 255
+        r =255, g = 255, b = 255, a = 155
     },
     shadow =
     {
-        r = 0, g = 0, b = 0, a = 255
+        r = 255, g = 255, b = 255, a = 255
     }
 }
 texting:setEmbossColor( color )

@@ -1,14 +1,7 @@
-
-display.setStatusBar(display.HiddenStatusBar)
+local external   = require "luafile.external"
 local w = display.contentWidth / 2
 local h = display.contentHeight / 2
-local widget = (require "widget")
-local sprite = require("sprite")
-local physics = require("physics")
 local storyboard = require "storyboard"
-local adshow = require "luafile.adshow"
-local spritefactory = require "luafile.spritefactory";
-local sfx = require "luafile.sfx";
 local scene = storyboard.newScene()
 local controller = {}
 local spritesset = {}
@@ -46,9 +39,10 @@ local none
 local addbarrel
 local onTouch
 local onKeyEvent
+
 local function onSceneTouch(event)
     out  = false
-    audio.play(sfx.clicksound)
+    audio.play(external.sfx.clicksound)
     transition.cancel(colortimer)
     print(event.phase)
     if event.phase == "ended" then
@@ -70,7 +64,7 @@ local function onSceneTouch(event)
                             }
                        }
             storyboard.gotoScene( "luafile.menu",scenefrom)
-            adshow.loading("show") 
+            external.adshow.loading("show") 
         end
         
     end
@@ -92,14 +86,14 @@ end
 
 function striker (locy)
 ticker[9] = true
-dis[6] = sprite.newSprite(spritefactory.spritelaser)
+dis[6] = external.sprite.newSprite(external.spritefactory.spritelaser)
 dis[6].x = w 
 dis[6].y = locy
 dis[6]:prepare("strike")  
 dis[6]:play()
 
 group[3]:insert(dis[6])
-physics.addBody(dis[6],"static",{density = 1, bounce = 0,isSensor = true});
+external.physics.addBody(dis[6],"static",{density = 1, bounce = 0,isSensor = true});
 dis[6].alpha = 0.8
 dis[6].myName = "laserobj" --laser"
 timer.performWithDelay(3000, stopnow, 1)    
@@ -117,7 +111,7 @@ group[1]:insert(bg)
 
 function none (event)
     
-    
+return true   
 end
 Runtime:addEventListener( "key", none );
 
@@ -125,8 +119,8 @@ end
 
 function scene:enterScene( event )
     
-physics.start()
-physics.setGravity(0,1.5)
+external.physics.start()
+external.physics.setGravity(0,1.5)
 storyboard.purgeAll()
 storyboard.removeAll()
 group[1] = self.view
@@ -138,7 +132,7 @@ group[5] = display.newGroup();
 ticker[1] = 0
 barrelbacknum = 0
 
---scroller = widget.newScrollView{
+--scroller = external.widget.newScrollView{
 --width = 320,
 --height = 240,
 --maskFile= "background/mask-160x120.png",
@@ -181,7 +175,7 @@ for k = 1,7,1 do
             barreler[k].x = w - 290;
         end
 
-physics.addBody(barreler[k],"static",{density  = 0,bounce = 0,friction = 0});
+external.physics.addBody(barreler[k],"static",{density  = 0,bounce = 0,friction = 0});
 barreler[k].myName = "barrelers";
 barreler[k].id = "barrel #"..k;
 group[2]:insert(barreler[k]);           
@@ -191,7 +185,7 @@ local rect_ = display.newRect(0,0, display.contentWidth, 10)
 rect_:setReferencePoint(display.CenterReferencePoint)
 rect_.x = display.contentWidth / 2
 rect_.y = display.contentHeight - 50
-physics.addBody(rect_,"static" ,{density = 0.1, bounce = 0,firction = 0})
+external.physics.addBody(rect_,"static" ,{density = 0.1, bounce = 0,firction = 0})
 rect_.myName = "flamerss"
 group[3]:insert(rect_)
 rect_.alpha = 0
@@ -209,7 +203,7 @@ function mobmoving (event)
  controller[4] = false
 local mobnum       = 1--math.random(1,4)
 mobcount           = mobcount + 1
-mobruner[mobcount]   = sprite.newSprite(spritefactory.alien_2)
+mobruner[mobcount]   = external.sprite.newSprite(external.spritefactory.alien_2)
 mobruner[mobcount].y = -10
 mobruner[mobcount].x = (math.random(50,250))
 
@@ -238,7 +232,7 @@ elseif mobnum == 4 then
 
 end
 --mobruner[mobcount]:scale(2,2)
-physics.addBody(mobruner[mobcount] ,{density = 0.1, bounce = 0,firction = 0})
+external.physics.addBody(mobruner[mobcount] ,{density = 0.1, bounce = 0,firction = 0})
 mobruner[mobcount].myName = "runnerers";
 group[2]:insert(mobruner[mobcount])
 --controller[1] = true  
@@ -253,7 +247,7 @@ end
 local function explodeevent(locx,locy) -- EXPLODE
     
     ticker[1] = ticker[1] + 1
-    playexplode[ticker[1]]= sprite.newSprite(spritefactory.spritexplode)
+    playexplode[ticker[1]]= external.sprite.newSprite(external.spritefactory.spritexplode)
    -- playexplode[ticker[1]]:scale(2,2)
     playexplode[ticker[1]].x = locx
     playexplode[ticker[1]].y = locy
@@ -280,7 +274,7 @@ end
 barreler[barrelbacknum] = display.newImageRect("button/barrelbut/barrel.png", 64, 64);
 barreler[barrelbacknum].x = locbarrel.x
 barreler[barrelbacknum].y = locbarrel.y
-physics.addBody(barreler[barrelbacknum],"static",{density  = 0,bounce = 0,friction = 0})
+external.physics.addBody(barreler[barrelbacknum],"static",{density  = 0,bounce = 0,friction = 0})
 barreler[barrelbacknum].myName = "barrelers"
 barreler[barrelbacknum].id = event.target.id
 group[2]:insert(barreler[barrelbacknum])
@@ -296,7 +290,7 @@ local function hitcar (left,right,hitting,spriteid)
 --print("hitcar ID "..spriteid)
 
 if hitting == "runnerers" then
-    cardeader[cardeadnum]= sprite.newSprite(spritefactory.spritedeadmob_)
+    cardeader[cardeadnum]= external.sprite.newSprite(external.spritefactory.spritedeadmob_)
     if spriteid == "runner 1" then
        cardeader[cardeadnum]:prepare("dead_1")
     elseif spriteid == "runner 2" then
@@ -341,7 +335,7 @@ ticker[14]= true
 ticker[22] = true
 carrunnum  = carrunnum + 1
 local carnum_ = math.random(1,4)
-carrun[carrunnum] = sprite.newSprite(spritefactory.spritecar)
+carrun[carrunnum] = external.sprite.newSprite(external.spritefactory.spritecar)
 carrun[carrunnum].rotation = 0
 
 bump[carrunnum] = display.newRect( 0, 0, 8, 35)
@@ -396,8 +390,8 @@ end
 
 carrun[carrunnum].id = "carrer "..carrunnum
 bump[carrunnum].alpha = 0
-physics.addBody(carrun[carrunnum],"static",{density = 5, bounce = 0});--,isSensor = true})
-physics.addBody(bump[carrunnum],"static",{density = 10, bounce = 15});--,isSensor = true})
+external.physics.addBody(carrun[carrunnum],"static",{density = 5, bounce = 0});--,isSensor = true})
+external.physics.addBody(bump[carrunnum],"static",{density = 10, bounce = 15});--,isSensor = true})
 carrun[carrunnum].myName = "carrer";
 bump[carrunnum].myName = "bumper";
 ticker[12] = transition.to(carrun[carrunnum], {x = ticker[16], y = carrun.y,time = 2000,onComplete = removecar});
@@ -493,7 +487,7 @@ end
 laserbutton[lasernumber]:addEventListener( "touch", onTouch )
 
 
-carpowbutton = widget.newButton
+carpowbutton = external.widget.newButton
 
     {
     defaultFile = "button/carbut/car.png",
@@ -507,7 +501,7 @@ carpowbutton.x = w + 260
 carpowbutton.y = h + 200
 group[3]:insert(carpowbutton)
 
-menubutton = widget.newButton
+menubutton = external.widget.newButton
 
     {
     defaultFile = "button/woodbutton/gotitbtn.png",
@@ -540,7 +534,7 @@ textcolor ()
 --colortimer = transition.to(menubutton, {alpha = 1 , time = 100,onComplete = textcolor})
 
 
-backbutton = widget.newButton
+backbutton = external.widget.newButton
     {
         defaultFile     = "button/orange/left.png",
         overFile        = "button/orange/lefttap.png",
@@ -577,7 +571,7 @@ end
 if((event.object1.myName == "runnerers" and event.object2.myName =="barrelers") or 
 (event.object1.myName =="barrelers" and event.object2.myName =="runnerers")) then
 
-audio.play(sfx.sound_1)
+audio.play(external.sfx.sound_1)
 
 if barelnum == 7 then
     barelnum = 0
@@ -629,7 +623,7 @@ end
 if((event.object1.myName == "runnerers" and event.object2.myName == "laserobj") or 
    (event.object1.myName == "laserobj" and event.object2.myName == "runnerers")) then
 
-audio.play(sfx.sound_1)
+audio.play(external.sfx.sound_1)
 
 if event.object2.myName == "runnerers" then
     explodeevent(event.object2.x,event.object2.y)
@@ -708,7 +702,7 @@ end
 if ticker[15] == true then
     timer.cancel(ticker[18])
 end
-physics.stop()
+external.physics.stop()
 group[2]:removeSelf()
 group[2] = nil
 group[3]:removeSelf()

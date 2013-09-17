@@ -76,7 +76,6 @@ group = {
         surgroup = display.newGroup(),
         rushgroup= display.newGroup(),
         }
-local devname = system.getInfo( "model" )
 
 local path = system.pathForFile("records.sqlite",system.DocumentsDirectory  )
 db = sqlite3.open( path ) 

@@ -42,13 +42,25 @@ local laser = sprite.newSpriteSheet("spritesheets/beam.png", 680, 50)
 spritefactory.spritelaser = sprite.newSpriteSet(laser, 1, 10)
 sprite.add(spritefactory.spritelaser, "strike", 1, 10, 300, 0)
 
-local human = sprite.newSpriteSheet("spritesheets/human.png",64,98)
-spritefactory.spritehuman = sprite.newSpriteSet(human, 1, 9)
-sprite.add(spritefactory.spritehuman, "human", 1, 9, 500, -0)
+--80x126
+--
 
-local deadhuman = sprite.newSpriteSheet("spritesheets/humandead.png", 128, 96)
-spritefactory.spritedeadhuman= sprite.newSpriteSet(deadhuman, 1, 6)
-sprite.add(spritefactory.spritedeadhuman, "humandead", 1, 6, 1000, 1)
+local boy = sprite.newSpriteSheet("spritesheets/boy.png",80,126)
+spritefactory.spriteboy = sprite.newSpriteSet(boy, 1, 6)
+sprite.add(spritefactory.spriteboy, "boy", 1, 6, 500, 0)
+
+local dboy = sprite.newSpriteSheet("spritesheets/dboy.png", 80, 126)
+spritefactory.spritedeadboy= sprite.newSpriteSet(dboy, 1, 7)
+sprite.add(spritefactory.spritedeadboy, "dboy", 1, 7, 1000, 1)
+
+local girl = sprite.newSpriteSheet("spritesheets/girl.png",80,126)
+spritefactory.spritegirl = sprite.newSpriteSet(girl, 1, 6)
+sprite.add(spritefactory.spritegirl, "girl", 1, 6, 500, 0)
+
+local dgirl = sprite.newSpriteSheet("spritesheets/dgirl.png", 80, 126)
+spritefactory.spritedeadgirl= sprite.newSpriteSet(dgirl, 1, 7)
+sprite.add(spritefactory.spritedeadgirl, "dgirl", 1, 7, 1000, 1)
+
 
 local alien_1 = sprite.newSpriteSheet("spritesheets/gus.png", 80, 114)
 spritefactory.alien_1 = sprite.newSpriteSet(alien_1, 1, 6)

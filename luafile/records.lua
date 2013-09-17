@@ -18,6 +18,8 @@ local number
 local name
 local stats
 local onTouched_
+
+
 local function onSceneTouch(event)
 switch = event.targe
 -- open SQLite database, if it doesn't exist, create database

@@ -63,6 +63,7 @@ end
 
 function functions.notouch (event)
 print(event.phase)
+
 local function spritehuman (event)
     if event.phase == "end" then   
     event.sprite:removeSelf()
@@ -71,12 +72,20 @@ local function spritehuman (event)
 end
     
 if event.phase == "began" then
+    
     master[1].humanstats = false
     master[1].humanum = master[1].humanum + 1
-    human[master[1].humanum] =  external.sprite.newSprite(external.spritefactory.spritedeadhuman);
+    if event.target.id == "boy" then
+        human[master[1].humanum] =  external.sprite.newSprite(external.spritefactory.spritedeadboy);   
+        human[master[1].humanum]:prepare("dboy")     
+    elseif event.target.id == "girl" then
+        human[master[1].humanum] =  external.sprite.newSprite(external.spritefactory.spritedeadgirl);   
+        human[master[1].humanum]:prepare("dgirl") 
+    end
+    
     human[master[1].humanum].x = event.target.x
     human[master[1].humanum].y = event.target.y
-    human[master[1].humanum]:prepare("humandead")  
+    
     human[master[1].humanum]:play()
     group[5]:insert(human[master[1].humanum]);
     human[master[1].humanum]:addEventListener("sprite",spritehuman)
@@ -112,14 +121,24 @@ end
 
 function functions.runninghumen ()
     
-audio.play(external.sfx.human)
+
 master[1].humanum = master[1].humanum + 1
-human[master[1].humanum] =  external.sprite.newSprite(external.spritefactory.spritehuman);
+local humanused = math.random(1,2)
+if humanused == 1 then
+    audio.play(external.sfx.boy)
+    human[master[1].humanum] =  external.sprite.newSprite(external.spritefactory.spriteboy);
+    human[master[1].humanum]:prepare("boy")  
+    human[master[1].humanum].id = "boy"
+elseif humanused == 2 then
+    audio.play(external.sfx.girl)
+    human[master[1].humanum] =  external.sprite.newSprite(external.spritefactory.spritegirl);
+    human[master[1].humanum]:prepare("girl")  
+    human[master[1].humanum].id = "girl"   
+end
 human[master[1].humanum].x = (math.random(50,(display.contentWidth - 150)))
 human[master[1].humanum].y = -40
-human[master[1].humanum]:prepare("human")  
 human[master[1].humanum]:play()
-human[master[1].humanum].id = "human"
+
 external.physics.addBody(human[master[1].humanum],{density = den[5] , bounce = 0,firction = 0,isSensor = false})
 human[master[1].humanum].isFixedRotation = true
 human[master[1].humanum].myName = "human"

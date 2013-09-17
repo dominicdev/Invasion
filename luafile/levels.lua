@@ -1,18 +1,14 @@
 local external   = require "luafile.external"
 local storyboard = require "storyboard"
---local adshow     = require "luafile.adshow"
---local widget     = require "widget"
---local sfx        = require "luafile.sfx"
---local sqlite3    = require "sqlite3"
 local scene      = storyboard.newScene()
 local w_         = display.contentWidth / 2
 local h_         = display.contentHeight / 2 
 local group      = nil
 local object_    = nil
 local button     = nil
-local levelnum   = 1
-local pownum     = 0
+local pages      = nil
 local count      = 0
+local count_     = 0
 local level      = 1
 local textlabel  = ""
 local goto       = ""
@@ -111,6 +107,12 @@ group:insert(bg)
 end
 
 function scene:willEnterScene(event)
+pages = {
+            s_1 = display.newGroup(), 
+            s_2 = display.newGroup(),
+            scroller_1 = nil,
+            scroller_2 = nil,
+        }
 button = {
             back= nil,
             }    
@@ -134,25 +136,45 @@ storyboard.purgeAll()
 storyboard.removeAll() 
 level = numvolume.level
 
-local environment = system.getInfo("environment")
-if environment == "simulator" then
-print("You're in the simulator.")
-else 
-system.activate("multitouch")
-end
+pages.scroller_1 = external.widget.newScrollView
+            {
+                width = display.contentWidth*.90,
+                height = display.contentHeight*0.4,
+                hideBackground = true,
+                hideScrollBar = true,
+            }
+pages.scroller_1:setReferencePoint(display.CenterReferencePoint)
+pages.scroller_1.x = display.contentWidth*0.5
+pages.scroller_1.y = display.contentHeight*0.5
+pages.s_1:insert(pages.scroller_1)
+
+pages.scroller_2 = external.widget.newScrollView
+            {
+                width = display.contentWidth*.90,
+                height = display.contentHeight*0.4,
+                hideBackground = true,
+                hideScrollBar = true,
+            }
+pages.scroller_2:setReferencePoint(display.CenterReferencePoint)
+pages.scroller_2.x = display.contentWidth + display.contentWidth*0.5
+pages.scroller_2.y = display.contentHeight*0.5
+pages.s_2:insert(pages.scroller_2)
 
 local x_ = 0
 local y_ = 0
-
 local path = system.pathForFile("records.sqlite",system.DocumentsDirectory  )
 db = external.sqlite3.open( path ) 
-
+local row
 count = 0
+count_ = 0
 sql = "SELECT * FROM button WHERE level="..level;
 
 for row in db:nrows(sql) do
-
 count = count + 1
+
+--if row.level == 2 and count == 21 then
+-- y_ = 0   
+--end
 
 if row.stats == "unlocked" then
     textlabel = count
@@ -183,8 +205,8 @@ button[count] = external.widget.newButton
     onRelease   = onSceneTouch,
     }
 button[count]:setReferencePoint(display.CenterReferencePoint)
-button[count].x = 80 + x_
-button[count].y = (h_ - 250)+ y_
+button[count].x = (button[count].width*0.5) + x_
+button[count].y = (button[count].height*0.5)+ y_
 button[count].status_       = id_
 button[count].stage_        = count
 button[count].speed         = row.speed
@@ -207,41 +229,62 @@ button[count].movnum        = row.movnum
 button[count].tutorial      = row.tutorial
 button[count].bossing       = row.bossing
 button[count].bossbol       = row.bossbol
+
 if row.stats == "locked" then
  button[count].alpha = 0.6
 else
  button[count].alpha = 1   
 end
-object_:insert(button[count]) 
 
+--
+--if count > 20 then
+--    
+--for i = 1 ,star_.num  , 1 do
+--    star_[i] = display.newImageRect("items/star.png", 30, 30)  
+--    star_[i]:setReferencePoint(display.CenterReferencePoint)
+--    if i == 1 then
+--        star_[i].x  = button[count].x
+--    elseif i == 2 then
+--        star_[i].x  = button[count].x + 30  
+--    elseif i == 3 then
+--        star_[i].x  = button[count].x - 30 
+--    end
+--    star_[i].y = button[count].y + 30
+--    pages.scroller_2:insert(star_[i]) 
+--end
+--    x_ = x_ + 120
+--    pages.scroller_2:insert(button[count])  
+--    
+--else
+--
+--end
+pages.scroller_1:insert(button[count])  
 for i = 1 ,star_.num  , 1 do
     star_[i] = display.newImageRect("items/star.png", 30, 30)  
     star_[i]:setReferencePoint(display.CenterReferencePoint)
-        if i == 1 then
-            star_[i].x  = button[count].x
-        elseif i == 2 then
-            star_[i].x  = button[count].x + 30  
-        elseif i == 3 then
-            star_[i].x  = button[count].x - 30 
-        end
-         star_[i].y = button[count].y + 30
-object_:insert(star_[i]) 
+    if i == 1 then
+        star_[i].x  = button[count].x
+    elseif i == 2 then
+        star_[i].x  = button[count].x + 30  
+    elseif i == 3 then
+        star_[i].x  = button[count].x - 30 
+    end
+    star_[i].y = button[count].y + 30
+    pages.scroller_1:insert(star_[i]) 
 end
+x_ = x_ + 120  
 
-x_ = x_ + 120
 
-if count == 5 then
+count_ = count_ + 1
+if count_ == 5 then
 y_ = y_ + 120    
 x_ = 0
-elseif count == 10 then
-y_ = y_ + 120    
-x_ = 0
-elseif count == 15 then
-y_ = y_ + 120    
-x_ = 0  
+count_ = 0
 end
 
 end
+
+--transition.to(pages.scroller_2,{x = display.contentWidth*0.5,delay = 1000,time = 10000,transition=easing.outExpo,alpha = 1}) 
 
 sql = "SELECT * FROM item WHERE id="..1;
 
@@ -249,8 +292,6 @@ for row in db:nrows(sql) do
     powers.laser = row.laser
     powers.car   = row.car
     powers.barrel = row.barrel
-    
-    --print(powers.laser.. " "..powers.car.." "..powers.barrel)
     
     if powers.car  ==  0 then
     powers.car  = 2
@@ -279,11 +320,14 @@ button.back = external.widget.newButton
 button.back.x = w_ - 240
 button.back.y = 80
 object_:insert(button.back)
+
 timer.performWithDelay(1000, function ()
 if numvolume.scenename == "mainrestart" then
 external.adshow.loading("hide")  
 end
 end, 1)
+group:insert(pages.s_1)
+group:insert(pages.s_2)
 group:insert(object_)
 Runtime:addEventListener( "key", none_2 )
 scenestats = true
@@ -295,12 +339,6 @@ db:close()
 if goto == "start" then 
 --external.adshow.loading("show")    
 end
-local environment = system.getInfo("environment")
-if environment == "simulator" then
-print("You're in the simulator.")
-else 
-system.deactivate("multitouch")
-end
 goto = ""
 end
 
@@ -309,7 +347,8 @@ object_:removeSelf()
 object_ = nil 
 Runtime:removeEventListener( "key", none_2 )
 scenestats = false
-
+group:removeSelf()
+group = nil 
 end
 
 scene:addEventListener( "createScene", scene )

@@ -14,13 +14,13 @@ sfx.sound_12    = audio.loadSound("sound/beep2.wav")
 sfx.sound_13    = audio.loadSound("sound/gamemusic.mp3")
 sfx.sound_14    = audio.loadSound("sound/monster.mp3")
 sfx.star        = audio.loadSound("sound/star.mp3")
-sfx.human       = audio.loadSound("sound/humanscream.mp3")
+sfx.boy       = audio.loadSound("sound/boy.mp3") -- http://www.soundjay.com/human/man-scream-01.mp3
 sfx.start       = audio.loadSound("sound/start.mp3")   
 sfx.backmusic   = audio.loadSound("sound/backmusic.mp3")
 sfx.humanfail   = audio.loadSound("sound/humanfail.mp3")
 sfx.clicksound  = audio.loadSound("sound/click2.mp3")
 sfx.bigmonster  = audio.loadSound("sound/bigmonster.mp3")
 sfx.splat       = audio.loadSound("sound/splat.wav")
-
+sfx.girl       = audio.loadSound("sound/girl.mp3")--http://www.soundjay.com/human/sounds/woman-scream-02.mp3
 return sfx
 

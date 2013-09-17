@@ -91,7 +91,7 @@ end
 
 local function none (event)
     
-    
+ return true   
 end
 
 function updatecoin_ ()

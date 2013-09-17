@@ -82,8 +82,8 @@ local function none_1 (event)
                             }
        }
         storyboard.gotoScene( "luafile.menu",scenefrom)
-    return true
     end
+return true
 end
 
 local function onSceneTouch(event)

@@ -23,7 +23,8 @@ local sql
 local powers = nil
 
 local function none ()
-      
+    
+    return true  
 end
 
 function scene:createScene( event )
