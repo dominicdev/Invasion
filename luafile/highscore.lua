@@ -40,7 +40,7 @@ local mask_
 local count
 local db
 local sql
-
+local path
 local function onSceneTouch(event)
     if event.phase == "ended" or event.keyName == "back" and event.phase == "down" then
          audio.play(sfx.clicksound)
@@ -77,8 +77,11 @@ group = {
         rushgroup= display.newGroup(),
         }
 
-local path = system.pathForFile("records.sqlite",system.DocumentsDirectory  )
+path = system.pathForFile("records.db",system.DocumentsDirectory)
 db = sqlite3.open( path ) 
+
+--local tablesetup = [[CREATE TABLE IF NOT EXISTS records (id INTEGER PRIMARY KEY autoincrement, name, score, total,level,event);]]
+--db:exec( tablesetup )
 
 if display.contentHeight > 960 then
     numbers = display.contentHeight -1200
@@ -184,7 +187,7 @@ highscoresur:setEmbossColor( color )
 highscorerush:setEmbossColor( color )
 rowplace = numbers
 count = 0
-sql = "SELECT * FROM records WHERE event = 'survival' ORDER BY total DESC ";
+sql = "SELECT * FROM records WHERE event = 'survival' ORDER BY total DESC"
 
 for row in db:nrows(sql) do
     count = count + 1

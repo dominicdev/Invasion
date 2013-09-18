@@ -65,7 +65,7 @@ function functions.transactionCallback( event )
         elseif productID == products.three then  
             coinnum = coinnum + 1500
         end
-        path = system.pathForFile("records.sqlite", system.DocumentsDirectory)
+        path = system.pathForFile("records.db", system.DocumentsDirectory )
         db = sqlite3.open( path ) 
         local tablesave_1 = [[UPDATE item SET coin=']].. coinnum ..[[' WHERE id = 1]]
         db:exec( tablesave_1 )
@@ -187,130 +187,126 @@ end
 adshow.storealert ("Check Internet Connection")
 network.request( "https://encrypted.google.com", "GET", networkListener_2 )
 
-        iapback = display.newImageRect("items/iapback.png",600,display.contentHeight-(h_+130))
-        iapback:setReferencePoint(display.CenterReferencePoint)
-        iapback.x = w_
-        iapback.y = h_ + 35
---        iapback.alpha = .8
-        iap = "open"
-        myButton[1] = widget.newButton
-                {
-                    defaultFile     = "button/buybutton/buy.png",
-                    overFile        = "button/buybutton/buyover.png",
-                    label           = "  $ 0.99 = 500 coin",
-                    id              = "coin",
-                    font            = "Feast of Flesh BB",
-                    fontSize        = 40,
-                    labelColor      = { default={51, 51, 51,255}, over={102, 102, 102} },
-                    emboss          = true,
-                    labelAlign      = "left",
-                    width           = display.contentWidth - 200, 
-                    height          = 80,
-                    emboss          = true,
-                    onRelease       = function (event) 
-                        if event.phase == "ended" then
-                            
-                            if connection == true then
-                                store.purchase({products.one})
-                            else
-                                adshow.storealert ("Network Error")
-                            end
-                            
-                        end
-                    end,
-                }
-        myButton[1]:setReferencePoint(display.CenterReferencePoint)
-        myButton[1].x = w_ - 20
-        myButton[1].y = h_ - 50
+iapback = display.newImageRect("items/iapback.png",600,display.contentHeight-(h_+130))
+iapback:setReferencePoint(display.CenterReferencePoint)
+iapback.x = w_
+iapback.y = h_ + 35
+--iapback.alpha = .8
+iap = "open"
+myButton[1] = widget.newButton
+        {
+            defaultFile     = "button/buybutton/buy.png",
+            overFile        = "button/buybutton/buyover.png",
+            label           = "  $ 0.99 = 500 coin",
+            id              = "coin",
+            font            = "Feast of Flesh BB",
+            fontSize        = 40,
+            labelColor      = { default={51, 51, 51,255}, over={102, 102, 102} },
+            emboss          = true,
+            labelAlign      = "left",
+            width           = display.contentWidth - 200, 
+            height          = 80,
+            emboss          = true,
+            onRelease       = function (event) 
+                if event.phase == "ended" then
 
-        myButton[2] = widget.newButton
-                {
-                    defaultFile     = "button/buybutton/buy.png",
-                    overFile        = "button/buybutton/buyover.png",
-                    label           = "  $ 1.99 = 1000 coin",
-                    id              = "coin",
-                    font            = "Feast of Flesh BB",
-                    fontSize        = 40,
-                    labelColor      = { default={51, 51, 51,255}, over={102, 102, 102} },
-                    emboss          = true,
-                    labelAlign      = "left",
-                    width           = display.contentWidth - 200, 
-                    height          = 80,
-                    emboss          = true,
-                    onRelease       = function (event) 
-                        if event.phase == "ended" then
-                            if connection == true then
-                                store.purchase({products.two})
-                            else
-                                adshow.storealert ("Network Error")
-                            end
-                        end
-                    end,
-                }
-        myButton[2]:setReferencePoint(display.CenterReferencePoint)
-        myButton[2].x = w_ - 20
-        myButton[2].y = myButton[1].y + 90
-        
-        myButton[3] = widget.newButton
-                {
-                    defaultFile     = "button/buybutton/buy.png",
-                    overFile        = "button/buybutton/buyover.png",
-                    label           = "  $ 2.99 = 1500 coin",
-                    id              = "coin",
-                    font            = "Feast of Flesh BB",
-                    fontSize        = 40,
-                    labelColor      = { default={51, 51, 51,255}, over={102, 102, 102} },
-                    emboss          = true,
-                    labelAlign      = "left",
-                    width           = display.contentWidth - 200, 
-                    height          = 80,
-                    emboss          = true,
-                    onRelease       = function (event) 
-                        if event.phase == "ended" then
-                            if connection == true then
-                                store.purchase({products.three})
-                            else
-                                adshow.storealert ("Network Error")
-                            end
-                        end
-                    end,
-                }
-        myButton[3]:setReferencePoint(display.CenterReferencePoint)
-        myButton[3].x = w_ - 20
-        myButton[3].y = myButton[2].y + 90
+                    if connection == true then
+                        store.purchase({products.one})
+                    else
+                        adshow.storealert ("Network Error")
+                    end
 
-        closebutton = widget.newButton
-                {
-                    defaultFile     = "button/buybutton/left.png",
-                    overFile        = "button/buybutton/lefttap.png",
-                    id              = "coin",
-                    width           = 50, 
-                    height          = 50,
-                    emboss          = true,
-                    onRelease       = removeiap,
-                }
-        closebutton:setReferencePoint(display.CenterLeftReferencePoint)
-        closebutton.x = w_ + 230
-        closebutton.y = h_ - 90
-        
-        buybutton:setEnabled(false)
-        startbutton:setEnabled(false)
-        cancelbutton:setEnabled(false)
-        backbutton:setEnabled(false)
-        item[17]:setEnabled(false)
-        item[18]:setEnabled(false)
-        item[19]:setEnabled(false)
-        item[20]:setEnabled(false)
-        --item[22]:setEnabled(false)
-        --Runtime:removeEventListener( "key", onKeyEvent );
-        --Runtime:addEventListener( "key", removeiap );
-        if control == true  then
-            buybutton.alpha = 0
-            cancelbutton.alpha = 0
-            startbutton.alpha = 1
-        end
-        
-        
+                end
+            end,
+        }
+myButton[1]:setReferencePoint(display.CenterReferencePoint)
+myButton[1].x = w_ - 20
+myButton[1].y = h_ - 50
+
+myButton[2] = widget.newButton
+        {
+            defaultFile     = "button/buybutton/buy.png",
+            overFile        = "button/buybutton/buyover.png",
+            label           = "  $ 1.99 = 1000 coin",
+            id              = "coin",
+            font            = "Feast of Flesh BB",
+            fontSize        = 40,
+            labelColor      = { default={51, 51, 51,255}, over={102, 102, 102} },
+            emboss          = true,
+            labelAlign      = "left",
+            width           = display.contentWidth - 200, 
+            height          = 80,
+            emboss          = true,
+            onRelease       = function (event) 
+                if event.phase == "ended" then
+                    if connection == true then
+                        store.purchase({products.two})
+                    else
+                        adshow.storealert ("Network Error")
+                    end
+                end
+            end,
+        }
+myButton[2]:setReferencePoint(display.CenterReferencePoint)
+myButton[2].x = w_ - 20
+myButton[2].y = myButton[1].y + 90
+
+myButton[3] = widget.newButton
+        {
+            defaultFile     = "button/buybutton/buy.png",
+            overFile        = "button/buybutton/buyover.png",
+            label           = "  $ 2.99 = 1500 coin",
+            id              = "coin",
+            font            = "Feast of Flesh BB",
+            fontSize        = 40,
+            labelColor      = { default={51, 51, 51,255}, over={102, 102, 102} },
+            emboss          = true,
+            labelAlign      = "left",
+            width           = display.contentWidth - 200, 
+            height          = 80,
+            emboss          = true,
+            onRelease       = function (event) 
+                if event.phase == "ended" then
+                    if connection == true then
+                        store.purchase({products.three})
+                    else
+                        adshow.storealert ("Network Error")
+                    end
+                end
+            end,
+        }
+myButton[3]:setReferencePoint(display.CenterReferencePoint)
+myButton[3].x = w_ - 20
+myButton[3].y = myButton[2].y + 90
+
+closebutton = widget.newButton
+        {
+            defaultFile     = "button/buybutton/left.png",
+            overFile        = "button/buybutton/lefttap.png",
+            id              = "coin",
+            width           = 50, 
+            height          = 50,
+            emboss          = true,
+            onRelease       = removeiap,
+        }
+closebutton:setReferencePoint(display.CenterLeftReferencePoint)
+closebutton.x = w_ + 230
+closebutton.y = h_ - 90
+
+buybutton:setEnabled(false)
+startbutton:setEnabled(false)
+cancelbutton:setEnabled(false)
+backbutton:setEnabled(false)
+item[17]:setEnabled(false)
+item[18]:setEnabled(false)
+item[19]:setEnabled(false)
+item[20]:setEnabled(false)
+if control == true  then
+    buybutton.alpha = 0
+    cancelbutton.alpha = 0
+    startbutton.alpha = 1
+end
+
 end
 
 local function popupsforcoin ()
@@ -448,18 +444,12 @@ local function onSceneTouch(event)
 
     if switch.id == "buy" then
    
-        path = system.pathForFile("records.sqlite", system.DocumentsDirectory)
+        path = system.pathForFile("records.db", system.DocumentsDirectory)
         db = sqlite3.open( path ) 
-        --print(path)
-        local tablesetup = "CREATE TABLE IF NOT EXISTS item (id INTEGER PRIMARY KEY, car, barrel,laser,coin,lives);"
-        db:exec( tablesetup )
-        --print(tablesetup)
         local tablesave_ = [[UPDATE item SET car=']].. carnum ..[[',barrel=']]..barrelnum..[[',laser=']]..lasernum..[[',coin=']]..coinnum..[[',lives=']]..livesnum..[[' WHERE id = 1]]
         db:exec( tablesave_ )
-       -- print(tablesave_)
         db:close()
-        --print("db closed")
-
+        
         buybutton.alpha = 0
         cancelbutton.alpha = 0   
         startbutton.alpha = 1
@@ -512,18 +502,17 @@ connection = false
 function functions.loadproducts (store_use)
     if store_use == "apple" then
     products = {
-            one     = "eight.app.studio.homeinvasion.myproductname1",
-            two     = "eight.app.studio.homeinvasion.myproductname2",
-            three   = "eight.app.studio.homeinvasion.myproductname3",
+            one     = "eight.app.studio.aliendisruption.myproductname1",
+            two     = "eight.app.studio.aliendisruption.myproductname2",
+            three   = "eight.app.studio.aliendisruption.myproductname3",
             }
     elseif store_use == "google" then
     products = {
-            one     = "eight.app.studio.homeinvasion.myproductname1",
-            two     = "eight.app.studio.homeinvasion.myproductname2",
-            three   = "eight.app.studio.homeinvasion.myproductname3",
+            one     = "eight.app.studio.aliendisruption.myproductname1",
+            two     = "eight.app.studio.aliendisruption.myproductname2",
+            three   = "eight.app.studio.aliendisruption.myproductname3",
             }
     end
-    print("load Products")
 end            
             
 -- Identifies the device and will initialize according to type.
@@ -550,7 +539,7 @@ storyboard.purgeAll()
 storyboard.removeAll() 
 iap = "close"
 goto = ""
-path_ = system.pathForFile("records.sqlite", system.DocumentsDirectory )
+path_ = system.pathForFile("records.db", system.DocumentsDirectory )
 db = sqlite3.open( path_ ) 
 
 sql = "SELECT * FROM item";

@@ -917,14 +917,20 @@ if event.phase == "began" then
     
     if hit.damage == 0 and hit.myname == "runnerers" then
         number_.score = number_.score + 50
-        dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
+        if hit.name == "runners" then
+            dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
+            if holder == "runner 2" then
+                dead[number_.deadmon]:prepare("dead_2")  
+            elseif holder == "runner 1" then 
+                dead[number_.deadmon]:prepare("dead_3")  
+            end
+        elseif hit.name == "mover" then
+            dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritexplode)
+            dead[number_.deadmon]:prepare("explode") 
+        end
+    
         dead[number_.deadmon].x = x1
         dead[number_.deadmon].y = y1
-        if holder == "runner 2" then
-            dead[number_.deadmon]:prepare("dead_2")  
-        elseif holder == "runner 1" then 
-            dead[number_.deadmon]:prepare("dead_3")  
-        end
         dead[number_.deadmon]:play()
         group[2]:insert(dead[number_.deadmon])
         dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
@@ -1038,36 +1044,42 @@ end
 function functions.mobstart (event)
     local mobnum_       = math.random(1,2)
     number_.monster = number_.monster + 1 
-    --monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.spritemob)
     
     if mobnum_ == 1 then
         monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_1)
         monsters[number_.monster]:prepare("alien_1") 
         monsters[number_.monster]:play()
         monsters[number_.monster].id = "runner 1" 
-        
     elseif mobnum_ == 2 then
-
         monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_2)
         monsters[number_.monster]:prepare("alien_2") 
         monsters[number_.monster]:play()
         monsters[number_.monster].id = "runner 2"  
-
     elseif mobnum_ == 3 then
         monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_3)
         monsters[number_.monster]:prepare("alien_3") 
         monsters[number_.monster]:play()
         monsters[number_.monster].id = "runner 3"
     elseif mobnum_ == 4 then
-
         monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_2)
         monsters[number_.monster]:prepare("alien_2") 
         monsters[number_.monster]:play()
         monsters[number_.monster].id = "runner 4"   
-
     end
-monsters[number_.monster].y = -50
-monsters[number_.monster].x = (math.random(50,display.contentWidth - 50))
+monsters[number_.monster]:setReferencePoint(display.CenterReferencePoint);
+monsters[number_.monster].y = -monsters[number_.monster].height
+
+local locationx = math.random(1,4)
+if locationx == 1 then
+    monsters[number_.monster].x = (display.contentWidth/2) - (display.contentWidth*0.25) + monsters[number_.monster].width 
+elseif locationx == 2 then    
+    monsters[number_.monster].x = monsters[number_.monster].width
+elseif locationx == 3 then
+    monsters[number_.monster].x = (display.contentWidth/2) + (display.contentWidth*0.25) - monsters[number_.monster].width
+elseif locationx == 4 then    
+    monsters[number_.monster].x = display.contentWidth - monsters[number_.monster].width
+end
+monsters[number_.monster].name = "runners"
 monsters[number_.monster].damage = number_.damage  
 external.physics.addBody(monsters[number_.monster] ,{density = 0, bounce = 0,firction = 0})
 monsters[number_.monster].isFixedRotation = true
@@ -1080,23 +1092,20 @@ end
 
 function functions.masterstart (event)
     
-    local mobnum_       = 1--math.random(1,2)
-    number_.monster = number_.monster + 1 
-    monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_3)
-    monsters[number_.monster].y = -80
-    monsters[number_.monster].x = (math.random(50,display.contentWidth - 50))
-    
-    if mobnum_ == 1 then
-
-        monsters[number_.monster]:prepare("alien_3")  
-        monsters[number_.monster]:play()
-        
-    elseif mobnum_ == 2 then
-
-        monsters[number_.monster]:prepare("master_2")  
-        monsters[number_.monster]:play() 
-  
-    end
+number_.monster = number_.monster + 1 
+monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_3)
+monsters[number_.monster]:setReferencePoint(display.CenterReferencePoint);
+monsters[number_.monster].y = -monsters[number_.monster].height
+local locationx_ = math.random(1,3)
+if locationx_ == 1 then
+    monsters[number_.monster].x = display.contentWidth - monsters[number_.monster].width*2
+elseif locationx_ == 2 then    
+    monsters[number_.monster].x = monsters[number_.monster].width*2
+elseif locationx_ == 3 then
+    monsters[number_.monster].x = (display.contentWidth/2) 
+end
+monsters[number_.monster]:prepare("alien_3")  
+monsters[number_.monster]:play()
 monsters[number_.monster].id = "master" 
 monsters[number_.monster].damage = number_.masdamage 
 external.physics.addBody(monsters[number_.monster] ,{density = 0, bounce = 0,firction = 0})
@@ -1192,28 +1201,12 @@ end
 
 function functions.movingmonster (event)
 local mobnum_   = 1--math.random(1,4)
+
 number_.monster = number_.monster + 1 
-if mobnum_ == 1 then
-    monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.spritealienship)
-    monsters[number_.monster]:prepare("shipfront")  
-    monsters[number_.monster]:play()
-    monsters[number_.monster].id = "runner 1" 
-elseif mobnum_ == 2 then
-    monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_1)
-    monsters[number_.monster]:prepare("alien_1")  
-    monsters[number_.monster]:play()
-    monsters[number_.monster].id = "runner 2"  
-elseif mobnum_ == 3 then
-    monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_2)
-    monsters[number_.monster]:prepare("alien_2")  
-    monsters[number_.monster]:play()
-    monsters[number_.monster].id = "runner 3"
-elseif mobnum_ == 4 then
-    monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_1)
-    monsters[number_.monster]:prepare("alien_1")  
-    monsters[number_.monster]:play()
-    monsters[number_.monster].id = "runner 4"   
-end
+monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.spritealienship)
+monsters[number_.monster]:prepare("shipfront")  
+monsters[number_.monster]:play()
+monsters[number_.monster].id = "runner 1" 
 monsters[number_.monster].y = -100
 monsters[number_.monster].name = "mover"
 monsters[number_.monster].damage = 2 
@@ -2669,7 +2662,7 @@ function functions.taptutorial_(event)
                      count_ = count_ + 1   
                     end,4)
 
-                    local path = system.pathForFile("records.sqlite",system.DocumentsDirectory  )
+                    local path = system.pathForFile("records.db",system.DocumentsDirectory  )
                     db = sqlite3.open( path )  
                     local tablesave_1 = [[UPDATE button SET tutorial =']]..game_.tutorial..[[' WHERE id =]]..1
                     db:exec( tablesave_1) 

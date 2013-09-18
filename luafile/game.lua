@@ -1258,39 +1258,45 @@ function functions.mobmoving (event)
     
 local mobnum = math.random(1,2)
 numbers.mobcount = numbers.mobcount + 1
-local xlocation = (math.random(50,(display.contentWidth - 150)))
+
 if mobnum == 1 then
     mobrun[numbers.mobcount] = external.sprite.newSprite(external.spritefactory.alien_2)
-    mobrun[numbers.mobcount].y = - 100
-    mobrun[numbers.mobcount].x = xlocation
     mobrun[numbers.mobcount]:prepare("alien_2")  
-    mobrun[numbers.mobcount]:play()
     mobrun[numbers.mobcount].id = "runner 1"
     mobrun[numbers.mobcount].damage = carpow[6]
     den[5] = den[1]
 elseif mobnum == 2 then 
     mobrun[numbers.mobcount] = external.sprite.newSprite(external.spritefactory.alien_1)
-    mobrun[numbers.mobcount].y = - 100
-    mobrun[numbers.mobcount].x = xlocation
     mobrun[numbers.mobcount]:prepare("alien_1")  
-    mobrun[numbers.mobcount]:play()
     mobrun[numbers.mobcount].id = "runner 2"
     den[5] = den[2]
     mobrun[numbers.mobcount].damage = carpow[7]
-elseif mobnum == 3 then  
-    mobrun[numbers.mobcount]:prepare("running3")  
-    mobrun[numbers.mobcount]:play()
-    mobrun[numbers.mobcount].id = "runner 3"
-    mobrun[numbers.mobcount].damage = carpow[8]
-    den[5] = den[3]
-elseif mobnum == 4 then 
-    mobrun[numbers.mobcount]:prepare("running4")  
-    mobrun[numbers.mobcount]:play()
-    mobrun[numbers.mobcount].id = "runner 4"
-    mobrun[numbers.mobcount].damage = carpow[9]
-    den[5] = den[4]
+--elseif mobnum == 3 then  
+--    mobrun[numbers.mobcount]:prepare("running3")  
+--    mobrun[numbers.mobcount]:play()
+--    mobrun[numbers.mobcount].id = "runner 3"
+--    mobrun[numbers.mobcount].damage = carpow[8]
+--    den[5] = den[3]
+--elseif mobnum == 4 then 
+--    mobrun[numbers.mobcount]:prepare("running4")  
+--    mobrun[numbers.mobcount]:play()
+--    mobrun[numbers.mobcount].id = "runner 4"
+--    mobrun[numbers.mobcount].damage = carpow[9]
+--    den[5] = den[4]
 end
-
+mobrun[numbers.mobcount]:setReferencePoint(display.CenterReferencePoint);
+local locationx = math.random(1,4)
+if locationx == 1 then
+    mobrun[numbers.mobcount].x = (display.contentWidth/2) - (display.contentWidth*0.25) + mobrun[numbers.mobcount].width 
+elseif locationx == 2 then    
+    mobrun[numbers.mobcount].x = mobrun[numbers.mobcount].width
+elseif locationx == 3 then
+    mobrun[numbers.mobcount].x = (display.contentWidth/2) + (display.contentWidth*0.25) - mobrun[numbers.mobcount].width
+elseif locationx == 4 then    
+    mobrun[numbers.mobcount].x = display.contentWidth - mobrun[numbers.mobcount].width
+end
+mobrun[numbers.mobcount].y = -mobrun[numbers.mobcount].height
+mobrun[numbers.mobcount]:play()
 external.physics.addBody(mobrun[numbers.mobcount],{density = den[5] , bounce = 0,firction = 0})
 mobrun[numbers.mobcount].isFixedRotation = true
 mobrun[numbers.mobcount].myName = "runner"
@@ -1304,8 +1310,17 @@ if master[1].stats == true then
     masternumbertable = masternumbertable  + 1
     local masternumber = masternumbertable
     mastersprite[masternumber] = external.sprite.newSprite(external.spritefactory.alien_3)
-    mastersprite[masternumber].x = (math.random(50,(display.contentWidth - 50)))
-    mastersprite[masternumber].y = - 80
+    mastersprite[masternumber]:setReferencePoint(display.CenterReferencePoint);
+    local locationx_ = math.random(1,3)
+    if locationx_ == 1 then
+        mastersprite[masternumber].x = display.contentWidth - mastersprite[masternumber].width*2
+    elseif locationx_ == 2 then    
+        mastersprite[masternumber].x = mastersprite[masternumber].width*2
+    elseif locationx_ == 3 then
+        mastersprite[masternumber].x = (display.contentWidth/2) 
+    end
+    
+    mastersprite[masternumber].y = -mastersprite[masternumber].height
     mastersprite[masternumber]:prepare("alien_3")
     mastersprite[masternumber]:play()
     mastersprite[masternumber]:addEventListener("touch",masterremove)

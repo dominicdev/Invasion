@@ -134,7 +134,7 @@ isPaused = nil
 
 num.coin = math.modf(num.monkill/3)
 num.coin = num.coin * num.addcoin
-local path = system.pathForFile("records.sqlite",system.DocumentsDirectory  )
+local path = system.pathForFile("records.db",system.DocumentsDirectory  )
 db = external.sqlite3.open( path )  
 
 local coin
@@ -251,7 +251,7 @@ display_.cointext:setEmbossColor( color )
 
 local function savename (event)
     if event.phase == "ended" then
-        local path = system.pathForFile("records.sqlite", system.DocumentsDirectory )
+        local path = system.pathForFile("records.db", system.DocumentsDirectory )
         db = external.sqlite3.open( path ) 
         local tablefill =[[INSERT INTO records2 VALUES (NULL,']] ..display_.textname.text.. [[',']] .. num.score .. [[',']].. map.dif ..[[');]]
         db:exec(tablefill)

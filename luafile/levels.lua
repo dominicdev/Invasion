@@ -162,7 +162,7 @@ pages.s_2:insert(pages.scroller_2)
 
 local x_ = 0
 local y_ = 0
-local path = system.pathForFile("records.sqlite",system.DocumentsDirectory  )
+local path = system.pathForFile("records.db",system.DocumentsDirectory  )
 db = external.sqlite3.open( path ) 
 local row
 count = 0

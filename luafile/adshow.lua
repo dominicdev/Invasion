@@ -130,18 +130,19 @@ end
 end
 
 adshow.sqlload = false
+
 function adshow.loadsql  ()
     
-local path = system.pathForFile("records.sqlite", system.DocumentsDirectory )
-file = io.open( path, "r" )
+local path = system.pathForFile("records.db", system.DocumentsDirectory )
+file = io.open( path )
    if( file == nil )then
        print("NO FILE")
    	-- Doesn't Already Exist, So Copy it In From Resource Directory                          
-  local pathSource     = system.pathForFile( "records.sqlite", system.ResourceDirectory )  
+  local pathSource     = system.pathForFile( "records.db", system.ResourceDirectory )  
   local fileSource = io.open( pathSource, "r" ) 
   local contentsSource = fileSource:read( "*a" )                                  
 		--Write Destination File in Documents Directory                                  
-		local pathDest = system.pathForFile( "records.sqlite", system.DocumentsDirectory )                 
+		local pathDest = system.pathForFile( "records.db", system.DocumentsDirectory )                 
 		local fileDest = io.open( pathDest, "w" )                 
 		fileDest:write( contentsSource )                 
 		 -- Done                      
@@ -244,7 +245,6 @@ elseif environment == "Android" then
 elseif environment == "iPhone OS" then
     application_key = "9S8NM34YBGMZG3KCSKQT"
 end
-
 analytics.init(application_key )
 function adshow.callflurry (action)
         analytics.logEvent(action)
@@ -305,6 +305,8 @@ end
 
 function adshow.storealert (limiter)
 local trueDestroy;
+local destroy
+
 function trueDestroy(toast)
     toast:removeSelf();
     toast = nil;

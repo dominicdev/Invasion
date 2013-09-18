@@ -179,7 +179,7 @@ storyboard.removeAll()
 external.adshow.callrevmob("showpop")
 numvolume = event.params
 local y_ = 0
-local path = system.pathForFile("records.sqlite",system.DocumentsDirectory  )
+local path = system.pathForFile("records.db",system.DocumentsDirectory  )
 db = sqlite3.open( path ) 
 
 scenestats = true
