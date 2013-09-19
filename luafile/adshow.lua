@@ -133,8 +133,10 @@ adshow.sqlload = false
 
 function adshow.loadsql  ()
     
-local path = system.pathForFile("records.db", system.DocumentsDirectory )
-file = io.open( path )
+end
+
+adshow.path = system.pathForFile("records.db", system.DocumentsDirectory )
+file = io.open( adshow.path )
    if( file == nil )then
        print("NO FILE")
    	-- Doesn't Already Exist, So Copy it In From Resource Directory                          
@@ -151,10 +153,7 @@ file = io.open( path )
    else
       print("FILE Already Exist")
    end
-db = sqlite3.open( path )
-db:close()
-
-end
+adshow.db = sqlite3.open( adshow.path )
 
 local _H = display.contentHeight
 local _W = display.contentWidth

@@ -2261,6 +2261,8 @@ if "ended" == event.phase or (event.keyName == "back" and event.phase == "down")
 --        end
 --        audio.setVolume(params.soundv)
 --        return false
+    elseif event.keyName == "menu" then
+      return true
     end
 
 end

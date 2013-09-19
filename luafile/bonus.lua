@@ -30,7 +30,7 @@ local pop_3
 local pop_4
 local color
 local sql
-
+local row
 local function none (event)
 
 return true
@@ -133,22 +133,20 @@ local function gameoverscreen ()
 isPaused = nil
 
 num.coin = math.modf(num.monkill/3)
-num.coin = num.coin * num.addcoin
-local path = system.pathForFile("records.db",system.DocumentsDirectory  )
-db = external.sqlite3.open( path )  
+num.coin = num.coin * num.addcoin 
 
 local coin
 sql = "SELECT * FROM item";
-for row in db:nrows(sql) do
+for row in external.adshow.db:nrows(sql) do
 coin = row.coin
 end
 coin = coin + num.coin
 
 local addcoin = [[UPDATE item SET coin=']]..coin..[[' WHERE id = 1]]
-db:exec( addcoin )
+external.adshow.db:exec( addcoin )
 print(addcoin)
 
-db:close()
+
 
 display_.overscreen = display.newImageRect("background/gameover.png",display.contentWidth - 200,300)
 display_.overscreen:setReferencePoint(display.TopCenterReferencePoint)
@@ -234,15 +232,18 @@ end
     end
 end
 bol.game = false
+
 local function showsrewards ()
-    local cointexter = nil
-    if num.coin == 1 or num.coin == 0 then
-        cointexter = "coin"
-    else
-        cointexter = "coins"
-    end
+transition.to (display_.restartbutton,{alpha =1 , time = 500})
+transition.to (display_.quitbutton,{alpha =1 , time = 500})  
+local cointexter = nil
+if num.coin == 1 or num.coin == 0 then
+    cointexter = "coin"
+else
+    cointexter = "coins"
+end
 display_.cointext = display.newEmbossedText("+ "..num.coin.." "..cointexter, 10, 10, "BadaBoom BB", 50,{ 255, 255, 255, 255 });
-display_.cointext:setReferencePoint(display.CenterReferencePoint);
+display_.cointext:setReferencePoint(display.CenterReferencePoint)
 display_.cointext.x = w_ ;  
 display_.cointext.y = display_.quitbutton.y  + 130;    
 display_.cointext:setTextColor( 204, 0, 0 )
@@ -251,12 +252,11 @@ display_.cointext:setEmbossColor( color )
 
 local function savename (event)
     if event.phase == "ended" then
-        local path = system.pathForFile("records.db", system.DocumentsDirectory )
-        db = external.sqlite3.open( path ) 
+
         local tablefill =[[INSERT INTO records2 VALUES (NULL,']] ..display_.textname.text.. [[',']] .. num.score .. [[',']].. map.dif ..[[');]]
-        db:exec(tablefill)
+        external.adshow.db:exec(tablefill)
         print(tablefill)
-        db:close()
+
         display_.textname:removeSelf()
         display_.textname = nil
         display_.savebutton:removeSelf()
@@ -299,9 +299,9 @@ Runtime:addEventListener( "touch", onTouched_ )
 
 end
 
-transition.to (display_.overscreen,{alpha =1 , time = 1000})
-transition.to (display_.restartbutton,{alpha =1 , time = 1000})
-transition.to (display_.quitbutton,{alpha =1 , time = 1000,onComplete = showsrewards})
+
+transition.to (display_.overscreen,{alpha =1 , time = 1000,onComplete = showsrewards})
+
 end
 
 local function pauseallgame (event) 
@@ -489,8 +489,11 @@ local function pauseallgame (event)
             display_.pausebutton.y = 50
             group.group_6:insert(display_.pausebutton) 
         end
+        return true
+    elseif event.keyName == "menu" then
+        return true
     end
-return true
+
 end
 
 local function timerstart (event)

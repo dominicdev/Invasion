@@ -1,11 +1,5 @@
-
+local external   = require "luafile.external"
 local storyboard    = require( "storyboard" )
-local adshow        = require "luafile.adshow"
-local widget        = require "widget"
-local sqlite3       = require "sqlite3"
-local sfx           = require "luafile.sfx";
-local sprite        = require "sprite";
-local spritefactory = require "luafile.spritefactory";
 local scene      = storyboard.newScene()
 local fullnamet = {};
 local scoret = {};
@@ -22,7 +16,6 @@ local h = display.contentHeight / 2
 local deletebutton
 local deleterecord
 local screenGroup
-local onKeyEvent
 local scroller_1
 local backbutton
 local background
@@ -38,12 +31,12 @@ local group
 local sql_1
 local mask_
 local count
-local db
 local sql
-local path
+local row
 local function onSceneTouch(event)
+    
     if event.phase == "ended" or event.keyName == "back" and event.phase == "down" then
-         audio.play(sfx.clicksound)
+         audio.play(external.sfx.clicksound)
         local scenefrom = 
                     {
                         effect = "fade",
@@ -77,12 +70,6 @@ group = {
         rushgroup= display.newGroup(),
         }
 
-path = system.pathForFile("records.db",system.DocumentsDirectory)
-db = sqlite3.open( path ) 
-
---local tablesetup = [[CREATE TABLE IF NOT EXISTS records (id INTEGER PRIMARY KEY autoincrement, name, score, total,level,event);]]
---db:exec( tablesetup )
-
 if display.contentHeight > 960 then
     numbers = display.contentHeight -1200
     numbers_ =  display.contentHeight - 580 
@@ -95,7 +82,7 @@ else
    height_ = 460
 end
 
-scroller = widget.newScrollView
+scroller = external.widget.newScrollView
             {
                 width = 560,
                 height = display.contentHeight*.4791666666666667,
@@ -108,7 +95,7 @@ scroller.x = display.contentWidth / 2
 scroller.y = display.contentHeight / 2 + 50
 group.surgroup:insert(scroller)
 
-scroller_1 = widget.newScrollView
+scroller_1 = external.widget.newScrollView
             {
                 width = 560,
                 height = display.contentHeight*.4791666666666667,
@@ -125,7 +112,7 @@ function deleterecord (event)
 
 local function onComplete(event)
         if "clicked" == event.action then
-            audio.play(sfx.clicksound)
+            audio.play(external.sfx.clicksound)
             local t = event.index
             if t == 1 then
                 
@@ -143,12 +130,12 @@ local function onComplete(event)
                 count = 0
                 sql = "DELETE FROM records"
                 sql_1 = "DELETE FROM records2"
-                for row in db:nrows(sql) do
+                for row in external.adshow.db:nrows(sql) do
                     count = count + 1
 
                 end
                 count = 0
-                for row in db:nrows(sql_1) do
+                for row in external.adshow.db:nrows(sql_1) do
                     count = count + 1
 
                 end
@@ -156,7 +143,7 @@ local function onComplete(event)
         end
     end
 local alert = native.showAlert( "Delete All Records", "Are You Sure?", { "YES", "NO" }, onComplete )
-audio.play(sfx.clicksound)
+audio.play(external.sfx.clicksound)
 end
 local highscoresur   = display.newEmbossedText("SURVIVAL", 10, 10, "Dimitri", 70,{ 0, 0, 0, 255 });
 highscoresur:setReferencePoint(display.CenterReferencePoint);
@@ -189,7 +176,7 @@ rowplace = numbers
 count = 0
 sql = "SELECT * FROM records WHERE event = 'survival' ORDER BY total DESC"
 
-for row in db:nrows(sql) do
+for row in external.adshow.db:nrows(sql) do
     count = count + 1
     fullnamet[count] = display.newText(count..".Score: "..row.total, 0,0,"BadaBoom BB",40)
     fullnamet[count]:setReferencePoint(display.CenterLeftReferencePoint)
@@ -216,7 +203,7 @@ rowplace = numbers
 count = 0
 sql = "SELECT * FROM records2 ORDER BY score DESC ";
 
-for row in db:nrows(sql) do
+for row in external.adshow.db:nrows(sql) do
 count = count + 1
 fullnamet_1[count] = display.newText(count..".Score: "..row.score, 0,0,"BadaBoom BB",40)
 fullnamet_1[count]:setReferencePoint(display.CenterLeftReferencePoint)
@@ -243,7 +230,7 @@ rowplace = rowplace + 170
 
 end
 
-backbutton = widget.newButton
+backbutton = external.widget.newButton
         {
         defaultFile = "button/orange/home.png",
         overFile    = "button/orange/hometap.png",
@@ -257,7 +244,7 @@ backbutton = widget.newButton
  backbutton.alpha = 0
 screenGroup:insert(backbutton);
 
-deletebutton = widget.newButton
+deletebutton = external.widget.newButton
         {
          defaultFile    = "button/woodbutton/deleteallbtn.png",
          overFile       = "button/woodbutton/deleteallbtnover.png",
@@ -281,7 +268,7 @@ function easing_1 (event)
             local function changeoil (object)
             object:removeSelf()
             object = nil  
-            surbutton = widget.newButton
+            surbutton = external.widget.newButton
                     {
                     defaultFile = "button/orange/left.png",
                     overFile    = "button/orange/lefttap.png",
@@ -305,7 +292,7 @@ function easing_1 (event)
             local function changeoil (object)
             object:removeSelf()
             object = nil
-            surbutton = widget.newButton
+            surbutton = external.widget.newButton
                     {
                     defaultFile = "button/orange/right.png",
                     overFile    = "button/orange/righttap.png",
@@ -325,7 +312,7 @@ function easing_1 (event)
         end  
     end
 end
-surbutton = widget.newButton
+surbutton = external.widget.newButton
         {
         defaultFile = "button/orange/right.png",
         overFile    = "button/orange/righttap.png",
@@ -362,7 +349,6 @@ group.surgroup:removeSelf()
 group.surgroup = nil
 group.rushgroup:removeSelf()
 group.rushgroup = nil
-db:close()
 end
 
 function scene:destroyScene( event )

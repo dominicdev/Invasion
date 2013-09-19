@@ -109,7 +109,7 @@ end
 function scene:willEnterScene(event)
 pages = {
             s_1 = display.newGroup(), 
-            s_2 = display.newGroup(),
+            --s_2 = display.newGroup(),
             scroller_1 = nil,
             scroller_2 = nil,
         }
@@ -148,33 +148,27 @@ pages.scroller_1.x = display.contentWidth*0.5
 pages.scroller_1.y = display.contentHeight*0.5
 pages.s_1:insert(pages.scroller_1)
 
-pages.scroller_2 = external.widget.newScrollView
-            {
-                width = display.contentWidth*.90,
-                height = display.contentHeight*0.4,
-                hideBackground = true,
-                hideScrollBar = true,
-            }
-pages.scroller_2:setReferencePoint(display.CenterReferencePoint)
-pages.scroller_2.x = display.contentWidth + display.contentWidth*0.5
-pages.scroller_2.y = display.contentHeight*0.5
-pages.s_2:insert(pages.scroller_2)
+--pages.scroller_2 = external.widget.newScrollView
+--            {
+--                width = display.contentWidth*.90,
+--                height = display.contentHeight*0.4,
+--                hideBackground = true,
+--                hideScrollBar = true,
+--            }
+--pages.scroller_2:setReferencePoint(display.CenterReferencePoint)
+--pages.scroller_2.x = display.contentWidth + display.contentWidth*0.5
+--pages.scroller_2.y = display.contentHeight*0.5
+--pages.s_2:insert(pages.scroller_2)
 
 local x_ = 0
 local y_ = 0
-local path = system.pathForFile("records.db",system.DocumentsDirectory  )
-db = external.sqlite3.open( path ) 
 local row
 count = 0
 count_ = 0
 sql = "SELECT * FROM button WHERE level="..level;
 
-for row in db:nrows(sql) do
+for row in external.adshow.db:nrows(sql) do
 count = count + 1
-
---if row.level == 2 and count == 21 then
--- y_ = 0   
---end
 
 if row.stats == "unlocked" then
     textlabel = count
@@ -288,7 +282,7 @@ end
 
 sql = "SELECT * FROM item WHERE id="..1;
 
-for row in db:nrows(sql) do
+for row in external.adshow.db:nrows(sql) do
     powers.laser = row.laser
     powers.car   = row.car
     powers.barrel = row.barrel
@@ -327,7 +321,7 @@ external.adshow.loading("hide")
 end
 end, 1)
 group:insert(pages.s_1)
-group:insert(pages.s_2)
+--group:insert(pages.s_2)
 group:insert(object_)
 Runtime:addEventListener( "key", none_2 )
 scenestats = true
@@ -335,7 +329,7 @@ end
 
 function scene:exitScene( event )
 --external.adshow.loading("show")  
-db:close() 
+--db:close() 
 if goto == "start" then 
 --external.adshow.loading("show")    
 end
@@ -352,7 +346,7 @@ group = nil
 end
 
 scene:addEventListener( "createScene", scene )
-scene:addEventListener("willEnterScene",scene)
+scene:addEventListener( "willEnterScene",scene)
 scene:addEventListener( "enterScene", scene )
 scene:addEventListener( "exitScene", scene )
 scene:addEventListener( "destroyScene", scene )

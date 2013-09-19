@@ -47,7 +47,7 @@ local moveLeftFunction
 local rightTrans
 local leftTrans
 local originalTrans
-local shakeTime = 80
+local shakeTime = 100
 local shakeRange = {min = 1, max = 3}
 local endShake   	
 
@@ -794,11 +794,13 @@ local function pauseall (event)
             game_.pause = true    
         end
         return true
+    elseif event.keyName == "menu" then
+      return true
     end
     
 end
 
-local function stopnow (event)
+local function stopnow ( )
 audio.stop({channel = 29})
 bol.laser = false
 objects_.beam:pause()
@@ -834,7 +836,7 @@ end
 
 end
 
-local function carrunning (event)
+local function carrunning ( )
 
 number_.carnum  = number_.carnum + 1
 local carnum_ =  math.random(1,4)
@@ -1041,7 +1043,7 @@ end
 number_.deadmon = number_.deadmon + 1
 end
 
-function functions.mobstart (event)
+function functions.mobstart ( )
     local mobnum_       = math.random(1,2)
     number_.monster = number_.monster + 1 
     
@@ -1090,7 +1092,7 @@ group[2]:insert(monsters[number_.monster])
 
 end
 
-function functions.masterstart (event)
+function functions.masterstart ( )
     
 number_.monster = number_.monster + 1 
 monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_3)
@@ -1117,7 +1119,7 @@ group[2]:insert(monsters[number_.monster])
 
 end
 
-function functions.bigmastercall (event)
+function functions.bigmastercall ( )
     
     number_.monster = number_.monster + 1 
     monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.boss_2)
@@ -1136,7 +1138,7 @@ function functions.bigmastercall (event)
     
 end
 
-function functions.helphuman (event)
+function functions.helphuman ( )
     
     number_.monster = number_.monster + 1 
     local humanused = math.random(1,2)
@@ -1168,7 +1170,7 @@ function functions.helphuman (event)
     end
 end
 
-function functions.helphuman_2 (event)
+function functions.helphuman_2 ( )
     
     local humanused = math.random(1,2)
     if humanused == 1 then
@@ -1184,6 +1186,7 @@ function functions.helphuman_2 (event)
     end
     monsters[number_.monster].y = -100
     monsters[number_.monster].x = (math.random(50,display.contentWidth - 50))
+    monsters[number_.monster]:play()
     monsters[number_.monster].damage = 1
     external.physics.addBody(monsters[number_.monster] ,{density = 0, bounce = 0,firction = 0,isSensor = true})
     monsters[number_.monster].isFixedRotation = true
@@ -1199,9 +1202,7 @@ function functions.helphuman_2 (event)
 
 end
 
-function functions.movingmonster (event)
-local mobnum_   = 1--math.random(1,4)
-
+function functions.movingmonster ( )
 number_.monster = number_.monster + 1 
 monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.spritealienship)
 monsters[number_.monster]:prepare("shipfront")  
@@ -1329,7 +1330,7 @@ end
 
 end
 
-function functions.updatestatus (event)
+function functions.updatestatus ( )
     
 text_.score:setText("Score: "..number_.score)
 text_.score:setReferencePoint(display.CenterLeftReferencePoint);
@@ -2408,15 +2409,43 @@ if ((event.object1.myname == "car" and event.object2.myname == "runnerers") or
     (event.object1.myname == "runnerers" and event.object2.myname == "car") or
     (event.object1.myname == "car" and event.object2.myname == "masters") or 
     (event.object1.myname == "masters" and event.object2.myname == "car")) then
-
+    local function stopmovers ()
+        if bol.top_1 == true then
+            transition.cancel(trans.top_1)
+            trans.can_1 = timer.cancel(trans.timer_1)
+        elseif bol.top_2 == true then
+            transition.cancel(trans.top_2)
+            trans.can_2 = timer.cancel(trans.timer_2)
+        elseif bol.top_3 == true then
+            transition.cancel(trans.top_3)
+            trans.can_3 = timer.cancel(trans.timer_3)
+        elseif bol.top_4 == true then
+            transition.cancel(trans.top_4)
+            trans.can_4 = timer.cancel(trans.timer_4)
+        elseif bol.top_5 == true then
+            transition.cancel(trans.top_5)
+            trans.can_5 = timer.cancel(trans.timer_5)
+        end
+    end
     if event.object1.myname == "runnerers" or event.object1.myname == "masters" then
+        if event.object1.name == "mover" then
+            stopmovers ()
+        end
+    
         event.object1.isFixedRotation = false
         event.object1:applyForce(event.object2.dir,0 , event.object1.x , event.object1.y + 10)
     elseif event.object2.myname == "runnerers" or event.object2.myname == "masters" then
+        if event.object2.name == "mover" then
+            stopmovers ()
+        end
+    
         event.object2.isFixedRotation = false
         event.object2:applyForce(event.object1.dir,0 , event.object1.x + 10 , event.object1.y) 
     end
-    audio.play(external.sfx.sound_5)
+    if event.phase == "began" then
+        audio.play(external.sfx.sound_5)
+    end
+
 end
 
 if ((event.object1.myname == "beam" and event.object2.myname == "runnerers") or 
@@ -2662,12 +2691,9 @@ function functions.taptutorial_(event)
                      count_ = count_ + 1   
                     end,4)
 
-                    local path = system.pathForFile("records.db",system.DocumentsDirectory  )
-                    db = sqlite3.open( path )  
                     local tablesave_1 = [[UPDATE button SET tutorial =']]..game_.tutorial..[[' WHERE id =]]..1
-                    db:exec( tablesave_1) 
+                    external.adshow.db:exec( tablesave_1) 
                     print(tablesave_1)
-                    db:close()
         end
         
         timer.performWithDelay(1000, function() 
@@ -2787,12 +2813,14 @@ if bol.carstart == true and game_.pause == false then
     timer.cancel(timer_.cartime)  
     
 end
+
 if bol.mobrun == true and game_.pause == false then
     timer.cancel(timer_.mob)
     external.physics.stop()
     audio.stop()
     
 end
+
 if bol.laser == true and game_.pause == false then
     timer.cancel(timer_.laser)
 end
@@ -2835,6 +2863,7 @@ group[6] = nil
 group[1]:removeSelf()
 group[1] = nil
 print("destroy group")
+
 end
 
 scene:addEventListener("createScene", scene )

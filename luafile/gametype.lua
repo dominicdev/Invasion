@@ -1,9 +1,5 @@
 local external   = require "luafile.external"
 local storyboard = require "storyboard"
-local adshow     = require "luafile.adshow"
-local widget     = require "widget"
-local sfx        = require "luafile.sfx"
-local sqlite3    = require "sqlite3"
 local scene      = storyboard.newScene()
 local w_         = display.contentWidth / 2
 local h_         = display.contentHeight / 2 
@@ -12,7 +8,6 @@ local object_    = nil
 local button     = nil
 local sql
 local count = 0
-local params = nil
 local bg 
 local numvolume 
 local def_ 
@@ -25,54 +20,9 @@ local textsize
 local scenestats = false
 local goto = ""
 
-local trueDestroy;
--------------------------------
--- private functions
--------------------------------
-function trueDestroy(toast)
-    toast:removeSelf();
-    toast = nil;
-end
-
--------------------------------
--- public functions
--------------------------------
-local function new(pText, pTime)
-
-    local text = pText or "nil";
-    local pTime = pTime;
-    local toast = display.newGroup();
-
-    toast.text                      = display.newText(toast, pText, 14, 12, native.systemFont, 20);
-    toast.background                = display.newRoundedRect( toast, 0, 0, toast.text.width + 24, toast.text.height + 24, 16 );
-    toast.background.strokeWidth    = 4
-    toast.background:setFillColor(72, 64, 72)
-    toast.background:setStrokeColor(96, 88, 96)
-
-    toast.text:toFront();
-
-    toast:setReferencePoint(toast.width*.5, toast.height*.5)
-    --utils.maintainRatio(toast);
-    toast.alpha = 0;
-    toast.transition = transition.to(toast, {time=250, alpha = 1});
-
-    if pTime ~= nil then
-        timer.performWithDelay(pTime, function() destroy(toast) end);
-    end
-
-    toast.x = display.contentWidth * .5
-    toast.y = display.contentHeight * .8
-
-    return toast;
-end
-
-function destroy(toast)
-    toast.transition = transition.to(toast, {time=250, alpha = 0, onComplete = function() trueDestroy(toast) end});
-end
-
 local function none_1 (event)
     if event.phase == "down" and event.keyName == "back" and scenestats == true then
-        audio.play(sfx.clicksound)
+        audio.play(external.sfx.clicksound)
         local scenefrom = {
                             effect  = "fade",
                             time    = 500,
@@ -89,7 +39,7 @@ end
 local function onSceneTouch(event)
     
         local switch = event.target
-        audio.play(sfx.clicksound)
+        audio.play(external.sfx.clicksound)
         
         --adstatus.hideads ()
     if switch.id == "survival" and switch.stats == "unlocked" and event.phase == "ended" then
@@ -129,7 +79,7 @@ local function onSceneTouch(event)
        }
         storyboard.gotoScene( "luafile.bonus",scenefrom)
         goto = "bonus"
-        adshow.loading("show")
+        external.adshow.loading("show")
         external.adshow.callflurry("Play Bonus")
     elseif switch.id == "back" or event.phase == "down" and event.keyName == "back" then
            local scenefrom = {
@@ -143,23 +93,24 @@ local function onSceneTouch(event)
        }
         storyboard.gotoScene( "luafile.menu",scenefrom)
     elseif switch.id == "survival" and switch.stats == "locked" and event.phase == "ended" then
-        print("locked")
-        new("Finish the Mission 1 to Unlocked Survival", 2000)
+        external.adshow.storealert ("Finish the Mission 1 to Unlocked Survival")
     elseif switch.id == "levels" and switch.stats == "locked" and event.phase == "ended" then 
-        new("Finish the Mission 1 to Unlocked Mission 2", 2000)
+        external.adshow.storealert ("Finish the Mission 1 to Unlocked Mission 2")
     elseif switch.id == "bonus" and switch.stats == "locked" and event.phase == "ended" then
-        new("Finish the Mission 2 to Unlocked Coin Rush", 2000)
+        external.adshow.storealert ("Finish the Mission 2 to Unlocked Mini Game")
     end
      
 end
 
 function scene:createScene( event )
+
 group = self.view
 bg = display.newImageRect("background/levelsScreen.png",display.contentWidth,display.contentHeight)
 bg.x = w_
 bg.y = h_
 group:insert(bg)
 Runtime:addEventListener( "key", none_1 )
+
 end
 
 function scene:willEnterScene(event)
@@ -179,39 +130,35 @@ storyboard.removeAll()
 external.adshow.callrevmob("showpop")
 numvolume = event.params
 local y_ = 0
-local path = system.pathForFile("records.db",system.DocumentsDirectory  )
-db = sqlite3.open( path ) 
+--local path = system.pathForFile("records.db",system.DocumentsDirectory  )
+--db = external.sqlite3.open( path ) 
 
 scenestats = true
 count = 0
 sql = "SELECT * FROM gamestats ";
-
-for row in db:nrows(sql) do
+local row
+for row in external.adshow.db:nrows(sql) do
 
 count = count + 1
 
 if row.stats == "unlocked" then
     
     if row.gametype == "mission_1" then
-        --textlabel = "Mission 1"
         id_  = "levels"
         level = 1
         def_ = "button/woodbutton/m1btn.png"
         over_= "button/woodbutton/m1btnover.png"
     elseif row.gametype == "mission_2" then
-        --textlabel = "Mission 2"
         id_  = "levels"
         level = 2
         def_ = "button/woodbutton/m2btn.png"
         over_= "button/woodbutton/m2btnover.png"
     elseif row.gametype == "survival" then
-        --textlabel = "Survival" 
         id_  = "survival"
         level = 0
         def_ = "button/woodbutton/survivalbtn.png"
         over_= "button/woodbutton/survivalbtnover.png"
     elseif row.gametype == "bonus" then
-        --textlabel = "Survival" 
         id_  = "bonus"
         level = 0
         def_ = "button/woodbutton/minigame.png"
@@ -242,19 +189,13 @@ elseif row.stats == "locked" then
     level = 0
 end
 
-button[count] = widget.newButton
+button[count] = external.widget.newButton
     {
     defaultFile = def_,
     overFile    = over_,
-    --label       = textlabel,
     id          = id_,
     width       = 250, 
     height      = 71,
---    font        = "Dimitri",
---    fontSize    = textsize,
---    labelAlign  = textalign,
---    labelColor  = { default={0, 0, 0,255}, over={153, 255, 255} },
---    emboss      = true,
     onRelease   = onSceneTouch,
     }
 button[count]:setReferencePoint(display.CenterReferencePoint)
@@ -267,7 +208,7 @@ object_:insert(button[count])
 y_ = y_ + 100
 end
 
-button.back = widget.newButton
+button.back = external.widget.newButton
     {
         defaultFile = "button/orange/home.png",
         overFile    = "button/orange/hometap.png",
@@ -281,11 +222,11 @@ button.back.x = w_ - 240
 button.back.y = 80
 button.back.stats = "back"
 object_:insert(button.back)
-adshow.calltapfortap("show")
+external.adshow.calltapfortap("show")
 
 timer.performWithDelay( 1000, function() 
     if numvolume.scenename == "mainrestart" or numvolume.scenename == "buymenu"  then
-    adshow.loading("hide")  
+    external.adshow.loading("hide")  
     end
 end,1)
 
@@ -293,7 +234,8 @@ group:insert(object_)
 end
 
 function scene:exitScene( event )
-adshow.calltapfortap("hide")
+--db:close()
+external.adshow.calltapfortap("hide")
 Runtime:removeEventListener( "key", none_1 )
 object_:removeSelf()
 object_ = nil 

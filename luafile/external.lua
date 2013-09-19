@@ -1,6 +1,5 @@
 local external = {}
 
-external.widget        = require "widget"
 external.adshow        = require "luafile.adshow"
 external.widget        = require "widget"
 external.sfx           = require "luafile.sfx"

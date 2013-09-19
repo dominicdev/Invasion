@@ -2,52 +2,50 @@
 display.setStatusBar(display.HiddenStatusBar)
 local w_ = display.contentWidth / 2
 local h_ = display.contentHeight / 2 
-local adshow     = require "luafile.adshow";
 local external   = require "luafile.external"
-local sfx        = require "luafile.sfx";
 local storyboard = require "storyboard";
-local sqlite3    = require "sqlite3";
-local widget     = require "widget";
 local store      = require "store"
 local scene      = storyboard.newScene()
+local functions  = {}
+local myButton   = {}
 local group      = {}
 local item       = {}
-local buybutton
+local colortimer = nil
+local pugong     = 0
+local cancelbutton
+local closebutton
+local startbutton
+local finalbarrel 
+local updatecoin_
 local backbutton
+local colortimer
+local connection
+local finallaser 
+local buybutton
 local numvolume
-local barrelnum 
+local barrelnum
 local lasernum 
 local livesnum
+local finalcar  
+local products
 local coinnum 
+local iapback 
+local control
 local screen
 local carnum 
+local params
 local score
+local goto
 local wave
 local time
 local tick
 local path
 local path_
+local row
+local sql
+local iap
 local bg
 local db
-local closebutton
-local cancelbutton
-local iapback 
-local myButton = {}
-local products 
-local colortimer
-local startbutton
-local connection
-local colortimer = nil
-local control 
-local pugong = 0
-local params
-local finallaser  
-local finalcar    
-local finalbarrel 
-local goto
-local iap
-local updatecoin_
-local functions = {}
 
 function functions.transactionCallback( event )
     print("transactionCallback: Received event " .. tostring(event.name))
@@ -57,7 +55,7 @@ function functions.transactionCallback( event )
     
     local productID= event.transaction.productIdentifier;
     if event.transaction.state == "purchased" then
-        adshow.storealert ("Product Purchased: "..productID)
+        external.adshow.storealert ("Product Purchased: "..productID)
         if productID == products.one then
             coinnum = coinnum + 500
         elseif productID == products.two then
@@ -65,11 +63,11 @@ function functions.transactionCallback( event )
         elseif productID == products.three then  
             coinnum = coinnum + 1500
         end
-        path = system.pathForFile("records.db", system.DocumentsDirectory )
-        db = sqlite3.open( path ) 
+--        path = system.pathForFile("records.db", system.DocumentsDirectory )
+--        db = sqlite3.open( path ) 
         local tablesave_1 = [[UPDATE item SET coin=']].. coinnum ..[[' WHERE id = 1]]
-        db:exec( tablesave_1 )
-        db:close()
+        external.adshow.db:exec( tablesave_1 )
+   
         
         item[13]:setReferencePoint(display.CenterLeftReferencePoint)
         item[13].text = coinnum
@@ -82,9 +80,9 @@ function functions.transactionCallback( event )
     elseif event.transaction.state == "cancelled" then
         print("Transaction cancelled")
     elseif event.transaction.state == "failed" then
-        adshow.storealert ("Transaction Failed")
+        external.adshow.storealert ("Transaction Failed")
     else
-        adshow.storealert ("Some unknown event occured. This should never happen.")
+        external.adshow.storealert ("Some unknown event occured. This should never happen.")
     end
     store.finishTransaction( event.transaction )
 end
@@ -132,7 +130,7 @@ local function onKeyEvent ( event )
 if event.keyName == "back" and event.phase == "down" and iap == "close" then  
     
     if params.screenfrom == "survival" then
-     audio.play(sfx.clicksound)
+     audio.play(external.sfx.clicksound)
     local scenefrom = 
                 {
                 effect = "slideRight",
@@ -147,7 +145,7 @@ if event.keyName == "back" and event.phase == "down" and iap == "close" then
     --adshow.calltapfortap("hide") 
     external.adshow.callflurry("Start Survival")
     elseif params.screenfrom == "mission" then
-       audio.play(sfx.clicksound)
+       audio.play(external.sfx.clicksound)
     local scenefrom = 
                 {
                 effect = "slideRight",
@@ -168,32 +166,28 @@ if event.keyName == "back" and event.phase == "down" and iap == "close" then
         removeiap ()
     return true
     end
-    
-    
 end
 
 local function buycoins_ (event)
 
 local function networkListener_2( event )
     if ( event.isError ) then
-        adshow.storealert ("Network Error")
+        external.adshow.storealert ("Network Error")
         connection = false
     else
-        adshow.storealert ("Connected")   
+        external.adshow.storealert ("Connected")   
         connection = true
     end
 end
 
-adshow.storealert ("Check Internet Connection")
+external.adshow.storealert ("Check Internet Connection")
 network.request( "https://encrypted.google.com", "GET", networkListener_2 )
-
 iapback = display.newImageRect("items/iapback.png",600,display.contentHeight-(h_+130))
 iapback:setReferencePoint(display.CenterReferencePoint)
 iapback.x = w_
 iapback.y = h_ + 35
---iapback.alpha = .8
 iap = "open"
-myButton[1] = widget.newButton
+myButton[1] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/buy.png",
             overFile        = "button/buybutton/buyover.png",
@@ -213,7 +207,7 @@ myButton[1] = widget.newButton
                     if connection == true then
                         store.purchase({products.one})
                     else
-                        adshow.storealert ("Network Error")
+                        external.adshow.storealert ("Network Error")
                     end
 
                 end
@@ -223,7 +217,7 @@ myButton[1]:setReferencePoint(display.CenterReferencePoint)
 myButton[1].x = w_ - 20
 myButton[1].y = h_ - 50
 
-myButton[2] = widget.newButton
+myButton[2] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/buy.png",
             overFile        = "button/buybutton/buyover.png",
@@ -242,7 +236,7 @@ myButton[2] = widget.newButton
                     if connection == true then
                         store.purchase({products.two})
                     else
-                        adshow.storealert ("Network Error")
+                        external.adshow.storealert ("Network Error")
                     end
                 end
             end,
@@ -251,7 +245,7 @@ myButton[2]:setReferencePoint(display.CenterReferencePoint)
 myButton[2].x = w_ - 20
 myButton[2].y = myButton[1].y + 90
 
-myButton[3] = widget.newButton
+myButton[3] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/buy.png",
             overFile        = "button/buybutton/buyover.png",
@@ -270,7 +264,7 @@ myButton[3] = widget.newButton
                     if connection == true then
                         store.purchase({products.three})
                     else
-                        adshow.storealert ("Network Error")
+                        external.adshow.storealert ("Network Error")
                     end
                 end
             end,
@@ -279,7 +273,7 @@ myButton[3]:setReferencePoint(display.CenterReferencePoint)
 myButton[3].x = w_ - 20
 myButton[3].y = myButton[2].y + 90
 
-closebutton = widget.newButton
+closebutton = external.widget.newButton
         {
             defaultFile     = "button/buybutton/left.png",
             overFile        = "button/buybutton/lefttap.png",
@@ -301,6 +295,7 @@ item[17]:setEnabled(false)
 item[18]:setEnabled(false)
 item[19]:setEnabled(false)
 item[20]:setEnabled(false)
+
 if control == true  then
     buybutton.alpha = 0
     cancelbutton.alpha = 0
@@ -309,36 +304,34 @@ end
 
 end
 
-local function popupsforcoin ()
+local function popupsforcoin (coinstats)
     local function onComplete (event)
         if "clicked" == event.action then
+            audio.play(external.sfx.clicksound) 
             local i = event.index
             if 1 == i then
                 buycoins_()
             elseif 2 == i then
                 if control == true  then
-                buybutton.alpha = 1
-                cancelbutton.alpha = 1
-                startbutton.alpha = 0
+                    buybutton.alpha = 1
+                    cancelbutton.alpha = 1
+                    startbutton.alpha = 0
                 else
-                 startbutton.alpha = 1   
-                end
-                
+                    startbutton.alpha = 1   
+                end 
             end
         end
-        
     end
 local alert =   native.showAlert("Need More Coins?","You Would Like to buy more coins?", { "YES", "NO" }, onComplete)  
-audio.play(sfx.clicksound) 
 buybutton.alpha = 0
 cancelbutton.alpha = 0
-startbutton.alpha = 0
+startbutton.alpha = 0      
 end
 
 local function additem (event)
 
 local switch = event.target
-   audio.play(sfx.clicksound)
+   audio.play(external.sfx.clicksound)
    
     if event.phase == "ended" then
         
@@ -346,18 +339,18 @@ local switch = event.target
 
            if coinnum == 0 then
                 coinnum = 0
-                popupsforcoin ()
+                popupsforcoin ("nocoin")
            elseif 19 >= coinnum  then
-                popupsforcoin ()
+                popupsforcoin ("nocoin")
            else
-                pugong = carnum + 5
+                pugong = carnum + 2
                if pugong <= 35 then
                 coinnum = coinnum - 20
                 item[13]:setReferencePoint(display.CenterLeftReferencePoint)
                 item[13].text = coinnum
                 item[13].x = w_ - 80  
                 
-                carnum = carnum + 5
+                carnum = carnum + 2
                 item[14]:setReferencePoint(display.CenterLeftReferencePoint)
                 item[14].text = carnum
                 item[14].x = w_ - 35
@@ -367,7 +360,7 @@ local switch = event.target
                 startbutton.alpha = 0
                 control = true
                else
-                   adshow.storealert ("Reach Limit of more than 35")
+                   external.adshow.storealert ("Reach Limit of more than 35")
                end 
            end
 
@@ -375,18 +368,18 @@ local switch = event.target
             
            if coinnum == 0 then
                 coinnum = 0
-                popupsforcoin ()
+                popupsforcoin ("nocoin")
            elseif 24 >= coinnum  then
-                popupsforcoin ()
+                popupsforcoin ("nocoin")
            else
-                pugong = barrelnum + 4
+                pugong = barrelnum + 2
                if pugong <= 35 then
                 coinnum = coinnum - 25
                 item[13]:setReferencePoint(display.CenterLeftReferencePoint)
                 item[13].text = coinnum
                 item[13].x = w_ - 80 
 
-                barrelnum = barrelnum + 4
+                barrelnum = barrelnum + 2
                 item[15]:setReferencePoint(display.CenterLeftReferencePoint)
                 item[15].text = barrelnum
                 item[15].x = w_ - 35
@@ -396,7 +389,7 @@ local switch = event.target
                 startbutton.alpha = 0
                 control = true
                else
-                adshow.storealert ("Reach Limit of more than 35")
+                external.adshow.storealert ("Reach Limit of more than 35")
                end
                    
            end
@@ -404,18 +397,18 @@ local switch = event.target
             
              if coinnum == 0 then
                     coinnum = 0 
-                    popupsforcoin ()
+                    popupsforcoin ("nocoin")
              elseif 49 >= coinnum  then
-                    popupsforcoin ()
+                    popupsforcoin ("nocoin")
              else
-                    pugong = lasernum + 3
+                    pugong = lasernum + 2
                if pugong <= 35 then
                     coinnum = coinnum - 50
                     item[13]:setReferencePoint(display.CenterLeftReferencePoint)
                     item[13].text = coinnum
                     item[13].x = w_ - 80 
 
-                    lasernum = lasernum + 3
+                    lasernum = lasernum + 2
                     item[16].text = lasernum
                     item[16]:setReferencePoint(display.CenterLeftReferencePoint)
                     item[16].x = w_ - 35
@@ -425,7 +418,7 @@ local switch = event.target
                     startbutton.alpha = 0
                     control = true
                else
-                   adshow.storealert ("Reach Limit of more than 35")
+                   external.adshow.storealert ("Reach Limit of more than 35")
                end
             end
             
@@ -439,16 +432,15 @@ return true
 end
 
 local function onSceneTouch(event)
-    audio.play(sfx.clicksound)
+    audio.play(external.sfx.clicksound)
     local switch = event.target
 
     if switch.id == "buy" then
    
-        path = system.pathForFile("records.db", system.DocumentsDirectory)
-        db = sqlite3.open( path ) 
+--        path = system.pathForFile("records.db", system.DocumentsDirectory)
+--        db = sqlite3.open( path ) 
         local tablesave_ = [[UPDATE item SET car=']].. carnum ..[[',barrel=']]..barrelnum..[[',laser=']]..lasernum..[[',coin=']]..coinnum..[[',lives=']]..livesnum..[[' WHERE id = 1]]
-        db:exec( tablesave_ )
-        db:close()
+        external.adshow.db:exec( tablesave_ )
         
         buybutton.alpha = 0
         cancelbutton.alpha = 0   
@@ -539,11 +531,11 @@ storyboard.purgeAll()
 storyboard.removeAll() 
 iap = "close"
 goto = ""
-path_ = system.pathForFile("records.db", system.DocumentsDirectory )
-db = sqlite3.open( path_ ) 
+--path_ = system.pathForFile("records.db", system.DocumentsDirectory )
+--db = sqlite3.open( path_ ) 
 
 sql = "SELECT * FROM item";
-for row in db:nrows(sql) do
+for row in external.adshow.db:nrows(sql) do
     
 carnum    = row.car
 coinnum   = row.coin
@@ -557,7 +549,7 @@ tick      = row.tick
 
 end
 --print(lasernum)
-db:close()
+--db:close()
 
 finallaser  = lasernum
 finalcar    = carnum
@@ -573,7 +565,7 @@ item[13]:setReferencePoint(display.CenterLeftReferencePoint)
 item[13].x = w_ - 80
 item[13].y = item[12].y
 
-item[20] = widget.newButton
+item[20] = external.widget.newButton
 
         {
             defaultFile     = "button/buybutton/addbtn.png",
@@ -619,7 +611,7 @@ item[16]:setReferencePoint(display.CenterLeftReferencePoint)
 item[16].x = w_ - 35
 item[16].y = item[4].y 
 
-item[17] = widget.newButton
+item[17] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/addbtn.png",
             overFile        = "button/buybutton/addbtnover.png",
@@ -634,7 +626,7 @@ item[17]:setReferencePoint(display.CenterLeftReferencePoint)
 item[17].x = w_ + 70
 item[17].y = item[2].y
 
-item[18] = widget.newButton
+item[18] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/addbtn.png",
             overFile        = "button/buybutton/addbtnover.png",
@@ -648,7 +640,7 @@ item[18]:setReferencePoint(display.CenterLeftReferencePoint)
 item[18].x = w_ + 70
 item[18].y = item[3].y 
 
-item[19] = widget.newButton
+item[19] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/addbtn.png",
             overFile        = "button/buybutton/addbtnover.png",
@@ -662,7 +654,7 @@ item[19]:setReferencePoint(display.CenterLeftReferencePoint)
 item[19].x = w_ + 70
 item[19].y = item[4].y 
 
-cancelbutton = widget.newButton
+cancelbutton = external.widget.newButton
         {
             defaultFile     = "button/buybutton/cancelbtn.png",
             overFile        = "button/buybutton/cancelbtnover.png",
@@ -671,10 +663,10 @@ cancelbutton = widget.newButton
             onRelease       = function (event)
             
             if event.phase == "ended" then
-                db = sqlite3.open( path_ ) 
+--                db = sqlite3.open( path_ ) 
 
                 sql = "SELECT * FROM item";
-                for row in db:nrows(sql) do
+                for row in external.adshow.db:nrows(sql) do
 
                 carnum    = row.car
                 coinnum   = row.coin
@@ -688,7 +680,7 @@ cancelbutton = widget.newButton
 
                 end
 
-                db:close()
+                --db:close()
                 
                 item[13].text = coinnum
                 item[13]:setReferencePoint(display.CenterLeftReferencePoint)
@@ -720,7 +712,7 @@ cancelbutton.alpha = 0
 group[2]:insert(cancelbutton)
 control = false
 
-buybutton = widget.newButton
+buybutton = external.widget.newButton
         {
             defaultFile     = "button/buybutton/storebuybtn.png",
             overFile        = "button/buybutton/storebuybtnover.png",
@@ -735,7 +727,7 @@ buybutton.y = display.contentHeight - (h_*.25)
 buybutton.alpha = 0
 group[2]:insert(buybutton)
 
-startbutton = widget.newButton
+startbutton = external.widget.newButton
         {
             defaultFile     = "button/buybutton/storestartbtn.png",
             overFile        = "button/buybutton/storestartbtnover.png",
@@ -814,7 +806,7 @@ startbutton.y = display.contentHeight - (h_*.25)
 startbutton.alpha = 1
 group[2]:insert(startbutton)
 
-backbutton = widget.newButton
+backbutton = external.widget.newButton
         {
             defaultFile = "button/orange/left.png",
             overFile    = "button/orange/lefttap.png",
@@ -860,7 +852,7 @@ group[1] = self.view
 Runtime:removeEventListener( "key", onKeyEvent );
 
 if goto == "start" then
- adshow.loading("show")   
+ external.adshow.loading("show")   
 end
 group[2]:removeSelf()
 group[2] = nil
@@ -873,10 +865,10 @@ group[1]:removeSelf()
 group[1] = nil 
 end
 
-scene:addEventListener( "createScene", scene )
-scene:addEventListener( "enterScene", scene )
+scene:addEventListener( "createScene",  scene )
+scene:addEventListener( "enterScene",   scene )
 scene:addEventListener( "destroyScene", scene )
-scene:addEventListener( "exitScene", scene )
+scene:addEventListener( "exitScene",    scene )
 
 return scene
 

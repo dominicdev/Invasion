@@ -5,12 +5,12 @@ local h             = display.contentHeight / 2
 local scene         = storyboard.newScene()
 local numvolume     = 1
 local showpopevent
-local buttons 
+local timertrans
 local timerstop
 local constatus
 local scenefrom
-local timertrans
 local scroller
+local buttons
 local devname
 local texting
 local twitter
@@ -20,7 +20,7 @@ local popup
 local color
 local bg
 
-local function followTwitterListener (event)
+local function followTwitterListener ()
 twitter:follow("justTrying01")
 twitter:authorise()
 external.adshow.storealert ("Followed")
@@ -184,10 +184,12 @@ elseif keyName == "volumeDown" and event.phase == "down" then
       end
       audio.setVolume(numvolume)
     return false
+  elseif keyName == "menu" then
+      return true
     end
 end
 
-function scene:createScene( event )
+function scene:createScene(event)
 external.adshow.callflurry("MENU")
 
 group = {}
@@ -214,7 +216,7 @@ popup = false
 
 end
 
-function scene:enterScene( event )
+function scene:enterScene(event)
 storyboard.purgeAll()
 storyboard.removeAll() 
 group[1] = self.view
@@ -236,20 +238,20 @@ scroller.x = (w/2) - 10
 scroller.y = scroller.y  + h - 30
 
 
-texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\nDeveloper:\nDominic Wagas\n\nGraphic Artist:\nBea Jimenez :D\n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
+texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\nDeveloper:\nDominic Wagas\n\nGraphic Artist:\nBea Jimenez \n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
 texting:setReferencePoint(display.BottomCenterReferencePoint);
 texting.x =  texting.width/2 + 20 
 texting.y = scroller.y + 120;    
-texting:setTextColor( 51, 51, 51 )
+texting:setTextColor( 0, 0, 0 )
 color = 
 {
     highlight = 
     {
-        r =255, g = 255, b = 255, a = 155
+        r =255, g = 255, b = 255, a = 100
     },
     shadow =
     {
-        r = 255, g = 255, b = 255, a = 255
+        r = 255, g = 255, b = 255, a = 100
     }
 }
 texting:setEmbossColor( color )
@@ -293,8 +295,8 @@ buttons.facebutton = external.widget.newButton
     defaultFile = "button/facebook/tap.png",
     overFile    = "button/facebook/over.png",
     id          = "facebook",
-    width       = 122, 
-    height      = 42,
+    width       = 80, 
+    height      = 80,
     onRelease   = function (event)
     audio.play(external.sfx.clicksound)
     if event.phase == "ended" then
@@ -356,8 +358,8 @@ buttons.twitbutton = external.widget.newButton
     defaultFile = "button/twitter/tap.png",
     overFile    = "button/twitter/over.png",
     id          = "twitter",
-    width       = 122, 
-    height      = 42,
+    width       = 80, 
+    height      = 80,
     onRelease   = function (event)
             audio.play(external.sfx.clicksound)
             if event.phase == "ended" then
@@ -378,8 +380,8 @@ buttons.twitbutton = external.widget.newButton
 
 }
 buttons.twitbutton:setReferencePoint(display.CenterLeftReferencePoint)
-buttons.twitbutton.x = 20
-buttons.twitbutton.y = buttons.facebutton.y  + 50
+buttons.twitbutton.x = buttons.facebutton.x + buttons.facebutton.width
+buttons.twitbutton.y = buttons.facebutton.y
 buttons.twitbutton.alpha = 0
 scroller:insert(buttons.twitbutton)
 
@@ -409,7 +411,7 @@ buttons.appbutton = external.widget.newButton
             end,}
 buttons.appbutton:setReferencePoint(display.CenterLeftReferencePoint)
 buttons.appbutton.x = 20
-buttons.appbutton.y = buttons.twitbutton.y  + 70
+buttons.appbutton.y = buttons.twitbutton.y  + 90
 buttons.appbutton.alpha = 0
 
 scroller:insert(buttons.appbutton)
@@ -546,7 +548,7 @@ group[2]:insert(buttons.storebutton)
 group[1]:insert(group[2])
 end
 
-function scene:exitScene( event )
+function scene:exitScene(event)
 Runtime:removeEventListener( "touch", showpopevent )
 if popup == true then
     native.cancelWebPopup()
@@ -559,15 +561,14 @@ group[2] = nil
 
 end
 
-function scene:destroyScene( event )  
+function scene:destroyScene(event)  
 group[1]:removeSelf()
 group[1] = nil
 end
 
-scene:addEventListener( "createScene", scene )
-scene:addEventListener( "enterScene", scene )
-scene:addEventListener( "exitScene", scene )
+scene:addEventListener( "createScene",  scene )
+scene:addEventListener( "enterScene",   scene )
+scene:addEventListener( "exitScene",    scene )
 scene:addEventListener( "destroyScene", scene )
-
 
 return scene
