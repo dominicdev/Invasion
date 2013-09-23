@@ -111,37 +111,34 @@ group.rushgroup:insert(scroller_1)
 function deleterecord (event) 
 
 local function onComplete(event)
-        if "clicked" == event.action then
-            audio.play(external.sfx.clicksound)
-            local t = event.index
-            if t == 1 then
-                
-                for i = 1,#fullnamet ,1 do
-                    fullnamet[i].text = " "
-                    scoret[i].text = " "
-                    wave[i].text = " "
-                end
-                for i = 1,#fullnamet_1 ,1 do
-                    fullnamet_1[i].text = " "
-                    scoret_1[i].text = " "
-                    wave_1[i].text = " "
-                end
-                rowplace = -40
-                count = 0
-                sql = "DELETE FROM records"
-                sql_1 = "DELETE FROM records2"
-                for row in external.adshow.db:nrows(sql) do
-                    count = count + 1
-
-                end
-                count = 0
-                for row in external.adshow.db:nrows(sql_1) do
-                    count = count + 1
-
-                end
+    if "clicked" == event.action then
+        audio.play(external.sfx.clicksound)
+        local t = event.index
+        if t == 1 then
+            for i = 1,#fullnamet ,1 do
+                fullnamet[i].text = " "
+                scoret[i].text = " "
+                wave[i].text = " "
+            end
+            for i = 1,#fullnamet_1 ,1 do
+                fullnamet_1[i].text = " "
+                scoret_1[i].text = " "
+                wave_1[i].text = " "
+            end
+            rowplace = -40
+            count = 0
+            sql = "DELETE FROM records"
+            sql_1 = "DELETE FROM records2"
+            for row in external.adshow.db:nrows(sql) do
+                count = count + 1
+            end
+            count = 0
+            for row in external.adshow.db:nrows(sql_1) do
+                count = count + 1
             end
         end
     end
+end
 local alert = native.showAlert( "Delete All Records", "Are You Sure?", { "YES", "NO" }, onComplete )
 audio.play(external.sfx.clicksound)
 end
@@ -201,7 +198,7 @@ end
 
 rowplace = numbers
 count = 0
-sql = "SELECT * FROM records2 ORDER BY score DESC ";
+sql = "SELECT * FROM records2 ORDER BY score DESC";
 
 for row in external.adshow.db:nrows(sql) do
 count = count + 1

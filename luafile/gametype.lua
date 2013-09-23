@@ -195,7 +195,7 @@ button[count] = external.widget.newButton
     overFile    = over_,
     id          = id_,
     width       = 250, 
-    height      = 71,
+    height      = 80,
     onRelease   = onSceneTouch,
     }
 button[count]:setReferencePoint(display.CenterReferencePoint)
@@ -231,14 +231,15 @@ timer.performWithDelay( 1000, function()
 end,1)
 
 group:insert(object_)
+external.adshow.callrevmob("320x50")
 end
 
 function scene:exitScene( event )
---db:close()
 external.adshow.calltapfortap("hide")
 Runtime:removeEventListener( "key", none_1 )
 object_:removeSelf()
 object_ = nil 
+external.adshow.callrevmob("hide")
 end
 
 function scene:destroyScene( event )

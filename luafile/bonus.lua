@@ -31,6 +31,7 @@ local pop_4
 local color
 local sql
 local row
+
 local function none (event)
 
 return true
@@ -41,18 +42,19 @@ local function none_1 ()
 end
 
 local function addclockers (locx,locy)
-    if (secondHandler+2) >= 6 then
+    
+    if (secondHandler+1) >= 6 then
         print("more then 6")
         minuteHandler = minuteHandler + 1
-        secondHandler = secondHandler - 2
+        secondHandler = secondHandler - 1
     else
-     secondHandler = secondHandler + 2 
+     secondHandler = secondHandler + 1 
     end
 local function deletetext (textobject) 
     textobject:removeSelf()
     textobject = nil
 end
-display_.timers = display.newText ("+20sec Time",0,0,nil,25)
+display_.timers = display.newText ("+10sec Time",0,0,nil,25)
 display_.timers:setReferencePoint(display.CenterReferencePoint)
 display_.timers.x = locx
 display_.timers.y = locy
@@ -60,7 +62,46 @@ transition.to (display_.timers,{y = locy - 200,time = 2000,onComplete = deletete
 end
 
 local function screengo (event)
+    
+    local function onComplete (event)
+        if "clicked" == event.action then
+            local t = event.index
+            if t == 1 then
+                if bol.savego == "menu_over"  then
+           
+                    local option = 
+                        {
+                        effect = "fade",
+                        time = 500,
+                        params = 
+                            { 
+                                soundv = params.soundv,
+                                name   = "menu",
+                            }
+                        }
+                    storyboard.gotoScene( "luafile.menu",option)
+                    external.adshow.callflurry("Quit GaveOVER")
+                elseif bol.savego == "restart_over" then
+      
+                    local option = 
+                    {
+                    effect = "fade",
+                    time = 500,
+                    params = 
+                        { 
+                            soundv = params.soundv,
+                            name   = "restartbonus",
+                        }
+                    }
+                 storyboard.gotoScene( "luafile.mainrestart",option)
+                 external.adshow.callflurry("Restart GaveOVER")
+                 end
+            end
+        end 
+    end
+    
     if event.phase == "ended" then
+        
         if event.target.id == "menu" then
             local option = 
             {
@@ -87,34 +128,43 @@ local function screengo (event)
             }
          storyboard.gotoScene( "luafile.mainrestart",option)
          external.adshow.callflurry("Restart Bonus")
-        elseif event.target.id == "menu_over" then
+        elseif event.target.id == "menu_over"  then
+            if  bol.save == true then
+                    local option = 
+                        {
+                        effect = "fade",
+                        time = 500,
+                        params = 
+                            { 
+                                soundv = params.soundv,
+                                name   = "menu",
+                            }
+                        }
+                    storyboard.gotoScene( "luafile.menu",option)
+                    external.adshow.callflurry("Quit GaveOVER")
+            else
+                local alert = native.showAlert( "Record not Saved", "Are You Sure?", { "YES", "NO" }, onComplete ) 
+                bol.savego = event.target.id
+            end
             
-            local option = 
-                {
-                effect = "fade",
-                time = 500,
-                params = 
-                    { 
-                        soundv = params.soundv,
-                        name   = "menu",
-                    }
-                }
-            storyboard.gotoScene( "luafile.menu",option)
-            external.adshow.callflurry("Quit GaveOVER")
         elseif event.target.id == "restart_over" then
-            
-            local option = 
-            {
-            effect = "fade",
-            time = 500,
-            params = 
-                { 
-                    soundv = params.soundv,
-                    name   = "restartbonus",
-                }
-            }
-         storyboard.gotoScene( "luafile.mainrestart",option)
-         external.adshow.callflurry("Restart GaveOVER")
+            if  bol.save == true then
+                    local option = 
+                    {
+                    effect = "fade",
+                    time = 500,
+                    params = 
+                        { 
+                            soundv = params.soundv,
+                            name   = "restartbonus",
+                        }
+                    }
+                 storyboard.gotoScene( "luafile.mainrestart",option)
+                 external.adshow.callflurry("Restart GaveOVER")
+            else
+                local alert = native.showAlert( "Record not Saved", "Are You Sure?", { "YES", "NO" }, onComplete )  
+                bol.savego = event.target.id
+            end 
         end
     end
 end
@@ -145,8 +195,6 @@ coin = coin + num.coin
 local addcoin = [[UPDATE item SET coin=']]..coin..[[' WHERE id = 1]]
 external.adshow.db:exec( addcoin )
 print(addcoin)
-
-
 
 display_.overscreen = display.newImageRect("background/gameover.png",display.contentWidth - 200,300)
 display_.overscreen:setReferencePoint(display.TopCenterReferencePoint)
@@ -251,6 +299,7 @@ group.group_6:insert(display_.cointext);
 display_.cointext:setEmbossColor( color )
 
 local function savename (event)
+    
     if event.phase == "ended" then
 
         local tablefill =[[INSERT INTO records2 VALUES (NULL,']] ..display_.textname.text.. [[',']] .. num.score .. [[',']].. map.dif ..[[');]]
@@ -263,7 +312,9 @@ local function savename (event)
         display_.savebutton = nil
         native.setKeyboardFocus(nil)
         bol.key_ = false
+        bol.save = true 
     end
+
 end
 
 display_.textname = native.newTextField(0, 0, 260, 60)
@@ -900,6 +951,8 @@ bol =
     stats4  = false,
     game    = false,
     key_    = false,
+    save    = false,
+    savego  = nil,
     }
 object =
     {
@@ -1002,7 +1055,7 @@ map.section_5.alpha = 0
 group.group_5:insert(map.section_5)
 
 local function holeline_1 () 
-local randompos = math.random(1,4)
+local randompos = math.random(1,8)
 local timeadd = math.random(1,20)
 num.alien_1 = num.alien_1 + 1
 if timeadd == 7 then
@@ -1016,11 +1069,23 @@ else
         alien_1[num.alien_1] = display.newImageRect("items/guz.png", 80, 95)
         alien_1[num.alien_1].id = "guz_line_1"  
     elseif randompos == 3 then
+        alien_1[num.alien_1] = display.newImageRect("items/girl.png", 80, 95)
+        alien_1[num.alien_1].id = "human_line_1"
+    elseif randompos == 4 then
+        alien_1[num.alien_1] = display.newImageRect("items/boy.png", 80, 95)
+        alien_1[num.alien_1].id = "human_line_1"
+    elseif randompos == 5 then
         alien_1[num.alien_1] = display.newImageRect("items/giz.png", 80, 95)
         alien_1[num.alien_1].id = "giz_line_1"
-    elseif randompos == 4 then
-        alien_1[num.alien_1] = display.newImageRect("items/human.png", 80, 95)
-        alien_1[num.alien_1].id = "human_line_1"
+    elseif randompos == 6 then
+        alien_1[num.alien_1] = display.newImageRect("items/goor.png", 80, 95)
+        alien_1[num.alien_1].id = "goor_line_1"
+    elseif randompos == 7 then
+        alien_1[num.alien_1] = display.newImageRect("items/guz.png", 80, 95)
+        alien_1[num.alien_1].id = "guz_line_1"  
+    elseif randompos == 8 then
+        alien_1[num.alien_1] = display.newImageRect("items/giz.png", 80, 95)
+        alien_1[num.alien_1].id = "giz_line_1"
     end    
 end
 alien_1[num.alien_1]:setReferencePoint(display.TopCenterReferencePoint)
@@ -1039,7 +1104,7 @@ end
 
 local function holeline_2 () 
 local randompos = math.random(1,2)
-local randomimg = math.random(1,4)
+local randomimg = math.random(1,8)
 local timeadd   = math.random(1,20)
 num.alien_2 = num.alien_2 + 1
 if timeadd == 13 then
@@ -1050,14 +1115,26 @@ else
         alien_2[num.alien_2] = display.newImageRect("items/goor.png", 80, 95)
         alien_2[num.alien_2].id = "goor_line_2"
     elseif randomimg == 2 then
-        alien_2[num.alien_2] = display.newImageRect("items/guz.png", 80, 95)
-        alien_2[num.alien_2].id = "guz_line_2"  
+        alien_2[num.alien_2] = display.newImageRect("items/girl.png", 80, 95)
+        alien_2[num.alien_2].id = "human_line_2"
     elseif randomimg == 3 then
         alien_2[num.alien_2] = display.newImageRect("items/giz.png", 80, 95)
         alien_2[num.alien_2].id = "giz_line_2"
     elseif randomimg == 4 then
-        alien_2[num.alien_2] = display.newImageRect("items/human.png", 80, 95)
+        alien_2[num.alien_2] = display.newImageRect("items/boy.png", 80, 95)
         alien_2[num.alien_2].id = "human_line_2"
+    elseif randomimg == 5 then
+        alien_2[num.alien_2] = display.newImageRect("items/guz.png", 80, 95)
+        alien_2[num.alien_2].id = "guz_line_2" 
+    elseif randomimg == 6 then
+        alien_2[num.alien_2] = display.newImageRect("items/giz.png", 80, 95)
+        alien_2[num.alien_2].id = "giz_line_2"
+    elseif randomimg == 7 then
+        alien_2[num.alien_2] = display.newImageRect("items/goor.png", 80, 95)
+        alien_2[num.alien_2].id = "goor_line_2"
+    elseif randomimg == 8 then
+        alien_2[num.alien_2] = display.newImageRect("items/guz.png", 80, 95)
+        alien_2[num.alien_2].id = "guz_line_2" 
     end    
 end
 
@@ -1073,7 +1150,7 @@ pop_2()
 end
 
 local function holeline_3 () 
-local randompos = math.random(1,4)
+local randompos = math.random(1,8)
 local timeadd   = math.random(1,20)
 num.alien_3 = num.alien_3 + 1
 if timeadd == 16 then
@@ -1087,11 +1164,23 @@ else
         alien_3[num.alien_3] = display.newImageRect("items/guz.png", 80, 95)
         alien_3[num.alien_3].id = "guz_line_3"  
     elseif randompos == 3 then
+        alien_3[num.alien_3] = display.newImageRect("items/girl.png", 80, 95)
+        alien_3[num.alien_3].id = "human_line_3"
+    elseif randompos == 4 then
+        alien_3[num.alien_3] = display.newImageRect("items/boy.png", 80, 95)
+        alien_3[num.alien_3].id = "human_line_3"
+    elseif randompos == 5 then
         alien_3[num.alien_3] = display.newImageRect("items/giz.png", 80, 95)
         alien_3[num.alien_3].id = "giz_line_3"
-    elseif randompos == 4 then
-        alien_3[num.alien_3] = display.newImageRect("items/human.png", 80, 95)
-        alien_3[num.alien_3].id = "human_line_3"
+    elseif randompos == 6 then
+        alien_3[num.alien_3] = display.newImageRect("items/goor.png", 80, 95)
+        alien_3[num.alien_3].id = "goor_line_3"
+    elseif randompos == 7 then
+        alien_3[num.alien_3] = display.newImageRect("items/guz.png", 80, 95)
+        alien_3[num.alien_3].id = "guz_line_3"  
+    elseif randompos == 8 then
+        alien_3[num.alien_3] = display.newImageRect("items/giz.png", 80, 95)
+        alien_3[num.alien_3].id = "giz_line_3"
     end   
 end
 alien_3[num.alien_3]:setReferencePoint(display.TopCenterReferencePoint)
@@ -1110,7 +1199,7 @@ end
 
 local function holeline_4 () 
 local randompos = math.random(1,2)
-local randomimg = math.random(1,4)
+local randomimg = math.random(1,8)
 local timeadd   = math.random(1,20)
 
 num.alien_4 = num.alien_4 + 1
@@ -1126,11 +1215,23 @@ else
         alien_4[num.alien_4] = display.newImageRect("items/guz.png", 80, 95)
         alien_4[num.alien_4].id = "guz_line_4"  
     elseif randomimg == 3 then
+        alien_4[num.alien_4] = display.newImageRect("items/girl.png", 80, 95)
+        alien_4[num.alien_4].id = "human_line_4"
+    elseif randomimg == 4 then
+        alien_4[num.alien_4] = display.newImageRect("items/boy.png", 80, 95)
+        alien_4[num.alien_4].id = "human_line_4"
+    elseif randomimg == 5 then
         alien_4[num.alien_4] = display.newImageRect("items/giz.png", 80, 95)
         alien_4[num.alien_4].id = "giz_line_4"
-    elseif randomimg == 4 then
-        alien_4[num.alien_4] = display.newImageRect("items/human.png", 80, 95)
-        alien_4[num.alien_4].id = "human_line_4"
+    elseif randomimg == 6 then
+        alien_4[num.alien_4] = display.newImageRect("items/goor.png", 80, 95)
+        alien_4[num.alien_4].id = "goor_line_4"
+    elseif randomimg == 7 then
+        alien_4[num.alien_4] = display.newImageRect("items/guz.png", 80, 95)
+        alien_4[num.alien_4].id = "guz_line_4"  
+    elseif randomimg == 8 then
+        alien_4[num.alien_4] = display.newImageRect("items/giz.png", 80, 95)
+        alien_4[num.alien_4].id = "giz_line_4"
     end
 end
 

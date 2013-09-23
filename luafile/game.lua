@@ -368,15 +368,19 @@ local y1 = bossing.y
 
 if event.phase == "began" then
     bossing.damage = bossing.damage - 1
-    audio.play(external.sfx.sound_2)
-    numbers.flasnum = numbers.flasnum + 1;
-    flash[numbers.flasnum] = external.sprite.newSprite(external.spritefactory.spriteflash)
-    flash[numbers.flasnum].x = x1
-    flash[numbers.flasnum].y = y1
-    flash[numbers.flasnum]:prepare("flash")
-    flash[numbers.flasnum]:play()
-    group[9]:insert(flash[numbers.flasnum])
-    flash[numbers.flasnum]:addEventListener( "sprite", spriteListener_ )
+    if bossing.damage > 0 then
+        audio.play(external.sfx.sound_2)
+        numbers.flasnum = numbers.flasnum + 1;
+        flash[numbers.flasnum] = external.sprite.newSprite(external.spritefactory.spriteflash)
+        flash[numbers.flasnum].x = x1
+        flash[numbers.flasnum].y = y1
+        flash[numbers.flasnum]:prepare("flash")
+        flash[numbers.flasnum]:play()
+        group[9]:insert(flash[numbers.flasnum])
+        flash[numbers.flasnum]:addEventListener( "sprite", spriteListener_ ) 
+    end
+    
+    
     if bossing.damage == 0 then
         if boss.bol_ == true then
             transition.cancel(boss.move_)
@@ -537,86 +541,86 @@ human             = {};
 heart             = {};
 
 numbers       = {
-        barrelbacknum = 0,
-        lasernumber   = 1,
-        cardeadnum    = 1,
-        nicehitnum    = 1,
-        numbermobs    = 0,
-        crackernum    = 0,
-        carrunnum     = 0,
-        mobcount      = 0,
-        barelnum      = 0,
-        flasnum       = 0,
-        deadnum       = 1,
-        loop          = 0,
-        deadmon       = 0,
+        barrelbacknum   = 0,
+        lasernumber     = 1,
+        cardeadnum      = 1,
+        nicehitnum      = 1,
+        numbermobs      = 0,
+        crackernum      = 0,
+        carrunnum       = 0,
+        mobcount        = 0,
+        barelnum        = 0,
+        flasnum         = 0,
+        deadnum         = 1,
+        loop            = 0,
+        deadmon         = 0,
             };
 
 
 master[1] = {
-        stats  = false;
-        stats2 = false;
-        humanstats = false,
-        humanum= 0,
-        humantime = 0,
+        stats       = false;
+        stats2      = false;
+        humanstats  = false,
+        humanum     = 0,
+        humantime   = 0,
             };    
 master[2] = {
-        number  = 0;
-        deadnum = 0;
+        number      = 0;
+        deadnum     = 0;
         
             };
             
 trans[6] = {
-        id_1 = false;
-        id_2 = false;
-        id_3 = false;
-        id_4 = false;
-        id_5 = false;
-        id_6 = nil,
-        id_7 = nil,
+        id_1        = false;
+        id_2        = false;
+        id_3        = false;
+        id_4        = false;
+        id_5        = false;
+        id_6        = nil,
+        id_7        = nil,
             };
 level[6] = {
-        time_   = nil,
-        time_2  = nil,
-        bol_    = false,
-        num_    = 0,
-        wavestats = false,
+        time_       = nil,
+        time_2      = nil,
+        bol_        = false,
+        num_        = 0,
+        wavestats   = false,
             };
 display_ = {
-        dark            = nil,
-        fogleft         = nil,
-        fogright        = nil,
-        earlynight      = nil,
-        lateafternoon   = nil,
-        num             = 0,
-        darkbol         = false,
-        fogleftbol      = false,
-        fogrightbol     = false,
-        earlynightbol   = false,
-        lateafternoonbol= false
+        dark             = nil,
+        fogleft          = nil,
+        fogright         = nil,
+        earlynight       = nil,
+        lateafternoon    = nil,
+        darkbol          = false,
+        fogleftbol       = false,
+        fogrightbol      = false,
+        earlynightbol    = false,
+        lateafternoonbol = false,
+        num              = 0,
             };
 
-coin       = value.coin_;
-tick       = value.tick_;
-time[4]    = value.time_;
-carup[2]   = value.car_;
-lives[3]   = 5;
-score[2]   = value.score_;
-level[2]   = value.wave_;
-carup[11]  = value.laser_;
-barrel[10] = value.barrel_;
-level[4]   = level[2]
-time[2]    = 3; 
-flash[2]   = 1;  
-carpow[7]  = 1; 
-carpow[6]  = 1;
-carpow[8]  = 1; 
-carpow[9]  = 1;
-ticker[3]  = 1; 
-ticker[1]  = 0;
-ticker[2]  = 0; 
-ticker[20] = 3000;
-crackxplode[1] = 1 ; 
+coin            = value.coin_;
+carup[2]        = value.car_;
+carup[11]       = value.laser_;
+barrel[10]      = value.barrel_;
+tick            = 0;
+time[4]         = 0;
+lives[3]        = 5;
+score[2]        = 0;
+level[2]        = 1;
+level[4]        = level[2];
+time[2]         = 3; 
+flash[2]        = 1;  
+carpow[7]       = 1; 
+carpow[6]       = 1;
+carpow[8]       = 1; 
+carpow[9]       = 1;
+ticker[3]       = 1; 
+ticker[1]       = 0;
+ticker[2]       = 0; 
+ticker[20]      = 3000;
+crackxplode[1]  = 1; 
 
 carpow[3]       = false;
 carpow[4]       = false;
@@ -638,29 +642,29 @@ den[12] = 5;
 den[15] = .5;       
 
 boss = {
-            num         = 0,
-            time_1      = 1000,
-            move_       = nil,
-            move_1      = nil,
-            move_2      = nil,
-            bol_        = false,
-            bol_1       = false,
-            bol_2       = false,
-            pause       = false,
-            timer_      = nil,
-            timer_1     = nil,
-            timer_2     = nil,
-            timepause   = nil,
-            timepause_1 = nil,
-            timepause_2 = nil,
-            locx        = nil,
-            locy        = nil,
-            locz        = nil,
-            locv        = nil,
-            stats_      = false,
-            starting    = false,
-            starttime   = nil,
-            }
+    num         = 0,
+    time_1      = 1000,
+    move_       = nil,
+    move_1      = nil,
+    move_2      = nil,
+    bol_        = false,
+    bol_1       = false,
+    bol_2       = false,
+    pause       = false,
+    timer_      = nil,
+    timer_1     = nil,
+    timer_2     = nil,
+    timepause   = nil,
+    timepause_1 = nil,
+    timepause_2 = nil,
+    locx        = nil,
+    locy        = nil,
+    locz        = nil,
+    locv        = nil,
+    stats_      = false,
+    starting    = false,
+    starttime   = nil,
+    }
 bullet =  {
             num = 0,
             }  
@@ -1167,15 +1171,17 @@ local y1 = masterdead.y
 local masdead = 11 + master[2].deadnum
 if event.phase == "began" then
     masterdead.damage = masterdead.damage - 1
-    audio.play(external.sfx.sound_2)
-    numbers.flasnum = numbers.flasnum + 1;
-    flash[numbers.flasnum] = external.sprite.newSprite(external.spritefactory.spriteflash)
-    flash[numbers.flasnum].x = x1
-    flash[numbers.flasnum].y = y1
-    flash[numbers.flasnum]:prepare("flash")
-    flash[numbers.flasnum]:play()
-    group[3]:insert(flash[numbers.flasnum])
-    flash[numbers.flasnum]:addEventListener( "sprite", spriteListener )
+    if masterdead.damage > 0 then
+        audio.play(external.sfx.sound_2)
+        numbers.flasnum = numbers.flasnum + 1;
+        flash[numbers.flasnum] = external.sprite.newSprite(external.spritefactory.spriteflash)
+        flash[numbers.flasnum].x = x1
+        flash[numbers.flasnum].y = y1
+        flash[numbers.flasnum]:prepare("flash")
+        flash[numbers.flasnum]:play()
+        group[3]:insert(flash[numbers.flasnum])
+        flash[numbers.flasnum]:addEventListener( "sprite", spriteListener )
+    end
     if masterdead.damage == 0 then
         audio.play(external.sfx.splat)
         master[masdead] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
@@ -1216,15 +1222,18 @@ if event.phase == "began" then
     hit.damage = hit.damage - 1
     local x1 = hit.x
     local y1 = hit.y
-    audio.play(external.sfx.sound_2)
-    numbers.flasnum = numbers.flasnum + 1;
-    flash[numbers.flasnum] = external.sprite.newSprite(external.spritefactory.spriteflash)
-    flash[numbers.flasnum].x = x1
-    flash[numbers.flasnum].y = y1
-    flash[numbers.flasnum]:prepare("flash")
-    flash[numbers.flasnum]:play()
-    group[3]:insert(flash[numbers.flasnum])
-    flash[numbers.flasnum]:addEventListener( "sprite", spriteListener )
+    if hit.damage > 0 then
+        audio.play(external.sfx.sound_2)
+        numbers.flasnum = numbers.flasnum + 1;
+        flash[numbers.flasnum] = external.sprite.newSprite(external.spritefactory.spriteflash)
+        flash[numbers.flasnum].x = x1
+        flash[numbers.flasnum].y = y1
+        flash[numbers.flasnum]:prepare("flash")
+        flash[numbers.flasnum]:play()
+        group[3]:insert(flash[numbers.flasnum])
+        flash[numbers.flasnum]:addEventListener( "sprite", spriteListener )
+    end
+    
     
     if hit.damage == 0 then
         trans[6].id_5 = false

@@ -74,9 +74,6 @@ local function onSceneTouch(event)
     
         switch = event.target
         audio.play(external.sfx.clicksound)
-        
-        --adstatus.hideads ()
-        
     if switch.id == "game" then
         local option = {
                             effect  = "fade",
@@ -116,9 +113,7 @@ local function onSceneTouch(event)
 end
 
 local function ExitAppss (event)
-    ----print("press")
-    local keyName = event.keyName   
-    
+local keyName = event.keyName   
 if keyName == "back" and event.phase == "down" then
     audio.play(external.sfx.clicksound)
     local function onComplete( event )
@@ -224,6 +219,7 @@ scenefrom = event.params
 Runtime:addEventListener( "key", ExitAppss )
 timertrans = false
 audio.play(external.sfx.backmusic,{loops = 99,channel = 1})
+audio.setVolume(0.3, {channel = 1})
 
 scroller = external.widget.newScrollView
             {
@@ -238,7 +234,8 @@ scroller.x = (w/2) - 10
 scroller.y = scroller.y  + h - 30
 
 
-texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\nDeveloper:\nDominic Wagas\n\nGraphic Artist:\nBea Jimenez \n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
+--texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\nDeveloper:\nDominic Wagas\n\nGraphic Artist:\nBea Jimenez \n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
+texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
 texting:setReferencePoint(display.BottomCenterReferencePoint);
 texting.x =  texting.width/2 + 20 
 texting.y = scroller.y + 120;    
@@ -369,8 +366,9 @@ buttons.twitbutton = external.widget.newButton
                             external.adshow.storealert ("Network Error")
                         else
                             print ( "Connected" )
-                            twitter = external.GGTwitter:new( "qrocz3l60SijeAe9pXTDw", "RkaWqnQ7TY93qVCxA3e9bL7K3AKyH63fQba9EoRuw",followTwitterListener)
-                            twitter:authorise()
+                            system.openURL("https://twitter.com/8appstudio")
+                            --twitter = external.GGTwitter:new( "qrocz3l60SijeAe9pXTDw", "RkaWqnQ7TY93qVCxA3e9bL7K3AKyH63fQba9EoRuw",followTwitterListener)
+                            --twitter:authorise()
                         end
                     end
                     network.request( "https://encrypted.google.com", "GET", networkListener )
@@ -509,13 +507,14 @@ buttons.storebutton = external.widget.newButton
     end,}
 buttons.storebutton:setReferencePoint(display.CenterRightReferencePoint)
 buttons.storebutton.x = display.contentWidth - 10
-buttons.storebutton.y = display.contentHeight - 50
+buttons.storebutton.y =  50
 buttons.storebutton.alpha = 0
 
 timer.performWithDelay( 1000, function() 
 if (scenefrom.scenename == "gametype") or (scenefrom.scenename == "highscore") or (scenefrom.scenename == "howto") or (scenefrom.scenename == "store") then
 else
     external.adshow.loading("hide")
+    
 end
 timer.performWithDelay( 1000, function() 
     if external.adshow.sqlload == false then
@@ -536,6 +535,7 @@ function showpopevent(event)
         native.cancelWebPopup()
         popup = false
     end
+
 end
 
 Runtime:addEventListener( "touch", showpopevent )
@@ -546,6 +546,8 @@ group[2]:insert(buttons.insbutton)
 group[2]:insert(buttons.highbutton)  
 group[2]:insert(buttons.storebutton)
 group[1]:insert(group[2])
+
+
 end
 
 function scene:exitScene(event)
@@ -558,7 +560,7 @@ Runtime:removeEventListener( "key", ExitAppss )
 popup = false
 group[2]:removeSelf()
 group[2] = nil
-
+--external.adshow.callrevmob("hide")
 end
 
 function scene:destroyScene(event)  

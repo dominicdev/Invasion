@@ -16,28 +16,14 @@ local onTouched_
 
 local function onSceneTouch(event)
 switch = event.targe
--- open SQLite database, if it doesn't exist, create database
---local path = system.pathForFile("records.db", system.DocumentsDirectory  )
---db = sqlite3.open( path ) 
---print(path)
 
--- setup the table if it doesn't exist
-local tablesetup = "CREATE TABLE IF NOT EXISTS records (id INTEGER PRIMARY KEY, name, score,time, car, barrel,total,level,lives);"
-external.adshow.db:exec( tablesetup )
---print(tablesetup)
-
--- save student data to database
-local tablefill =[[INSERT INTO records VALUES (NULL,']] .. name.text .. [[',']] .. number[1] .. [[',']].. number[2] .. [[',']] .. number[3] .. [[',']].. number[4] .. [[',']].. number[5] ..[[',']].. number[9] ..[[');]]
+local tablefill =[[INSERT INTO records VALUES (NULL,']] .. name.text .. [[',']] .. number[5] .. [[',']].. number[9] .. [[',']] .. "survival" .. [[');]]
 external.adshow.db:exec(tablefill)
 --print(tablefill )
 
-local tablesave = [[UPDATE item SET car=']].. number[3] ..[[',barrel=']]..number[4]..[[',laser=']]..number[8]..[[',coin=']]..number[7]..[[',event=']]..stats.gametype..[[' WHERE id = 1]]
+local tablesave = [[UPDATE item SET car=']].. number[3] ..[[',barrel=']]..number[4]..[[',laser=']]..number[8]..[[',coin=']]..number[7]..[[' WHERE id = 1]]
 external.adshow.db:exec( tablesave )
---print(tablesave)
---number[10]..
---close database
 
---print("db closed")
 audio.play(external.sfx.clicksound)          
 local scenefrom = 
             {
@@ -50,7 +36,6 @@ local scenefrom =
 
             } 
 storyboard.gotoScene( "luafile.menu", scenefrom  )
---adshow.inneractive ("hide") 
 end
 
 local function cancelstats (event)

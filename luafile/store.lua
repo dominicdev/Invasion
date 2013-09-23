@@ -39,13 +39,10 @@ local goto
 local wave
 local time
 local tick
-local path
-local path_
 local row
 local sql
 local iap
 local bg
-local db
 
 function functions.transactionCallback( event )
     print("transactionCallback: Received event " .. tostring(event.name))
@@ -63,12 +60,9 @@ function functions.transactionCallback( event )
         elseif productID == products.three then  
             coinnum = coinnum + 1500
         end
---        path = system.pathForFile("records.db", system.DocumentsDirectory )
---        db = sqlite3.open( path ) 
+    
         local tablesave_1 = [[UPDATE item SET coin=']].. coinnum ..[[' WHERE id = 1]]
         external.adshow.db:exec( tablesave_1 )
-   
-        
         item[13]:setReferencePoint(display.CenterLeftReferencePoint)
         item[13].text = coinnum
         item[13].x = w_ - 80
@@ -182,11 +176,13 @@ end
 
 external.adshow.storealert ("Check Internet Connection")
 network.request( "https://encrypted.google.com", "GET", networkListener_2 )
+
 iapback = display.newImageRect("items/iapback.png",600,display.contentHeight-(h_+130))
 iapback:setReferencePoint(display.CenterReferencePoint)
 iapback.x = w_
 iapback.y = h_ + 35
 iap = "open"
+
 myButton[1] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/buy.png",
@@ -203,13 +199,11 @@ myButton[1] = external.widget.newButton
             emboss          = true,
             onRelease       = function (event) 
                 if event.phase == "ended" then
-
                     if connection == true then
                         store.purchase({products.one})
                     else
                         external.adshow.storealert ("Network Error")
                     end
-
                 end
             end,
         }
@@ -439,7 +433,7 @@ local function onSceneTouch(event)
    
 --        path = system.pathForFile("records.db", system.DocumentsDirectory)
 --        db = sqlite3.open( path ) 
-        local tablesave_ = [[UPDATE item SET car=']].. carnum ..[[',barrel=']]..barrelnum..[[',laser=']]..lasernum..[[',coin=']]..coinnum..[[',lives=']]..livesnum..[[' WHERE id = 1]]
+        local tablesave_ = [[UPDATE item SET car=']].. carnum ..[[',barrel=']]..barrelnum..[[',laser=']]..lasernum..[[',coin=']]..coinnum..[[' WHERE id = 1]]
         external.adshow.db:exec( tablesave_ )
         
         buybutton.alpha = 0
@@ -788,11 +782,11 @@ startbutton = external.widget.newButton
                             car_      = finalcar,
                             laser_    = finallaser,
                             coin_     = coinnum,
-                            lives_    = livesnum,
-                            score_    = score,
-                            time_     = time,
-                            wave_     = wave,
-                            tick_     = tick,
+                            lives_    = 6,
+                            score_    = 0,
+                            time_     = 0,
+                            wave_     = 1,
+                            tick_     = 0,
 
                                     }
                                 }

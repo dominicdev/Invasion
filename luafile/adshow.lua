@@ -178,7 +178,6 @@ local REVMOB_IDS = { ["Android"] = "51a6f392433111f6e90000f7", ["iPhone OS"] = "
 RevMob.startSession(REVMOB_IDS)
 
 function adshow.callrevmob (bansize)
-
     if bansize == "320x50" then
         banner = RevMob.createBanner({x = display.contentWidth / 2, y = _H - 40, width = _W, height = 96 })
         banner:show()

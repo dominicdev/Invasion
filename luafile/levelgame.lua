@@ -362,7 +362,7 @@ end, 1)
             if number_.starnum == number_.life then
                 text_.score:setReferencePoint(display.CenterReferencePoint)
                 transition.to(text_.score, {x = display.contentWidth / 2,y = display.contentHeight / 2 + 200 ,time = 1000,xScale=2, yScale=2,onComplete = bunoscoin})
-                number_.coin = number_.coin + 10
+                number_.coin = number_.coin + 8
             end
         end
         objects_[number_.starnum].y = h_ - 150
@@ -384,111 +384,119 @@ end, 1)
 end
 
 local function gameoverscreen ()    
-    external.physics.stop()
-            objects_.pausescreen = display.newImageRect("background/gameover.png",display.contentWidth - 200,300)
-            objects_.pausescreen:setReferencePoint(display.TopCenterReferencePoint)
-            objects_.pausescreen.x = w_
-            objects_.pausescreen.y = h_ - 300
-            group[5]:insert(objects_.pausescreen)
-            
-            objects_.resbutton = external.widget.newButton
-                {
-                    defaultFile     = "button/woodbutton/playagainbtn.png",
-                    overFile        = "button/woodbutton/playagainbtnover.png",
-                    id              = "restart",
-                    width           = 200, 
-                    height          = 70,
-                    onRelease       = onSceneTouch,
-                }
-            objects_.resbutton:setReferencePoint(display.TopCenterReferencePoint)
-            objects_.resbutton.x = w_ - 120
-            objects_.resbutton.y = objects_.pausescreen.y + objects_.pausescreen.height + 50
-            group[5]:insert(objects_.resbutton)
+external.physics.stop()
+objects_.pausescreen = display.newImageRect("background/gameover.png",display.contentWidth - 200,300)
+objects_.pausescreen:setReferencePoint(display.TopCenterReferencePoint)
+objects_.pausescreen.x = w_
+objects_.pausescreen.y = h_ - 300
+group[5]:insert(objects_.pausescreen)
 
-            objects_.quitbutton = external.widget.newButton
-                {
-                    defaultFile     = "button/woodbutton/quitbtn.png",
-                    overFile        = "button/woodbutton/quitbtnover.png",
-                    id              = "quit",
-                    width           = 200, 
-                    height          = 70,
-                    onRelease       = onSceneTouch,
-                }
-            objects_.quitbutton:setReferencePoint(display.TopCenterReferencePoint)
-            objects_.quitbutton.x = w_ + 120
-            objects_.quitbutton.y = objects_.pausescreen.y + objects_.pausescreen.height + 50
-            group[5]:insert(objects_.quitbutton)
-            
-            if game_.killed ~= number_.monsterleft then
-                if bol.mobrun == true then
-                    timer.cancel(timer_.mob)
-                end
-                if bol.masrun == true then
-                    timer.cancel(timer_.master)
-                end
-                if bol.bigrun == true then
-                    timer.cancel(timer_.bigmas)
-                end
-                if bol.movrun == true then
-                    timer.cancel(timer_.movmob)
-                end
-                if bol.human == true then
-                    timer.cancel(timer_.human)
-                end
-                if bol.human_2 == true then
-                    timer.cancel(timer_.human_2)
-                end
-                for i = 1, #monsters do
-                    if monsters[i].myname ~= nil then
-                        monsters[i]:pause()
-                        monsters[i]:removeEventListener("touch",functions.removerunner)
-                    end
-                end
-            end
-            if bol.carstart == true then
-                timer.cancel(timer_.cartime)
-                for u = 1, #carrun do
-                    if carrun[u].myname ~= nil then
-                        carrun[u]:pause()
-                    end
-                end  
-            end
-            if bol.laser == true then
-                timer.cancel(timer_.laser)
-                objects_.beam:pause()
-            end
-            if bol.top_1 == true then
-                transition.cancel(trans.top_1)
-                trans.can_1 = timer.cancel(trans.timer_1)
-            elseif bol.top_2 == true then
-                transition.cancel(trans.top_2)
-                trans.can_2 = timer.cancel(trans.timer_2)
-            elseif bol.top_3 == true then
-                transition.cancel(trans.top_3)
-                trans.can_3 = timer.cancel(trans.timer_3)
-            elseif bol.top_4 == true then
-                transition.cancel(trans.top_4)
-                trans.can_4 = timer.cancel(trans.timer_4)
-            elseif bol.top_5 == true then
-                transition.cancel(trans.top_5)
-                trans.can_5 = timer.cancel(trans.timer_5)
-            end
-            if boss.bol_ == true then
-                transition.cancel(boss.move_)
-                timer.cancel(boss.timer_)
-            end
-            if boss.bol_1 == true then
-                transition.cancel(boss.move_1)
-                timer.cancel(boss.timer_1)
-            end
-            if boss.bol_2 == true then
-                transition.cancel(boss.move_2)
-               timer.cancel(boss.timer_2)
-            end
-            if bol.bosstats == true then
-                timer.cancel(timer_.bosstats)
-            end
-            game_.over = true
+objects_.resbutton = external.widget.newButton
+    {
+        defaultFile     = "button/woodbutton/playagainbtn.png",
+        overFile        = "button/woodbutton/playagainbtnover.png",
+        id              = "restart",
+        width           = 200, 
+        height          = 70,
+        onRelease       = onSceneTouch,
+    }
+objects_.resbutton:setReferencePoint(display.TopCenterReferencePoint)
+objects_.resbutton.x = w_ - 120
+objects_.resbutton.y = objects_.pausescreen.y + objects_.pausescreen.height + 50
+group[5]:insert(objects_.resbutton)
+
+objects_.quitbutton = external.widget.newButton
+    {
+        defaultFile     = "button/woodbutton/quitbtn.png",
+        overFile        = "button/woodbutton/quitbtnover.png",
+        id              = "quit",
+        width           = 200, 
+        height          = 70,
+        onRelease       = onSceneTouch,
+    }
+objects_.quitbutton:setReferencePoint(display.TopCenterReferencePoint)
+objects_.quitbutton.x = w_ + 120
+objects_.quitbutton.y = objects_.pausescreen.y + objects_.pausescreen.height + 50
+group[5]:insert(objects_.quitbutton)
+
+if game_.killed ~= number_.monsterleft then
+    if bol.mobrun == true then
+        timer.cancel(timer_.mob)
+    end
+    if bol.masrun == true then
+        timer.cancel(timer_.master)
+    end
+    if bol.bigrun == true then
+        timer.cancel(timer_.bigmas)
+    end
+    if bol.movrun == true then
+        timer.cancel(timer_.movmob)
+    end
+    if bol.human == true then
+        timer.cancel(timer_.human)
+    end
+    if bol.human_2 == true then
+        timer.cancel(timer_.human_2)
+    end
+    for i = 1, #monsters do
+        if monsters[i].myname ~= nil then
+            monsters[i]:pause()
+            monsters[i]:removeEventListener("touch",functions.removerunner)
+        end
+    end
+end
+if bol.carstart == true then
+    timer.cancel(timer_.cartime)
+    for u = 1, #carrun do
+        if carrun[u].myname ~= nil then
+            carrun[u]:pause()
+        end
+    end  
+end
+if bol.laser == true then
+    timer.cancel(timer_.laser)
+    objects_.beam:pause()
+end
+if bol.top_1 == true then
+    transition.cancel(trans.top_1)
+    trans.can_1 = timer.cancel(trans.timer_1)
+elseif bol.top_2 == true then
+    transition.cancel(trans.top_2)
+    trans.can_2 = timer.cancel(trans.timer_2)
+elseif bol.top_3 == true then
+    transition.cancel(trans.top_3)
+    trans.can_3 = timer.cancel(trans.timer_3)
+elseif bol.top_4 == true then
+    transition.cancel(trans.top_4)
+    trans.can_4 = timer.cancel(trans.timer_4)
+elseif bol.top_5 == true then
+    transition.cancel(trans.top_5)
+    trans.can_5 = timer.cancel(trans.timer_5)
+end
+if boss.bol_ == true then
+    transition.cancel(boss.move_)
+    timer.cancel(boss.timer_)
+end
+if boss.bol_1 == true then
+    transition.cancel(boss.move_1)
+    timer.cancel(boss.timer_1)
+end
+if boss.bol_2 == true then
+    transition.cancel(boss.move_2)
+   timer.cancel(boss.timer_2)
+end
+if bol.bosstats == true then
+    timer.cancel(timer_.bosstats)
+end
+if boss.stats_ == true then
+    for k = 1, #boss do
+        if boss[k].myname ~= nil then
+            boss[k]:pause()
+            boss[k]:removeEventListener("touch",functions.removerunner)
+        end
+    end
+end
+game_.over = true
 timer.performWithDelay(300, function()
 
 audio.stop()
@@ -562,6 +570,7 @@ local function pauseall (event)
                     end
                 end  
             end
+        
             if game_.killed ~= number_.monsterleft then
                 
                 if bol.mobrun == true then
@@ -612,28 +621,29 @@ local function pauseall (event)
                     trans.can_5 = timer.pause(trans.timer_5)
             end
             
-            if boss.bol_ == true then
-                transition.cancel(boss.move_)
-                boss.timepause_ = timer.pause(boss.timer_)
-            end
-            if boss.bol_1 == true then
-                transition.cancel(boss.move_1)
-                boss.timepause_1 = timer.pause(boss.timer_1)
-            end
-            if boss.bol_2 == true then
-                transition.cancel(boss.move_2)
-                boss.timepause_2 = timer.pause(boss.timer_2)
-            end
-            if boss.stats_ == true then
-                for k = 1, #boss do
-                    if boss[k].myname ~= nil then
-                        boss[k]:pause()
-                        boss[k]:removeEventListener("touch",functions.removerunner)
-                    end
-                end
-            end
+            
             if bol.bosstats == true then
                 timer.pause(timer_.bosstats)
+                if boss.bol_ == true then
+                    transition.cancel(boss.move_)
+                    boss.timepause_ = timer.pause(boss.timer_)
+                end
+                if boss.bol_1 == true then
+                    transition.cancel(boss.move_1)
+                    boss.timepause_1 = timer.pause(boss.timer_1)
+                end
+                if boss.bol_2 == true then
+                    transition.cancel(boss.move_2)
+                    boss.timepause_2 = timer.pause(boss.timer_2)
+                end
+                if boss.stats_ == true then
+                    for k = 1, #boss do
+                        if boss[k].myname ~= nil then
+                            boss[k]:pause()
+                            boss[k]:removeEventListener("touch",functions.removerunner)
+                        end
+                    end
+                end
             end
             game_.pause = false
             
@@ -747,49 +757,50 @@ local function pauseall (event)
                         timer.resume(trans.timer_5)
                 end
                                     
-            if boss.bol_ == true then
-                boss.move_ = transition.to(boss[boss.num],{time = boss.timepause_,y = display.contentHeight*.25,onComplete = functions.move1})
-                timer.resume(boss.timer_)
-            end
-        
-            if boss.bol_1 == true then
-                if boss.locx == 1 then
-                    boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = display.contentWidth / 2,onComplete = functions.move2}) 
-                elseif boss.locx == 2 then
-                    boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  + (display.contentWidth*.25),onComplete = functions.move2}) 
-                elseif boss.locx == 3 then    
-                    boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  - (display.contentWidth*.25),onComplete = functions.move2}) 
-                elseif boss.locx == 4 then
-                    boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  + (display.contentWidth*.25) + (display.contentWidth*.125),onComplete = functions.move2}) 
-                elseif boss.locx == 5 then    
-                    boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  - (display.contentWidth*.25) - (display.contentWidth*.125),onComplete = functions.move2}) 
-                end
-                timer.resume(boss.timer_1)
-            end
-            if boss.bol_2 == true then
-                if boss.locy == 1 then
-                    boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = display.contentWidth / 2,onComplete = functions.move1}) 
-                elseif boss.locy == 2 then
-                    boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  + (display.contentWidth*.25),onComplete = functions.move1}) 
-                elseif boss.locy == 3 then    
-                    boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  - (display.contentWidth*.25),onComplete = functions.move1}) 
-                elseif boss.locy == 4 then
-                    boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  + (display.contentWidth*.25) + (display.contentWidth*.125),onComplete = functions.move1}) 
-                elseif boss.locy == 5 then    
-                    boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  - (display.contentWidth*.25) - (display.contentWidth*.125),onComplete = functions.move1}) 
-                end
-                timer.resume(boss.timer_2)
-            end
-            if boss.stats_ == true then
-                for k = 1, #boss do
-                    if boss[k].myname ~= nil then
-                        boss[k]:play()
-                        boss[k]:addEventListener("touch",functions.removerunner)
-                    end
-                end
-            end   
+             
             if bol.bosstats == true then
                 timer.resume(timer_.bosstats)
+                if boss.bol_ == true then
+                    boss.move_ = transition.to(boss[boss.num],{time = boss.timepause_,y = display.contentHeight*.25,onComplete = functions.move1})
+                    timer.resume(boss.timer_)
+                end
+
+                if boss.bol_1 == true then
+                    if boss.locx == 1 then
+                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = display.contentWidth / 2,onComplete = functions.move2}) 
+                    elseif boss.locx == 2 then
+                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  + (display.contentWidth*.25),onComplete = functions.move2}) 
+                    elseif boss.locx == 3 then    
+                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  - (display.contentWidth*.25),onComplete = functions.move2}) 
+                    elseif boss.locx == 4 then
+                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  + (display.contentWidth*.25) + (display.contentWidth*.125),onComplete = functions.move2}) 
+                    elseif boss.locx == 5 then    
+                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  - (display.contentWidth*.25) - (display.contentWidth*.125),onComplete = functions.move2}) 
+                    end
+                    timer.resume(boss.timer_1)
+                end
+                if boss.bol_2 == true then
+                    if boss.locy == 1 then
+                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = display.contentWidth / 2,onComplete = functions.move1}) 
+                    elseif boss.locy == 2 then
+                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  + (display.contentWidth*.25),onComplete = functions.move1}) 
+                    elseif boss.locy == 3 then    
+                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  - (display.contentWidth*.25),onComplete = functions.move1}) 
+                    elseif boss.locy == 4 then
+                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  + (display.contentWidth*.25) + (display.contentWidth*.125),onComplete = functions.move1}) 
+                    elseif boss.locy == 5 then    
+                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  - (display.contentWidth*.25) - (display.contentWidth*.125),onComplete = functions.move1}) 
+                    end
+                    timer.resume(boss.timer_2)
+                end
+                if boss.stats_ == true then
+                    for k = 1, #boss do
+                        if boss[k].myname ~= nil then
+                            boss[k]:play()
+                            boss[k]:addEventListener("touch",functions.removerunner)
+                        end
+                    end
+                end  
             end
             game_.pause = true    
         end
@@ -907,6 +918,7 @@ if event.phase == "began" then
     local x1 = hit.x
     local y1 = hit.y
     audio.play(external.sfx.sound_2)
+    if hit.damage > 0 then
     number_.flasher = number_.flasher + 1;
     flash[number_.flasher] = external.sprite.newSprite(external.spritefactory.spriteflash)
     flash[number_.flasher].x = x1
@@ -916,7 +928,7 @@ if event.phase == "began" then
     flash[number_.flasher].alpha = 0.5
     group[5]:insert(flash[number_.flasher])
     flash[number_.flasher]:addEventListener( "sprite", functions.spriteListener )
-    
+    end
     if hit.damage == 0 and hit.myname == "runnerers" then
         number_.score = number_.score + 50
         if hit.name == "runners" then
@@ -929,6 +941,13 @@ if event.phase == "began" then
         elseif hit.name == "mover" then
             dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritexplode)
             dead[number_.deadmon]:prepare("explode") 
+            number_.movnum = number_.movnum - 1
+            if number_.movnum == -1 then
+                number_.movnum = 0
+            end
+                if bol.movrun == true and number_.movnum ~= 0 then
+                timer.resume(timer_.movmob)   
+            end
         end
     
         dead[number_.deadmon].x = x1
@@ -1203,6 +1222,7 @@ function functions.helphuman_2 ( )
 end
 
 function functions.movingmonster ( )
+    
 number_.monster = number_.monster + 1 
 monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.spritealienship)
 monsters[number_.monster]:prepare("shipfront")  
@@ -1234,6 +1254,11 @@ elseif bol.top == 3 then
     trans.timer_1 = timer.performWithDelay(1500, none, 1)
     bol.top_1 = true    
 end
+if bol.movrun == true then
+  timer.pause(timer_.movmob)   
+end
+ 
+   
 end
 
 function functions.firingboss (xloc,yloc)
@@ -1381,7 +1406,7 @@ end
 
 if number_.mastermon == 0 and bol.masrun == true then
     bol.masrun = false   
-    timer_.human_2 = timer.performWithDelay(10000, functions.helphuman_2, 1)
+    timer_.human_2 = timer.performWithDelay(10000, functions.helphuman_2, 3)
     bol.human_2 = true
 end
 
@@ -2281,7 +2306,16 @@ if ((event.object1.myname == "fence" and event.object2.myname == "runnerers") or
     (event.object1.myname == "masters" and event.object2.myname == "fence") or 
     (event.object1.myname == "fence" and event.object2.myname == "bigmaster") or 
     (event.object1.myname == "bigmaster" and event.object2.myname == "fence"))then
-
+    
+            if event.object1.name == "mover" or event.object2.name == "mover" then
+                number_.movnum = number_.movnum - 1
+                if number_.movnum == -1 then
+                    number_.movnum = 0
+                end
+                if bol.movrun == true and number_.movnum ~= 0 then
+                    timer.resume(timer_.movmob)   
+                end
+            end
     if event.object1.myname == "runnerers" and event.phase == "began" then
         number_.fencelife = number_.fencelife - 1
         event.object1:removeSelf()
@@ -2292,7 +2326,6 @@ if ((event.object1.myname == "fence" and event.object2.myname == "runnerers") or
         number_.fencelife = number_.fencelife - 1
         event.object2:removeSelf()
         event.object2.myname = nil
-
         number_.mobster = number_.mobster - 1
         game_.killed = game_.killed + 1
     elseif event.object1.myname == "masters" and event.phase == "began" then
@@ -2327,32 +2360,39 @@ if ((event.object1.myname == "end" and event.object2.myname == "runnerers") or
     (event.object1.myname == "end" and event.object2.myname == "bigmaster") or 
     (event.object1.myname == "bigmaster" and event.object2.myname == "end"))then
 
+            if event.object1.name == "mover" or event.object2.name == "mover" then
+                number_.movnum = number_.movnum - 1
+                if number_.movnum == -1 then
+                    number_.movnum = 0
+                end
+                if bol.movrun == true and number_.movnum ~= 0 then
+                    timer.resume(timer_.movmob)   
+                end
+            end
+
     if event.object1.myname == "runnerers" or event.object1.myname == "masters" or event.object1.myname == "bigmaster" then
-
-        if event.object1.myname == "runnerers" then
-            number_.mobster = number_.mobster - 1
-        elseif event.object1.myname == "masters" then
-            number_.mastermon = number_.mastermon - 1
-        elseif event.object1.myname == "bigmaster" then
-            number_.bignum = number_.bignum - 1
-        end
-
+            
+            if event.object1.myname == "runnerers" then
+                number_.mobster = number_.mobster - 1
+            elseif event.object1.myname == "masters" then
+                number_.mastermon = number_.mastermon - 1
+            elseif event.object1.myname == "bigmaster" then
+                number_.bignum = number_.bignum - 1
+            end
         event.object1:removeSelf()
         event.object1.myname = nil
-
     elseif event.object2.myname == "runnerers" or event.object2.myname == "masters" or event.object2.myname == "bigmaster" then
+            
+            if event.object2.myname == "runnerers" then
+                number_.mobster = number_.mobster - 1
 
-        if event.object2.myname == "runnerers" then
-            number_.mobster = number_.mobster - 1
-        elseif event.object2.myname == "masters" then
-            number_.mastermon = number_.mastermon - 1
-        elseif event.object2.myname == "bigmaster" then
-            number_.bignum = number_.bignum - 1    
-        end
-
+            elseif event.object2.myname == "masters" then
+                number_.mastermon = number_.mastermon - 1
+            elseif event.object2.myname == "bigmaster" then
+                number_.bignum = number_.bignum - 1    
+            end
         event.object2:removeSelf()
         event.object2.myname = nil    
-
     end
     game_.killed = game_.killed + 1
     life[number_.life]:removeSelf()
@@ -2368,12 +2408,22 @@ if ((event.object1.myname == "sides" and event.object2.myname == "runnerers") or
     (event.object1.myname == "sides" and event.object2.myname == "bigmaster") or 
     (event.object1.myname == "bigmaster" and event.object2.myname == "sides"))then
 
-    if event.object1.myname == "runnerers" or event.object1.myname == "car" or event.object1.myname == "masters" or event.object1.myname == "bigmaster" then
+            if event.object1.name == "mover" or event.object2.name == "mover" then
+                number_.movnum = number_.movnum - 1
+                if number_.movnum == -1 then
+                    number_.movnum = 0
+                end
+                if bol.movrun == true and number_.movnum ~= 0 then
+                    timer.resume(timer_.movmob)   
+                end
+            end
 
-        if event.object1.myname == "runnerers" then
+    if event.object1.myname == "runnerers" or event.object1.myname == "car" or event.object1.myname == "masters" or event.object1.myname == "bigmaster" then
+       if event.object1.myname == "runnerers" then
             number_.mobster = number_.mobster - 1
             game_.killed = game_.killed + 1
             number_.score = number_.score + 200
+            
         elseif event.object1.myname == "masters" then
             number_.mastermon = number_.mastermon - 1
             game_.killed = game_.killed + 1
@@ -2382,7 +2432,6 @@ if ((event.object1.myname == "sides" and event.object2.myname == "runnerers") or
             number_.bignum = number_.bignum - 1
             game_.killed = game_.killed + 1
         end
-
         event.object1:removeSelf()
         event.object1.myname = nil
     elseif event.object2.myname == "runnerers" or event.object2.myname == "car" or event.object2.myname == "masters" or event.object2.myname == "bigmaster" then
@@ -2391,6 +2440,7 @@ if ((event.object1.myname == "sides" and event.object2.myname == "runnerers") or
             number_.mobster = number_.mobster - 1
             game_.killed = game_.killed + 1
             number_.score = number_.score + 200
+           
         elseif event.object2.myname == "masters" then
             number_.mastermon = number_.mastermon - 1
             game_.killed = game_.killed + 1
@@ -2399,7 +2449,6 @@ if ((event.object1.myname == "sides" and event.object2.myname == "runnerers") or
             number_.bignum = number_.bignum - 1
             game_.killed = game_.killed + 1
         end
-
         event.object2:removeSelf()
         event.object2.myname = nil    
     end
@@ -2407,9 +2456,11 @@ end
 
 if ((event.object1.myname == "car" and event.object2.myname == "runnerers") or 
     (event.object1.myname == "runnerers" and event.object2.myname == "car") or
-    (event.object1.myname == "car" and event.object2.myname == "masters") or 
-    (event.object1.myname == "masters" and event.object2.myname == "car")) then
+    (event.object1.myname == "car" and event.object2.myname == "masters")   or 
+    (event.object1.myname == "masters" and event.object2.myname == "car"))  then
+    
     local function stopmovers ()
+        
         if bol.top_1 == true then
             transition.cancel(trans.top_1)
             trans.can_1 = timer.cancel(trans.timer_1)
@@ -2426,12 +2477,12 @@ if ((event.object1.myname == "car" and event.object2.myname == "runnerers") or
             transition.cancel(trans.top_5)
             trans.can_5 = timer.cancel(trans.timer_5)
         end
+    
     end
     if event.object1.myname == "runnerers" or event.object1.myname == "masters" then
         if event.object1.name == "mover" then
             stopmovers ()
         end
-    
         event.object1.isFixedRotation = false
         event.object1:applyForce(event.object2.dir,0 , event.object1.x , event.object1.y + 10)
     elseif event.object2.myname == "runnerers" or event.object2.myname == "masters" then
@@ -2445,7 +2496,6 @@ if ((event.object1.myname == "car" and event.object2.myname == "runnerers") or
     if event.phase == "began" then
         audio.play(external.sfx.sound_5)
     end
-
 end
 
 if ((event.object1.myname == "beam" and event.object2.myname == "runnerers") or 
@@ -2457,21 +2507,30 @@ if ((event.object1.myname == "beam" and event.object2.myname == "runnerers") or
     (event.object1.myname == "barrel" and event.object2.myname == "masters") or 
     (event.object1.myname == "masters" and event.object2.myname == "barrel")) then
 
+            if event.object1.name == "mover" or event.object2.name == "mover" then
+                number_.movnum = number_.movnum - 1
+                if number_.movnum == -1 then
+                    number_.movnum = 0
+                end
+                if bol.movrun == true and number_.movnum ~= 0 then
+                    timer.resume(timer_.movmob)   
+                end
+            end
+
     if event.object1.myname == "runnerers" or event.object1.myname == "masters" then
-        
         explodeevent(event.object1.x,event.object1.y)
         if event.object1.myname == "runnerers" then
+             
             number_.mobster = number_.mobster - 1
             number_.score = number_.score + 100
+            
         elseif event.object1.myname == "masters" then
             number_.mastermon = number_.mastermon - 1
             number_.score = number_.score + 200
         end
-
         event.object1:removeSelf()
         event.object1.myname = nil
         if event.object2.myname == "barrel" then
-
             number_.barrel = number_.barrel + 1
             barrelback[number_.barrel] = display.newImageRect("button/barrelbut/barreltap.png", 64, 64)
             barrelback[number_.barrel].x = event.object2.x
@@ -2486,12 +2545,13 @@ if ((event.object1.myname == "beam" and event.object2.myname == "runnerers") or
         end
 
     elseif event.object2.myname == "runnerers" or event.object2.myname == "masters" then
+        
         explodeevent(event.object2.x,event.object2.y)
         if event.object2.myname == "runnerers" then
             number_.mobster = number_.mobster - 1
             number_.score = number_.score + 100
+            
         elseif event.object2.myname == "masters" then
-
             number_.mastermon = number_.mastermon - 1
             number_.score = number_.score + 200
         end
@@ -2536,6 +2596,7 @@ if ((event.object1.myname == "barrel" and event.object2.myname == "bigmaster") o
             group[4]:insert(barrelback[number_.barrel])
             event.object1:removeSelf()
             event.object1.myname = nil
+            
     elseif event.object2.myname == "barrel" then 
 
             barrelexplode(event.object2.x,event.object2.y)
