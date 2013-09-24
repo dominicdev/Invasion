@@ -1,5 +1,5 @@
-local storyboard    = require "storyboard"
 local external      = require "luafile.external"
+local storyboard    = require "storyboard"
 local scene         = storyboard.newScene()
 local w             = display.contentWidth / 2
 local h             = display.contentHeight / 2
@@ -12,7 +12,6 @@ local number
 local name
 local stats
 local onTouched_
-
 
 local function onSceneTouch(event)
 switch = event.targe
@@ -68,7 +67,7 @@ end
 
 function scene:createScene( event )
 group[1] = self.view
-external.adshow.callrevmob("showpop")
+
 bg = display.newImageRect("background/scoreview.png",display.contentWidth,display.contentHeight)
 bg.x = w
 bg.y = h
@@ -76,29 +75,26 @@ group[1]:insert(bg)
 end
 
 function scene:enterScene( event )
---adshow.inneractive ("show")    
 group[1] = self.view
 group[2] = display.newGroup()
 dis = {}
 cal = {}
 number = {}
-
 storyboard.purgeAll()
 storyboard.removeAll() 
-
 stats = event.params
-
 Runtime:addEventListener( "key", cancelstats );
+
 local color = 
             {
-                highlight = 
-                {
-                    r =0, g = 0, b = 0, a = 255
-                },
-                shadow =
-                {
-                    r = 0, g = 0, b = 0, a = 255
-                }
+            highlight = 
+            {
+                r =0, g = 0, b = 0, a = 255
+            },
+            shadow =
+            {
+                r = 0, g = 0, b = 0, a = 255
+            }
             }    
 
 number[1] = stats.uscore;
@@ -110,7 +106,6 @@ number[9] = stats.ulevel
 number[10] = stats.ulives
 number[5] = stats.uscore + (stats.utime * 100) + (stats.ucar * 500) + (stats.ubarrel * 1000) + (stats.ulaser * 5000);
 number[6] = stats.ulevel*5
-
 number[7] = stats.ucoin + number[6]
 
 dis[9] = display.newEmbossedText("+"..number[6].." Coins", 10, 10, "Dimitri", 40,{ 255, 255, 255, 255 });
@@ -121,7 +116,6 @@ dis[9]:setTextColor( 0, 204, 0 )
 dis[9]:setEmbossColor( color )
 group[2]:insert(dis[9])
 
-
 dis[11] = display.newEmbossedText("LEVEL# "..stats.ulevel, 10, 10, "Dimitri", 40,{ 255, 255, 255, 255 });
 dis[11]:setReferencePoint(display.CenterReferencePoint)
 dis[11].x = w 
@@ -131,12 +125,14 @@ dis[11]:setEmbossColor( color )
 group[2]:insert(dis[11])
 
 name = native.newTextField(0, 0, 260, 60)
-name.font = native.newFont( "Consolas", 30 )
+name.font = native.newFont( "Consolas", (name.height*.2) )
 name:setReferencePoint(display.CenterReferencePoint)
+name.align = "center"
 name.x = w 
 name.y = dis[11].y + 70
-name.alpha = .3
+name.alpha = 0
 name.inputType = "default"
+name.text = "NAME"
 name:setTextColor( 0, 0, 0, 255 )
 group[2]:insert(name)
 
@@ -147,12 +143,6 @@ dis[1].y = name.y + 80
 dis[1]:setTextColor( 0, 204, 0 )
 dis[1]:setEmbossColor( color )
 group[2]:insert(dis[1])
-
---dis[2] = display.newText("Time : "..stats.utime,0,0,"BadaBoom BB",40)
---dis[2]:setReferencePoint(display.CenterLeftReferencePoint)
---dis[2].x = w - 260
---dis[2].y = dis[1].y + 50 
---group[2]:insert(dis[2])
 
 dis[3] = display.newImageRect("button/carbut/car.png", 100, 60)
 dis[3]:setReferencePoint(display.CenterRightReferencePoint)
@@ -218,8 +208,6 @@ dis[10].x = w
 dis[10].y = dis[7].y + 70
 group[2]:insert(dis[10])
 
-group[1]:insert(group[2])
-
 function onTouched_(event)
 native.setKeyboardFocus(nil)
 end
@@ -227,7 +215,11 @@ Runtime:addEventListener( "touch", onTouched_ )
 ----adshow.inneractive ("show")
 timer.performWithDelay(1000, function ()
 external.adshow.loading("hide") 
+name.alpha = 1
+external.adshow.callrevmob("showpop")
 end, 1)
+
+group[1]:insert(group[2])
 end
 
 function scene:exitScene( event )
@@ -238,13 +230,13 @@ Runtime:removeEventListener( "touch", onTouched_ )
 Runtime:removeEventListener( "key", cancelstats );
 group[2]:removeSelf()
 group[2] = nil
-external.adshow.loading("show")  
+
 end
 
 function scene:destroyScene( event )
 
 print("game destroy via gameover")
-----adshow.inneractive ("hide")
+external.adshow.loading("show")  
 group[1]:removeSelf()
 group[1] = nil
 end

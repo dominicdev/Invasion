@@ -1,5 +1,3 @@
-
-display.setStatusBar(display.HiddenStatusBar)
 local w_ = display.contentWidth / 2
 local h_ = display.contentHeight / 2 
 local external   = require "luafile.external"
@@ -154,6 +152,7 @@ if event.keyName == "back" and event.phase == "down" and iap == "close" then
     --db:close()
     --adshow.calltapfortap("hide")    
     external.adshow.callflurry("Start Mission")
+    
     end
     return true
     elseif event.keyName == "back" and event.phase == "down" and  iap == "open" then

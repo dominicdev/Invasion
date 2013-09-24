@@ -179,13 +179,13 @@ RevMob.startSession(REVMOB_IDS)
 
 function adshow.callrevmob (bansize)
     if bansize == "320x50" then
-        banner = RevMob.createBanner({x = display.contentWidth / 2, y = _H - 40, width = _W, height = 96 })
+        banner = RevMob.createBanner({x = display.contentWidth / 2, y = _H - 50, width = _W, height = 100 })
         banner:show()
     elseif bansize == "fullscreen" then
         banner = RevMob.createFullscreen() 
         banner:show()
     elseif bansize == "showpop" then
-        banner= RevMob.createPopup()
+        banner = RevMob.createPopup()
         banner:show()
     elseif bansize == "hide" then
         banner:hide()

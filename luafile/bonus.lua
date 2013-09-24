@@ -1493,6 +1493,7 @@ group.group_5:removeSelf()
 group.group_5 = nil
 group.group_6:removeSelf()
 group.group_6 = nil
+
 end
 
 function scene:destroyScene(event)

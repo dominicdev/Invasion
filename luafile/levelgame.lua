@@ -47,7 +47,7 @@ local moveLeftFunction
 local rightTrans
 local leftTrans
 local originalTrans
-local shakeTime = 100
+local shakeTime = 80
 local shakeRange = {min = 1, max = 3}
 local endShake   	
 
@@ -339,7 +339,8 @@ end, 1)
                 transition.to(objects_.menubutton,{time = 1000,alpha = 1,xScale=1, yScale=1})
             end
         end
-        timer_.star = timer.performWithDelay(600, function() 
+        timer_.star = timer.performWithDelay(800, function() 
+        audio.play(external.sfx.star)
         number_.starnum = number_.starnum + 1
         objects_[number_.starnum] = display.newImageRect("items/star.png", 50,50)  
         objects_[number_.starnum]:setReferencePoint(display.CenterReferencePoint)
@@ -371,7 +372,7 @@ end, 1)
         objects_[number_.starnum]:scale (2,2)
         transition.to(objects_[number_.starnum],{time = 500,alpha = 1})
         transition.to(objects_[number_.starnum], {time = 800,xScale=1, yScale=1})
-        audio.play(external.sfx.star)
+        
         bol.star = true
         end, number_.life)
         transition.to(objects_.pausescreen, {time = 1000,alpha = 1,xScale=1, yScale=1})
@@ -826,7 +827,7 @@ if number_.laserP ~= 0 then
     
 bol.laser = true
 audio.play(external.sfx.sound_7,{channel = 29})
-audio.setVolume(0.1,{channel = 29})
+audio.setVolume(0.3,{channel = 29})
 objects_.beam = external.sprite.newSprite(external.spritefactory.spritelaser)
 objects_.beam.x = w_ 
 objects_.beam.y = locy
@@ -1402,25 +1403,32 @@ end
 
 if number_.mobster == 0 and bol.mobrun == true then
     bol.mobrun = false
+    objects_.monster:setFillColor(102, 102, 102, 255)
 end
 
 if number_.mastermon == 0 and bol.masrun == true then
     bol.masrun = false   
     timer_.human_2 = timer.performWithDelay(10000, functions.helphuman_2, 3)
     bol.human_2 = true
+    objects_.master:setFillColor(102, 102, 102, 255)
 end
 
 if number_.movnum == 0 then
-    bol.movrun = false   
+    bol.movrun = false  
+end
+
+if number_.bignum == 0 and bol.bigboss == false then
+    objects_.bigmaster:setFillColor(102, 102, 102, 255)
+    bol.bigboss = true
 end
 
 if number_.mobster <= (number_.holder*.90) and bol.bigrun == false then
     
     if number_.bignum ~= 0 then
         
-    timer_.bigmas = timer.performWithDelay(3000, functions.bigmastercall, number_.bignumhold)
+    timer_.bigmas = timer.performWithDelay(2000, functions.bigmastercall, number_.bignumhold)
     if bol.bols == "true" then
-    timer_.bosstats = timer.performWithDelay(4000, functions.start, number_.bossinghold)   
+    timer_.bosstats = timer.performWithDelay(3000, functions.start, number_.bossinghold)   
     bol.bosstats = true
     bol.bols = "false"
     end
@@ -1532,6 +1540,7 @@ bol         = {
                 star        = false,
                 bols        = false,
                 bosstats    = false,
+                bigboss     = false,
                 }
 text_       = {
                 barrel      = nil,
@@ -2180,6 +2189,7 @@ end
 
 local function explodeevent(locx,locy) -- EXPLODE
 shakingeffect ()
+audio.play(external.sfx.sound_1)
 number_.exnum = number_.exnum + 1
 explodemon[number_.exnum] = external.sprite.newSprite(external.spritefactory.spritexplode)
 explodemon[number_.exnum].x = locx
@@ -2193,7 +2203,7 @@ end
 
 local function barrelexplode(locx,locy) -- EXPLODE
 shakingeffect () 
-
+audio.play(external.sfx.sound_1)
 number_.exnum = number_.exnum + 1
 explodemon[number_.exnum] = external.sprite.newSprite(external.spritefactory.spritexplode)
 explodemon[number_.exnum].x = locx
@@ -2240,7 +2250,7 @@ end
 
 if ((event.object1.myname == "barrel" and event.object2.myname == "bullet") or 
     (event.object1.myname == "bullet" and event.object2.myname == "barrel")) then
-    audio.play(external.sfx.sound_1)
+    
 if event.object1.myname == "barrel" then
     explodeevent(event.object1.x,event.object1.y)
     number_.barrel = number_.barrel + 1
@@ -2575,7 +2585,6 @@ if ((event.object1.myname == "beam" and event.object2.myname == "runnerers") or
     end
 
     game_.killed = game_.killed + 1
-    audio.play(external.sfx.sound_1)
 end
 
 if ((event.object1.myname == "barrel" and event.object2.myname == "bigmaster") or 
@@ -2818,7 +2827,7 @@ displaytutorial:addEventListener("touch",starttutorial_)
 group[2]:insert(displaytutorial)
 else
     
-timer.performWithDelay(500, function()
+timer.performWithDelay(800, function()
     
     if count_ == 0 then
         text_.count:setText("R E A D Y")
@@ -2843,7 +2852,7 @@ timer.performWithDelay(500, function()
         transition.to(text_.count,{alpha = 0,time = 1000})
         audio.play(external.sfx.sound_9)
         audio.play( external.sfx.sound_13,{loops= -1,channel = 18} )
-        audio.setVolume( 0.4, { channel=18} )
+        audio.setVolume( 0.6, { channel=18} )
         Runtime:removeEventListener( "key", nonkey )
         Runtime:addEventListener( "key", pauseall )
     end

@@ -13,18 +13,12 @@ local scroller
 local buttons
 local devname
 local texting
-local twitter
 local switch
 local group
 local popup
 local color
 local bg
 
-local function followTwitterListener ()
-twitter:follow("justTrying01")
-twitter:authorise()
-external.adshow.storealert ("Followed")
-end
 
 local function audiovolume (event)
     
@@ -122,8 +116,6 @@ if keyName == "back" and event.phase == "down" then
             if 1 == i then
                 if devname == "Android" then
                     native.requestExit()
-                else
-                  os.exit()  
                 end
             elseif 2 == i then
             end
@@ -186,7 +178,6 @@ end
 
 function scene:createScene(event)
 external.adshow.callflurry("MENU")
-
 group = {}
 group[1] = self.view
 group[2] = display.newGroup()
@@ -238,7 +229,7 @@ scroller.y = scroller.y  + h - 30
 texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
 texting:setReferencePoint(display.BottomCenterReferencePoint);
 texting.x =  texting.width/2 + 20 
-texting.y = scroller.y + 120;    
+texting.y = scroller.y + texting.height;    
 texting:setTextColor( 0, 0, 0 )
 color = 
 {
@@ -367,8 +358,7 @@ buttons.twitbutton = external.widget.newButton
                         else
                             print ( "Connected" )
                             system.openURL("https://twitter.com/8appstudio")
-                            --twitter = external.GGTwitter:new( "qrocz3l60SijeAe9pXTDw", "RkaWqnQ7TY93qVCxA3e9bL7K3AKyH63fQba9EoRuw",followTwitterListener)
-                            --twitter:authorise()
+                          
                         end
                     end
                     network.request( "https://encrypted.google.com", "GET", networkListener )
@@ -507,14 +497,13 @@ buttons.storebutton = external.widget.newButton
     end,}
 buttons.storebutton:setReferencePoint(display.CenterRightReferencePoint)
 buttons.storebutton.x = display.contentWidth - 10
-buttons.storebutton.y =  50
+buttons.storebutton.y =  buttons.storebutton.height
 buttons.storebutton.alpha = 0
 
 timer.performWithDelay( 1000, function() 
 if (scenefrom.scenename == "gametype") or (scenefrom.scenename == "highscore") or (scenefrom.scenename == "howto") or (scenefrom.scenename == "store") then
 else
-    external.adshow.loading("hide")
-    
+    external.adshow.loading("hide") 
 end
 timer.performWithDelay( 1000, function() 
     if external.adshow.sqlload == false then
@@ -561,6 +550,7 @@ popup = false
 group[2]:removeSelf()
 group[2] = nil
 --external.adshow.callrevmob("hide")
+
 end
 
 function scene:destroyScene(event)  

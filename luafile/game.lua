@@ -148,7 +148,7 @@ master[1].humanstats = true
 
 end
 
-function ending ()
+function functions.ending ()
 print("end")
 end
 
@@ -207,7 +207,7 @@ local switch = event.target
         local stats = 
                 {
                     effect = "fade",
-                    time   = 300,
+                    time   = 1000,
                     params = 
                     {
                         uscore  = score[2],
@@ -217,7 +217,7 @@ local switch = event.target
                         ulevel  = level[2],
                         ulaser  = carup[11],
                         ucoin   = coin,
-                        gametype    = "survival",
+                        gametype = "survival",
                         
                     }
                 }
@@ -303,7 +303,7 @@ spritesset[13] :play()
 sound[15] = audio.play( external.sfx.sound_14, {channel = 32,loops=2 }  )
 external.physics.addBody(spritesset[13],"statc",{density  = 0.1,bounce = 0,friction = 0,isSensor = true})
 spritesset[15] = transition.to(spritesset[13], {y = display.contentHeight + 50, time = 15000})
-spritesset[16] = timer.performWithDelay(15000, ending, 1)
+spritesset[16] = timer.performWithDelay(15000, functions.ending, 1)
 spritesset[13] .myName = "cracken"
 spritesset[13] .id = "cracken"
 spritesset[13] .damage = den[12]
@@ -703,7 +703,7 @@ local function newText()
     
 gamestatus = true
 sound[16] = audio.play( external.sfx.sound_13,{loops= -1,channel = 18} )
-
+audio.setVolume( 0.6, { channel=18})
 local house_ = display.newRect(0, 0, w - 50, 10)
 house_:setReferencePoint(display.CenterReferencePoint)
 house_.x = w - 180;
@@ -1069,7 +1069,7 @@ group[3]:insert(carrun[numbers.carrunnum]);
 group[3]:insert(bump[numbers.carrunnum]);
 end
 
-function stopnow (event)
+function functions.stopnow (event)
 audio.stop({channel = 29})
 ticker[9] = false
 carup[12]:pause()
@@ -1098,7 +1098,7 @@ carup[11] = carup[11] - 1
 if carup[11] == -1 then
     carup[11] = 0
 end
-den[13] = timer.performWithDelay(8000, stopnow, 1) 
+den[13] = timer.performWithDelay(8000, functions.stopnow, 1) 
 end
 updateText()
 end
@@ -1885,7 +1885,7 @@ end
 
 end
 
-function start ()
+function functions.start ()
 
 timer.performWithDelay(1000,gamecount,3)
 end
@@ -2107,7 +2107,7 @@ if "ended" == event.phase or (event.keyName == "back" and event.phase == "down")
         spritesset[13]:play()
         spritesset[13]:addEventListener("touch",functions.crackentouch)
         spritesset[15] = transition.to(spritesset[13],{y = display.contentHeight + 50, time = spritesset[17]})
-        spritesset[16] = timer.performWithDelay(spritesset[17], ending, 1)
+        spritesset[16] = timer.performWithDelay(spritesset[17], functions.ending, 1)
         
     end
     audio.resume()
@@ -2944,7 +2944,7 @@ group[1]:insert(group[8])
 group[1]:insert(group[9])
 
 timer.performWithDelay(1000, function() 
-start ()
+functions.start()
 external.adshow.loading("hide") 
 end, 1)
 
@@ -3023,8 +3023,10 @@ external.adshow.loading("show")
 end
 
 function scene:destroyScene ( event )
+    
 group[1]:removeSelf(); group[1] = nil;
 Runtime:removeEventListener( "key", none )
+
 end
 
 scene:addEventListener("createScene",scene)
