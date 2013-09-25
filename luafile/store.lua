@@ -471,6 +471,7 @@ local function onSceneTouch(event)
                         {
                             scenename = "store",
                             level     = params.level,
+                            soundv    = params.soundv,
                         }
                     }
         storyboard.gotoScene( "luafile.levels", scenefrom ) 

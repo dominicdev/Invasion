@@ -136,6 +136,8 @@ storyboard.purgeAll()
 storyboard.removeAll() 
 level = numvolume.level
 
+--print(params.soundv)
+print(numvolume.soundv)
 pages.scroller_1 = external.widget.newScrollView
             {
                 width = display.contentWidth*.90,

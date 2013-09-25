@@ -507,6 +507,7 @@ timer.performWithDelay( 1000, function()
 if (scenefrom.scenename == "gametype") or (scenefrom.scenename == "highscore") or (scenefrom.scenename == "howto") or (scenefrom.scenename == "store") then
 else
     external.adshow.loading("hide") 
+    
 end
 timer.performWithDelay( 1000, function() 
     if external.adshow.sqlload == false then
@@ -520,6 +521,7 @@ transition.to(buttons.insbutton, { delay = 500,time=1000, x= display.contentWidt
 transition.to(buttons.highbutton, { delay = 300,time=1000, x= display.contentWidth - 320, transition=easing.inOutQuad}) 
 transition.to(buttons.aboutbutton, { delay = 1000,time=2000, alpha = 1}) 
 transition.to(buttons.storebutton, { delay = 1000,time=2000, alpha = 0}) 
+external.adshow.callrevmob("320x50")
 end, 1 )
 
 function showpopevent(event)
@@ -538,7 +540,6 @@ group[2]:insert(buttons.highbutton)
 group[2]:insert(buttons.storebutton)
 group[1]:insert(group[2])
 
-
 end
 
 function scene:exitScene(event)
@@ -551,7 +552,7 @@ Runtime:removeEventListener( "key", ExitAppss )
 popup = false
 group[2]:removeSelf()
 group[2] = nil
---external.adshow.callrevmob("hide")
+external.adshow.callrevmob("hide")
 
 end
 

@@ -172,18 +172,20 @@ function adshow.calladmob (banstats)
 --    end
 
 end
+
 local banner = nil
 local RevMob = require("luafile.revmob")
 local REVMOB_IDS = { ["Android"] = "51a6f392433111f6e90000f7", ["iPhone OS"] = "51a6f380433111f6e90000e8" }
 RevMob.startSession(REVMOB_IDS)
 
 function adshow.callrevmob (bansize)
+    
     if bansize == "320x50" then
         banner = RevMob.createBanner({x = display.contentWidth / 2, y = _H - 50, width = _W, height = 100 })
         banner:show()
     elseif bansize == "fullscreen" then
-        banner = RevMob.createFullscreen() 
-        banner:show()
+--        banner = RevMob.createFullscreen() 
+--        banner:show()
     elseif bansize == "showpop" then
         banner = RevMob.createPopup()
         banner:show()

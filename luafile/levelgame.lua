@@ -48,7 +48,7 @@ local rightTrans
 local leftTrans
 local originalTrans
 local shakeTime = 80
-local shakeRange = {min = 1, max = 3}
+local shakeRange = {min = 1, max = 5}
 local endShake   	
 
 moveRightFunction = function(event) rightTrans = transition.to(stage, {x = math.random(shakeRange.min,shakeRange.max), y = math.random(shakeRange.min, shakeRange.max), time = shakeTime, onComplete=moveLeftFunction}); end 
@@ -624,20 +624,9 @@ local function pauseall (event)
             end
             
             
-            if bol.bosstats == true then
-                timer.pause(timer_.bosstats)
-                if boss.bol_ == true then
-                    transition.cancel(boss.move_)
-                    boss.timepause_ = timer.pause(boss.timer_)
-                end
-                if boss.bol_1 == true then
-                    transition.cancel(boss.move_1)
-                    boss.timepause_1 = timer.pause(boss.timer_1)
-                end
-                if boss.bol_2 == true then
-                    transition.cancel(boss.move_2)
-                    boss.timepause_2 = timer.pause(boss.timer_2)
-                end
+            
+                
+                
                 if boss.stats_ == true then
                     for k = 1, #boss do
                         if boss[k].myname ~= nil then
@@ -645,8 +634,24 @@ local function pauseall (event)
                             boss[k]:removeEventListener("touch",functions.removerunner)
                         end
                     end
+                    if boss.bol_ == true then
+                        transition.cancel(boss.move_)
+                        boss.timepause_ = timer.pause(boss.timer_)
+                    end
+                    if boss.bol_1 == true then
+                        transition.cancel(boss.move_1)
+                        boss.timepause_1 = timer.pause(boss.timer_1)
+                    end
+                    if boss.bol_2 == true then
+                        transition.cancel(boss.move_2)
+                        boss.timepause_2 = timer.pause(boss.timer_2)
+                    end
+                else
+                    if bol.bosstats == true and number_.bossing ~= 0 then
+                        timer.pause(timer_.bosstats)
+                     end
                 end
-            end
+            
             game_.pause = false
             
         elseif game_.pause == false and game_.over == false then
@@ -758,43 +763,8 @@ local function pauseall (event)
                         trans.top_5 = transition.to (game_.movingobject,{y = display.contentHeight,time = trans.can_5,onComplete = functions.top_5})  
                         timer.resume(trans.timer_5)
                 end
-                                    
              
-            if bol.bosstats == true then
-                timer.resume(timer_.bosstats)
-                if boss.bol_ == true then
-                    boss.move_ = transition.to(boss[boss.num],{time = boss.timepause_,y = display.contentHeight*.25,onComplete = functions.move1})
-                    timer.resume(boss.timer_)
-                end
-
-                if boss.bol_1 == true then
-                    if boss.locx == 1 then
-                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = display.contentWidth / 2,onComplete = functions.move2}) 
-                    elseif boss.locx == 2 then
-                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  + (display.contentWidth*.25),onComplete = functions.move2}) 
-                    elseif boss.locx == 3 then    
-                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  - (display.contentWidth*.25),onComplete = functions.move2}) 
-                    elseif boss.locx == 4 then
-                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  + (display.contentWidth*.25) + (display.contentWidth*.125),onComplete = functions.move2}) 
-                    elseif boss.locx == 5 then    
-                        boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  - (display.contentWidth*.25) - (display.contentWidth*.125),onComplete = functions.move2}) 
-                    end
-                    timer.resume(boss.timer_1)
-                end
-                if boss.bol_2 == true then
-                    if boss.locy == 1 then
-                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = display.contentWidth / 2,onComplete = functions.move1}) 
-                    elseif boss.locy == 2 then
-                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  + (display.contentWidth*.25),onComplete = functions.move1}) 
-                    elseif boss.locy == 3 then    
-                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  - (display.contentWidth*.25),onComplete = functions.move1}) 
-                    elseif boss.locy == 4 then
-                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  + (display.contentWidth*.25) + (display.contentWidth*.125),onComplete = functions.move1}) 
-                    elseif boss.locy == 5 then    
-                        boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  - (display.contentWidth*.25) - (display.contentWidth*.125),onComplete = functions.move1}) 
-                    end
-                    timer.resume(boss.timer_2)
-                end
+            
                 if boss.stats_ == true then
                     for k = 1, #boss do
                         if boss[k].myname ~= nil then
@@ -802,8 +772,46 @@ local function pauseall (event)
                             boss[k]:addEventListener("touch",functions.removerunner)
                         end
                     end
+                    if boss.bol_ == true then
+                        boss.move_ = transition.to(boss[boss.num],{time = boss.timepause_,y = display.contentHeight*.25,onComplete = functions.move1})
+                        timer.resume(boss.timer_)
+                    end
+
+                    if boss.bol_1 == true then
+                        if boss.locx == 1 then
+                            boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = display.contentWidth / 2,onComplete = functions.move2}) 
+                        elseif boss.locx == 2 then
+                            boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  + (display.contentWidth*.25),onComplete = functions.move2}) 
+                        elseif boss.locx == 3 then    
+                            boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  - (display.contentWidth*.25),onComplete = functions.move2}) 
+                        elseif boss.locx == 4 then
+                            boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  + (display.contentWidth*.25) + (display.contentWidth*.125),onComplete = functions.move2}) 
+                        elseif boss.locx == 5 then    
+                            boss.move_1 = transition.to(boss[boss.num],{time = boss.timepause_1,x = (display.contentWidth / 2)  - (display.contentWidth*.25) - (display.contentWidth*.125),onComplete = functions.move2}) 
+                        end
+                        timer.resume(boss.timer_1)
+                    end
+                    if boss.bol_2 == true then
+                        if boss.locy == 1 then
+                            boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = display.contentWidth / 2,onComplete = functions.move1}) 
+                        elseif boss.locy == 2 then
+                            boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  + (display.contentWidth*.25),onComplete = functions.move1}) 
+                        elseif boss.locy == 3 then    
+                            boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  - (display.contentWidth*.25),onComplete = functions.move1}) 
+                        elseif boss.locy == 4 then
+                            boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  + (display.contentWidth*.25) + (display.contentWidth*.125),onComplete = functions.move1}) 
+                        elseif boss.locy == 5 then    
+                            boss.move_2 = transition.to(boss[boss.num],{time = boss.timepause_2,x = (display.contentWidth / 2)  - (display.contentWidth*.25) - (display.contentWidth*.125),onComplete = functions.move1}) 
+                        end
+                        timer.resume(boss.timer_2)
+                    end
+                else
+                    if bol.bosstats == true and number_.bossing ~= 0 then
+                       timer.resume(timer_.bosstats)
+
+                    end
                 end  
-            end
+            
             game_.pause = true    
         end
         return true
@@ -1021,7 +1029,8 @@ if event.phase == "began" then
         if number_.bossing == 0 then
             bol.bosstats = false
         elseif number_.bossing ~= 0 then
-            timer.resume(timer_.bosstats)    
+            timer.resume(timer_.bosstats)  
+            bol.bosspause = false
         end
     elseif hit.damage == 0 and hit.myname == "bigmaster" then
         
@@ -1248,6 +1257,7 @@ monsters[number_.monster].myname = "runnerers";
 monsters[number_.monster]:addEventListener("touch",functions.removerunner)
 group[3]:insert(monsters[number_.monster])
 bol.top = math.random (1,3)
+
 game_.movingobject = monsters[number_.monster]
 if bol.top == 1 then
     monsters[number_.monster].x =  50
@@ -1362,6 +1372,7 @@ boss.bol_ = true
 boss.stats_ = true
 if number_.bossing ~= 0 then
     timer.pause(timer_.bosstats)
+    bol.bosspause  = true
 end
 
 end
@@ -1478,32 +1489,37 @@ end
 end
 
 local function fencehit ()
+    print(number_.fencelife)
     if number_.fencelife == 4 then
         objects_.fence:removeSelf()
         objects_.fence.myname = nil
-        timer.performWithDelay(1, function() 
         objects_.fence = external.sprite.newSprite(external.spritefactory.spritefence);
         objects_.fence:prepare("fence2");
         objects_.fence.x = w_;
         objects_.fence.y = h_ + 130;
         objects_.fence:play();
+        timer.performWithDelay(100, function() 
+        
         external.physics.addBody(objects_.fence,"static",{density = 0, bounce = 0,isSensor = true});
         objects_.fence.myname = "fence";
         group[3]:insert(objects_.fence);
         end, 1)
+    
     elseif number_.fencelife == 2 then
         objects_.fence:removeSelf()
         objects_.fence.myname = nil
-        timer.performWithDelay(1, function()
         objects_.fence = external.sprite.newSprite(external.spritefactory.spritefence);
         objects_.fence:prepare("fence3");
         objects_.fence.x = w_;
         objects_.fence.y = h_ + 130;
         objects_.fence:play();
+        timer.performWithDelay(100, function()
+        
         external.physics.addBody(objects_.fence,"static",{density = 0, bounce = 0,isSensor = true});
         objects_.fence.myname = "fence";
         group[3]:insert(objects_.fence);
         end, 1)
+    
     elseif number_.fencelife == 0 and bol.fence == true then
         objects_.fence:removeSelf()
         objects_.fence.myname = nil
@@ -1551,6 +1567,7 @@ bol         = {
                 bols        = false,
                 bosstats    = false,
                 bigboss     = false,
+                bosspause   = false,
                 }
 text_       = {
                 barrel      = nil,
@@ -1867,14 +1884,14 @@ objects_.monster.y = display.contentHeight - 30
 objects_.monster.alpha = 0
 group[3]:insert(objects_.monster)
 
-objects_.master = display.newImageRect("button/icon/smallgus.png",60,60)
+objects_.master = display.newImageRect("button/icon/smallgiz.png",60,60)
 objects_.master:setReferencePoint(display.CenterReferencePoint)
 objects_.master.x = display.contentWidth - 270
 objects_.master.y = display.contentHeight - 30
 objects_.master.alpha = 0
 group[3]:insert(objects_.master)
 
-objects_.bigmaster = display.newImageRect("button/icon/smallgiz.png",60,60)
+objects_.bigmaster = display.newImageRect("button/icon/smallship.png",60,60)
 objects_.bigmaster:setReferencePoint(display.CenterReferencePoint)
 objects_.bigmaster.x = display.contentWidth - 370
 objects_.bigmaster.y = display.contentHeight - 30
@@ -2140,13 +2157,13 @@ local phase = event.phase
         elseif "ended" == phase or "cancelled" == phase then
             display.getCurrentStage():setFocus( nil )
             t.isFocus = false
-            if t.y > (display.contentHeight - 120) then 
-            t.x = display.contentWidth - 60;
-            t.y = h_ + (h_/2) - 50;
-            elseif t.x > (display.contentWidth - 70) then
-            t.x = display.contentWidth - 60;
-            t.y = h_ + (h_/2) - 50;
-            else
+--            if t.y > (display.contentHeight - 120) then 
+--            t.x = display.contentWidth - 60;
+--            t.y = h_ + (h_/2) - 50;
+--            elseif t.x > (display.contentWidth - 70) then
+--            t.x = display.contentWidth - 60;
+--            t.y = h_ + (h_/2) - 50;
+--            else
             functions.striker (laser[number_.lasernumber].y)
             laser[number_.lasernumber]:removeSelf()
             laser[number_.lasernumber]:removeEventListener( "touch", functions.lasertouch )
@@ -2157,7 +2174,7 @@ local phase = event.phase
             laser[number_.lasernumber].y = h_ + (h_/2) - 50;
             laser[number_.lasernumber]:addEventListener( "touch", functions.lasertouch )
             group[3]:insert(laser[number_.lasernumber])
-            end  
+            --end  
         end
     end
     return true
@@ -2242,6 +2259,7 @@ end
 
 if ((event.object1.myname == "fence" and event.object2.myname == "bullet") or 
     (event.object1.myname == "bullet" and event.object2.myname == "fence")) then
+    
         if event.object1.myname == "bullet" then
                 event.object1:removeSelf()
                 event.object1.myname = nil
@@ -2310,13 +2328,13 @@ if  (event.object1.myname == "masters" and event.object2.myname == "runnerers") 
     (event.object1.myname == "bigmaster" and event.object2.myname == "masters") or 
     (event.object1.myname == "masters" and event.object2.myname == "bigmaster")then
 
-    if event.phase == "began" then
-        event.object1.isSensor = true
-        event.object2.isSensor = true
-    elseif event.phase == "ended" then
-        event.object1.isSensor = false
-        event.object2.isSensor = false
-    end
+--    if event.phase == "began" then
+--        event.object1.isSensor = true
+--        event.object2.isSensor = true
+--    elseif event.phase == "ended" then
+--        event.object1.isSensor = false
+--        event.object2.isSensor = false
+--    end
 
 end
 
@@ -2336,33 +2354,33 @@ if ((event.object1.myname == "fence" and event.object2.myname == "runnerers") or
                     timer.resume(timer_.movmob)   
                 end
             end
-    if event.object1.myname == "runnerers" and event.phase == "began" then
+    if event.object1.myname == "runnerers" then
         number_.fencelife = number_.fencelife - 1
         event.object1:removeSelf()
         event.object1.myname = nil
         number_.mobster = number_.mobster - 1
         game_.killed = game_.killed + 1
-    elseif event.object2.myname == "runnerers" and event.phase == "began" then
+    elseif event.object2.myname == "runnerers" then
         number_.fencelife = number_.fencelife - 1
         event.object2:removeSelf()
         event.object2.myname = nil
         number_.mobster = number_.mobster - 1
         game_.killed = game_.killed + 1
-    elseif event.object1.myname == "masters" and event.phase == "began" then
+    elseif event.object1.myname == "masters" then
         number_.fencelife = number_.fencelife - 1
         event.object1:removeSelf()
         event.object1.myname = nil
         number_.mastermon = number_.mastermon - 1
         game_.killed = game_.killed + 1
-    elseif event.object2.myname == "masters" and event.phase == "began" then
+    elseif event.object2.myname == "masters" then
         number_.fencelife = number_.fencelife - 1
         event.object2:removeSelf()
         event.object2.myname = nil
         number_.mastermon = number_.mastermon - 1
         game_.killed = game_.killed + 1
-    elseif event.object1.myname == "bigmaster" and event.phase == "began" then
+    elseif event.object1.myname == "bigmaster" then
         number_.fencelife = 0
-    elseif event.object2.myname == "bigmaster" and event.phase == "began" then    
+    elseif event.object2.myname == "bigmaster" then    
         number_.fencelife = 0
     end
 
