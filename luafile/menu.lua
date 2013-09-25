@@ -19,49 +19,48 @@ local popup
 local color
 local bg
 
-
 local function audiovolume (event)
     
-    if event.phase == "ended" then
-        if event.target.id == "mute" then
-            audio.setVolume( 0 )
-            buttons.playpause:removeSelf()
-            buttons.playpause = nil
-            buttons.playpause = external.widget.newButton
-                {
-                defaultFile = "button/audiobutton/mute.png",
-                overFile    = "button/audiobutton/play.png",
-                id          = "soundon",
-                width       = 80, 
-                height      = 80,
-                emboss      = true,
-                onRelease   = audiovolume,
-                }
-            buttons.playpause.x = 60
-            buttons.playpause.y = 50
-            group[2]:insert(buttons.playpause) 
-            external.adshow.audiostats = false
-        elseif event.target.id == "soundon" then
-            audio.setVolume(numvolume)
-            
-            buttons.playpause:removeSelf()
-            buttons.playpause = nil
-            buttons.playpause = external.widget.newButton
-                {
-                defaultFile = "button/audiobutton/play.png",
-                overFile    = "button/audiobutton/mute.png",
-                id          = "mute",
-                width       = 80, 
-                height      = 80,
-                emboss      = true,
-                onRelease   = audiovolume,
-                }
-            buttons.playpause.x = 60
-            buttons.playpause.y = 50
-            group[2]:insert(buttons.playpause)
-            external.adshow.audiostats = true
-        end
-    end 
+if event.phase == "ended" then
+    if event.target.id == "mute" then
+        audio.setVolume( 0 )
+        buttons.playpause:removeSelf()
+        buttons.playpause = nil
+        buttons.playpause = external.widget.newButton
+            {
+            defaultFile = "button/audiobutton/mute.png",
+            overFile    = "button/audiobutton/play.png",
+            id          = "soundon",
+            width       = 80, 
+            height      = 80,
+            emboss      = true,
+            onRelease   = audiovolume,
+            }
+        buttons.playpause.x = 60
+        buttons.playpause.y = 50
+        group[2]:insert(buttons.playpause) 
+        external.adshow.audiostats = false
+    elseif event.target.id == "soundon" then
+        audio.setVolume(numvolume)
+
+        buttons.playpause:removeSelf()
+        buttons.playpause = nil
+        buttons.playpause = external.widget.newButton
+            {
+            defaultFile = "button/audiobutton/play.png",
+            overFile    = "button/audiobutton/mute.png",
+            id          = "mute",
+            width       = 80, 
+            height      = 80,
+            emboss      = true,
+            onRelease   = audiovolume,
+            }
+        buttons.playpause.x = 60
+        buttons.playpause.y = 50
+        group[2]:insert(buttons.playpause)
+        external.adshow.audiostats = true
+    end
+end 
 end
 
 local function onSceneTouch(event)
@@ -213,23 +212,24 @@ audio.play(external.sfx.backmusic,{loops = 99,channel = 1})
 audio.setVolume(0.3, {channel = 1})
 
 scroller = external.widget.newScrollView
-            {
-                width = 240,
-                height = 320,
-                maskFile= "background/mask160x120.png",
-                hideBackground = true,
-                hideScrollBar = true,
-            }
+{
+    width = 240,
+    height = 320,
+    maskFile= "background/mask160x120.png",
+    hideBackground = true,
+    hideScrollBar = true,
+    verticalScrollDisabled  = true,
+    horizontalScrollDisabled = true,
+}
 scroller:setReferencePoint(display.CenterReferencePoint)
 scroller.x = (w/2) - 10
 scroller.y = scroller.y  + h - 30
-
 
 --texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\nDeveloper:\nDominic Wagas\n\nGraphic Artist:\nBea Jimenez \n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
 texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
 texting:setReferencePoint(display.BottomCenterReferencePoint);
 texting.x =  texting.width/2 + 20 
-texting.y = scroller.y + texting.height;    
+texting.y = scroller.height + texting.height
 texting:setTextColor( 0, 0, 0 )
 color = 
 {
@@ -248,30 +248,32 @@ scroller:insert(texting)
 local function aboutustop (object)
     local function mustdone ()
         timertrans = false      
+        
     end
-transition.to(buttons.facebutton,{time = 1000,alpha = 1,onComplete = mustdone})
-transition.to(buttons.twitbutton,{time = 1000,alpha = 1,onComplete = mustdone})
+--transition.to(buttons.facebutton,{time = 1000,alpha = 1,onComplete = mustdone})
+--transition.to(buttons.twitbutton,{time = 1000,alpha = 1,onComplete = mustdone})
+buttons.appbutton.y = texting.y + 10
 transition.to(buttons.appbutton,{time = 1000,alpha = 1,onComplete = mustdone})
 end
  
 buttons.aboutbutton = external.widget.newButton
-    {
-        defaultFile = "button/woodbutton/aboutbtn.png",
-        overFile    = "button/woodbutton/aboutbtnover.png",
-        width       = 200, 
-        height      = 60,
-        onRelease   = function (event)
-            audio.play(external.sfx.clicksound)  
-            if event.phase == "ended" and timertrans == false then
-                buttons.facebutton.alpha = 0
-                buttons.twitbutton.alpha = 0
-                buttons.appbutton.alpha = 0
-                texting.y = scroller.y + 120;
-                timerstop = transition.to(texting,{time = 9000,y = 25,onComplete = aboutustop})
-                timertrans = true   
-            end
-        end,
-    }
+{
+    defaultFile = "button/woodbutton/aboutbtn.png",
+    overFile    = "button/woodbutton/aboutbtnover.png",
+    width       = 200, 
+    height      = 60,
+    onRelease   = function (event)
+        audio.play(external.sfx.clicksound)  
+        if event.phase == "ended" and timertrans == false then
+            buttons.facebutton.alpha = 0
+            buttons.twitbutton.alpha = 0
+            buttons.appbutton.alpha = 0
+            texting.y = scroller.height + texting.height
+            timerstop = transition.to(texting,{time = 3000,y = texting.height + 50,alpha = 0.9,onComplete = aboutustop})
+            timertrans = true   
+        end
+    end,
+}
 buttons.aboutbutton:setReferencePoint(display.CenterReferencePoint)
 buttons.aboutbutton.x = w/2 - 10
 buttons.aboutbutton.y = h + 300
@@ -349,22 +351,22 @@ buttons.twitbutton = external.widget.newButton
     width       = 80, 
     height      = 80,
     onRelease   = function (event)
-            audio.play(external.sfx.clicksound)
-            if event.phase == "ended" then
-                local function networkListener( event )
-                        if ( event.isError ) then
-                            --print( "Network error!")
-                            external.adshow.storealert ("Network Error")
-                        else
-                            print ( "Connected" )
-                            system.openURL("https://twitter.com/8appstudio")
-                          
-                        end
-                    end
-                    network.request( "https://encrypted.google.com", "GET", networkListener )
-                    external.adshow.storealert ("Check internet connection")   
+        audio.play(external.sfx.clicksound)
+        if event.phase == "ended" then
+            local function networkListener( event )
+                if ( event.isError ) then
+                    --print( "Network error!")
+                    external.adshow.storealert ("Network Error")
+                else
+                    print ( "Connected" )
+                    system.openURL("https://twitter.com/8appstudio")
+
                 end
-        end,
+            end
+            network.request( "https://encrypted.google.com", "GET", networkListener )
+            external.adshow.storealert ("Check internet connection")   
+        end
+    end,
 
 }
 buttons.twitbutton:setReferencePoint(display.CenterLeftReferencePoint)
@@ -401,8 +403,8 @@ buttons.appbutton:setReferencePoint(display.CenterLeftReferencePoint)
 buttons.appbutton.x = 20
 buttons.appbutton.y = buttons.twitbutton.y  + 90
 buttons.appbutton.alpha = 0
-
 scroller:insert(buttons.appbutton)
+
 buttons.newbutton = external.widget.newButton
 {
     defaultFile = "button/woodbutton/newgamebtn.png",
@@ -473,28 +475,29 @@ buttons.highbutton.x = buttons.insbutton.x
 buttons.highbutton.y = buttons.insbutton.y + 100
 
 buttons.storebutton = external.widget.newButton
-    {
-    defaultFile = "button/woodbutton/moregamesbtn.png",
-    overFile    = "button/woodbutton/moregamesbtnover.png",
-    width       = 211, 
-    height      = 50,
-    onRelease = function(event)
-        audio.play(external.sfx.clicksound)
-        if event.phase == "ended" then
-            local function networkListener( event )
-                if ( event.isError ) then
-                    print( "Network error!")
-                    external.adshow.storealert ("Network Error")
-                else
-                    print ( "Connected" )
-                    external.adshow.showmore()
-                    external.adshow.calltapfortap ("appwall")
-                end
+{
+defaultFile = "button/woodbutton/moregamesbtn.png",
+overFile    = "button/woodbutton/moregamesbtnover.png",
+width       = 211, 
+height      = 50,
+onRelease = function(event)
+    audio.play(external.sfx.clicksound)
+    if event.phase == "ended" then
+        local function networkListener( event )
+            if ( event.isError ) then
+                print( "Network error!")
+                external.adshow.storealert ("Network Error")
+            else
+                print ( "Connected" )
+                external.adshow.showmore()
+                external.adshow.calltapfortap ("appwall")
             end
-            network.request( "https://encrypted.google.com", "GET", networkListener )
-            external.adshow.storealert ("Check internet connection")
         end
-    end,}
+        network.request( "https://encrypted.google.com", "GET", networkListener )
+        external.adshow.storealert ("Check internet connection")
+    end
+end,
+}
 buttons.storebutton:setReferencePoint(display.CenterRightReferencePoint)
 buttons.storebutton.x = display.contentWidth - 10
 buttons.storebutton.y =  buttons.storebutton.height
@@ -516,7 +519,7 @@ transition.to(buttons.newbutton, { time=1000, x= display.contentWidth - 320, tra
 transition.to(buttons.insbutton, { delay = 500,time=1000, x= display.contentWidth - 320, transition=easing.inOutQuad}) 
 transition.to(buttons.highbutton, { delay = 300,time=1000, x= display.contentWidth - 320, transition=easing.inOutQuad}) 
 transition.to(buttons.aboutbutton, { delay = 1000,time=2000, alpha = 1}) 
-transition.to(buttons.storebutton, { delay = 1000,time=2000, alpha = 1}) 
+transition.to(buttons.storebutton, { delay = 1000,time=2000, alpha = 0}) 
 end, 1 )
 
 function showpopevent(event)
@@ -524,7 +527,6 @@ function showpopevent(event)
         native.cancelWebPopup()
         popup = false
     end
-
 end
 
 Runtime:addEventListener( "touch", showpopevent )

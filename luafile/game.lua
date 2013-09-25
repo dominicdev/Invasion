@@ -250,15 +250,17 @@ function functions.crackentouch (event)
 local object = event.target
 if event.phase == "began" then
     object.damage = object.damage - 1
-    audio.play(external.sfx.sound_2 ,{channel = 1})
-    numbers.crackernum = numbers.crackernum + 1;
-    flash[numbers.crackernum] = external.sprite.newSprite(external.spritefactory.spriteflash)
-    flash[numbers.crackernum].x = event.target.x
-    flash[numbers.crackernum].y = event.target.y
-    flash[numbers.crackernum]:prepare("flash")
-    flash[numbers.crackernum]:play()
-    group[3]:insert(flash[numbers.crackernum])
-    flash[numbers.crackernum]:addEventListener( "sprite", spriteListener_ )
+        local availableChannel = audio.findFreeChannel()
+        audio.setVolume(params.soundv, {channel = availableChannel})
+        audio.play(external.sfx.sound_2 ,{channel = availableChannel})
+        numbers.crackernum = numbers.crackernum + 1;
+        flash[numbers.crackernum] = external.sprite.newSprite(external.spritefactory.spriteflash)
+        flash[numbers.crackernum].x = event.target.x
+        flash[numbers.crackernum].y = event.target.y
+        flash[numbers.crackernum]:prepare("flash")
+        flash[numbers.crackernum]:play()
+        group[3]:insert(flash[numbers.crackernum])
+        flash[numbers.crackernum]:addEventListener( "sprite", spriteListener_ )
 
     if object.damage == 0 then
         crackxplode[1] = crackxplode[1] + 1
@@ -277,7 +279,7 @@ if event.phase == "began" then
         group[2]:remove(object)
         score[2] = score[2] + 200
     end
-audio.stop( sound[15])
+    audio.stop( sound[15])
     if object.damage == -1 then
         object.damage = 0
     end
@@ -1172,7 +1174,9 @@ local masdead = 11 + master[2].deadnum
 if event.phase == "began" then
     masterdead.damage = masterdead.damage - 1
     if masterdead.damage > 0 then
-        audio.play(external.sfx.sound_2)
+        local availableChannel = audio.findFreeChannel()
+        audio.setVolume(params.soundv, {channel = availableChannel})
+        audio.play(external.sfx.sound_2,{channel = availableChannel})
         numbers.flasnum = numbers.flasnum + 1;
         flash[numbers.flasnum] = external.sprite.newSprite(external.spritefactory.spriteflash)
         flash[numbers.flasnum].x = x1
@@ -1234,10 +1238,12 @@ if event.phase == "began" then
         flash[numbers.flasnum]:addEventListener( "sprite", spriteListener )
     end
     
-    
+    local availableChannel = audio.findFreeChannel()
+    print(availableChannel)
     if hit.damage == 0 then
         trans[6].id_5 = false
-        audio.play(external.sfx.splat)
+        audio.setVolume(params.soundv, {channel = availableChannel})
+        audio.play(external.sfx.splat,{channel = availableChannel})
         deadtable[numbers.deadnum] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
         deadtable[numbers.deadnum].x = x1
         deadtable[numbers.deadnum].y = y1
@@ -1245,7 +1251,7 @@ if event.phase == "began" then
         if hit.id == "runner 1" then
           deadtable[numbers.deadnum]:prepare("dead_2")  
         elseif hit.id == "runner 2" then
-          deadtable[numbers.deadnum]:prepare("dead_2")
+          deadtable[numbers.deadnum]:prepare("dead_3")
         elseif hit.id == "runner 3" then
           deadtable[numbers.deadnum]:prepare("dead_3")
         elseif hit.id == "runner 4" then

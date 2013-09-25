@@ -143,7 +143,7 @@ local function screengo (event)
                     storyboard.gotoScene( "luafile.menu",option)
                     external.adshow.callflurry("Quit GaveOVER")
             else
-                local alert = native.showAlert( "Record not Saved", "Are You Sure?", { "YES", "NO" }, onComplete ) 
+                local alert = native.showAlert( "Record not Saved", "Name not Save,Are You Sure?", { "YES", "NO" }, onComplete ) 
                 bol.savego = event.target.id
             end
             
@@ -162,7 +162,7 @@ local function screengo (event)
                  storyboard.gotoScene( "luafile.mainrestart",option)
                  external.adshow.callflurry("Restart GaveOVER")
             else
-                local alert = native.showAlert( "Record not Saved", "Are You Sure?", { "YES", "NO" }, onComplete )  
+                local alert = native.showAlert( "Record not Saved", "Name not Save,Are You Sure?", { "YES", "NO" }, onComplete )  
                 bol.savego = event.target.id
             end 
         end
@@ -874,6 +874,7 @@ end
 
 function scene:createScene(event)
 params = event.params
+
 group = 
     {
     group_1 = display.newGroup(),
@@ -1323,17 +1324,23 @@ local function countstart (event)
             display_.count:setText("R E A D Y")
             display_.count:setReferencePoint(display.CenterReferencePoint);
             display_.count.x = w_ ; 
-            audio.play(external.sfx.star)
+            local availableChannel = audio.findFreeChannel()
+            audio.setVolume(params.soundv, {channel = availableChannel})
+            audio.play(external.sfx.star, {channel = availableChannel})
         elseif count_ == 1 then
             display_.count:setText("S E T")
             display_.count:setReferencePoint(display.CenterReferencePoint);
             display_.count.x = w_ ;
-            audio.play(external.sfx.star)
+            local availableChannel = audio.findFreeChannel()
+            audio.setVolume(params.soundv, {channel = availableChannel})
+            audio.play(external.sfx.star, {channel = availableChannel})
         elseif count_ == 2 then
             display_.count:setText("G O")
             display_.count:setReferencePoint(display.CenterReferencePoint);
             display_.count.x = w_ ;
-            audio.play(external.sfx.star)
+            local availableChannel = audio.findFreeChannel()
+            audio.setVolume(params.soundv, {channel = availableChannel})
+            audio.play(external.sfx.star, {channel = availableChannel})
         elseif count_ == 3 then
             display_.count:setText("Game On!")
             display_.count:setReferencePoint(display.CenterReferencePoint);
@@ -1342,7 +1349,7 @@ local function countstart (event)
             transition.to(display_.count,{alpha = 0,time = 500,onComplete = removecounttext})
             audio.play(external.sfx.sound_9)
             audio.play( external.sfx.sound_13,{loops= -1,channel = 18} )
-            audio.setVolume( 0.4, { channel=18} )
+            audio.setVolume( 0.5, { channel=18} )
             Runtime:removeEventListener( "key", none )
             Runtime:addEventListener( "key", pauseallgame )
             start()

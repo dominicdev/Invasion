@@ -118,6 +118,7 @@ local function onSceneTouch (event)
                     car         = number_.carP,
                     laser       = number_.laserP,
                     barrel      = number_.barrelP,
+                    soundv      = params.soundv,
                 }
             }
             storyboard.gotoScene( "luafile.mainrestart",option)
@@ -918,7 +919,9 @@ if event.phase == "began" then
     event.target.damage = event.target.damage - 1
     local x1 = hit.x
     local y1 = hit.y
-    audio.play(external.sfx.sound_2)
+    local availableChannel = audio.findFreeChannel()
+    audio.setVolume(params.soundv, {channel= availableChannel})
+    audio.play(external.sfx.sound_2,{channel = availableChannel})
     if hit.damage > 0 then
     number_.flasher = number_.flasher + 1;
     flash[number_.flasher] = external.sprite.newSprite(external.spritefactory.spriteflash)
@@ -939,6 +942,7 @@ if event.phase == "began" then
             elseif holder == "runner 1" then 
                 dead[number_.deadmon]:prepare("dead_3")  
             end
+            audio.play(external.sfx.splat)
         elseif hit.name == "mover" then
             dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritexplode)
             dead[number_.deadmon]:prepare("explode") 
@@ -949,6 +953,9 @@ if event.phase == "began" then
                 if bol.movrun == true and number_.movnum ~= 0 then
                 timer.resume(timer_.movmob)   
             end
+            local availableChannel = audio.findFreeChannel()
+            audio.setVolume( params.soundv, {channel= availableChannel } )
+            audio.play(external.sfx.sound_1,{channel = availableChannel})
         end
     
         dead[number_.deadmon].x = x1
@@ -960,7 +967,7 @@ if event.phase == "began" then
         event.target.myname = nil
         number_.mobster = number_.mobster - 1
         game_.killed = game_.killed + 1
-        audio.play(external.sfx.splat)
+        
     elseif hit.damage == 0 and hit.myname == "masters" then
         
         number_.score = number_.score + 100
@@ -1005,7 +1012,9 @@ if event.phase == "began" then
         dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
         event.target:removeSelf() 
         event.target.myname = nil
-        audio.play(external.sfx.sound_1)
+        local availableChannel = audio.findFreeChannel()
+        audio.setVolume( params.soundv, {channel= availableChannel } )
+        audio.play(external.sfx.sound_1,{channel = availableChannel})
         boss.stats_ = false
         number_.bossing = number_.bossing - 1
         game_.killed = game_.killed + 1 
@@ -1017,10 +1026,10 @@ if event.phase == "began" then
     elseif hit.damage == 0 and hit.myname == "bigmaster" then
         
         number_.score = number_.score + 500
-        dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
+        dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritexplode)
         dead[number_.deadmon].x = x1
         dead[number_.deadmon].y = y1
-        dead[number_.deadmon]:prepare("dead_1")  
+        dead[number_.deadmon]:prepare("explode")  
         dead[number_.deadmon]:play()
         group[2]:insert(dead[number_.deadmon])
         dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
@@ -1028,8 +1037,9 @@ if event.phase == "began" then
         event.target.myname = nil
         number_.bignum = number_.bignum - 1
         game_.killed = game_.killed + 1 
-        audio.play(external.sfx.splat)
-        --audio.play( external.sfx.sound_1)
+        local availableChannel = audio.findFreeChannel()
+        audio.setVolume( params.soundv, { channel= availableChannel } )
+        audio.play(external.sfx.sound_1,{channel = availableChannel})
         if number_.bignum == 0 then
             audio.stop({channel = 19})
             audio.fade({channel=19, time=2000, volume=0})
@@ -2732,27 +2742,37 @@ function functions.taptutorial_(event)
                         if count_ == 0 then
                             text_.count:setText("R E A D Y")
                             text_.count:setReferencePoint(display.CenterReferencePoint);
-                            text_.count.x = w_ ; 
-                            audio.play(external.sfx.star)
+                            text_.count.x = w_ ;
+                            local availableChannel = audio.findFreeChannel()
+                            audio.setVolume(params.soundv, {channel = availableChannel})
+                            audio.play(external.sfx.star, {channel = availableChannel})
                         elseif count_ == 1 then
                             text_.count:setText("S E T")
                             text_.count:setReferencePoint(display.CenterReferencePoint);
                             text_.count.x = w_ ;
-                            audio.play(external.sfx.star)
+                            local availableChannel = audio.findFreeChannel()
+                            audio.setVolume(params.soundv, {channel = availableChannel})
+                            audio.play(external.sfx.star, {channel = availableChannel})
                         elseif count_ == 2 then
                             text_.count:setText("G O")
                             text_.count:setReferencePoint(display.CenterReferencePoint);
                             text_.count.x = w_ ;
-                            audio.play(external.sfx.star)
+                            local availableChannel = audio.findFreeChannel()
+                            audio.setVolume(params.soundv, {channel = availableChannel})
+                            audio.play(external.sfx.star, {channel = availableChannel})
                         elseif count_ == 3 then
                             timer.performWithDelay(300, showobjects, 1)
                             text_.count:setText("Game On!")
                             text_.count:setReferencePoint(display.CenterReferencePoint);
                             text_.count.x = w_ ;
                             transition.to(text_.count,{alpha = 0,time = 1000})
-                            audio.play(external.sfx.sound_9)
-                            audio.play( external.sfx.sound_13,{loops= -1,channel = 18} )
-                            audio.setVolume( 0.4, { channel=18} )
+                            local availableChannel = audio.findFreeChannel()
+                            audio.setVolume(params.soundv, {channel = availableChannel})
+                            audio.play(external.sfx.sound_9, {channel = availableChannel})
+                            local availableChannel = audio.findFreeChannel()
+                            audio.setVolume((params.soundv/2), {channel = availableChannel})
+                            audio.play( external.sfx.sound_13,{loops= -1,channel = availableChannel} )
+                            --udio.setVolume( 0.5, { channel=18} )
                             Runtime:removeEventListener( "key", nonkey )
                             Runtime:addEventListener( "key", pauseall )
 
@@ -2833,17 +2853,23 @@ timer.performWithDelay(800, function()
         text_.count:setText("R E A D Y")
         text_.count:setReferencePoint(display.CenterReferencePoint);
         text_.count.x = w_ ; 
-        audio.play(external.sfx.star)
+        local availableChannel = audio.findFreeChannel()
+        audio.setVolume(params.soundv, {channel = availableChannel})
+        audio.play(external.sfx.star, {channel = availableChannel})
     elseif count_ == 1 then
         text_.count:setText("S E T")
         text_.count:setReferencePoint(display.CenterReferencePoint);
         text_.count.x = w_ ;
-        audio.play(external.sfx.star)
+        local availableChannel = audio.findFreeChannel()
+        audio.setVolume(params.soundv, {channel = availableChannel})
+        audio.play(external.sfx.star, {channel = availableChannel})
     elseif count_ == 2 then
         text_.count:setText("G O")
         text_.count:setReferencePoint(display.CenterReferencePoint);
         text_.count.x = w_ ;
-        audio.play(external.sfx.star)
+        local availableChannel = audio.findFreeChannel()
+        audio.setVolume(params.soundv, {channel = availableChannel})
+        audio.play(external.sfx.star, {channel = availableChannel})
     elseif count_ == 3 then
         timer.performWithDelay(300, showobjects, 1)
         text_.count:setText("Game On!")

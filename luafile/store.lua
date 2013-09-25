@@ -49,14 +49,15 @@ function functions.transactionCallback( event )
     print("errorString: " .. tostring(event.transaction.errorString))
     
     local productID= event.transaction.productIdentifier;
+    
     if event.transaction.state == "purchased" then
         external.adshow.storealert ("Product Purchased: "..productID)
         if productID == products.one then
-            coinnum = coinnum + 500
+            coinnum = coinnum + 250
         elseif productID == products.two then
-            coinnum = coinnum + 1000
+            coinnum = coinnum + 700
         elseif productID == products.three then  
-            coinnum = coinnum + 1500
+            coinnum = coinnum + 1200
         end
     
         local tablesave_1 = [[UPDATE item SET coin=']].. coinnum ..[[' WHERE id = 1]]
@@ -65,6 +66,7 @@ function functions.transactionCallback( event )
         item[13].text = coinnum
         item[13].x = w_ - 80
         external.adshow.callflurry("Purchased a Product")
+        native.showAlert("You Buy Product",productID, {"OK"})  
     elseif event.transaction.state == "restored" then
         print("Product Restored", productID)
     elseif event.transaction.state == "refunded" then
@@ -79,9 +81,9 @@ function functions.transactionCallback( event )
     store.finishTransaction( event.transaction )
 end
 
-local function none (event)
+local function none ()
     
- return true   
+return true   
 end
 
 function updatecoin_ ()
@@ -129,7 +131,8 @@ if event.keyName == "back" and event.phase == "down" and iap == "close" then
                 time = 800,
                 params = 
                     {
-                        scenename = "store"
+                        scenename = "store",
+                        soundv    = params.soundv,
                     }
                 }
     storyboard.gotoScene( "luafile.gametype", scenefrom )  
@@ -146,6 +149,7 @@ if event.keyName == "back" and event.phase == "down" and iap == "close" then
                     {
                         scenename = "store",
                         level     = params.level,
+                        soundv    = params.soundv,
                     }
                 }
     storyboard.gotoScene( "luafile.levels", scenefrom )  
@@ -186,9 +190,9 @@ myButton[1] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/buy.png",
             overFile        = "button/buybutton/buyover.png",
-            label           = "  $ 0.99 = 500 coin",
+            label           = "$ 0.99 = 250 coin",
             id              = "coin",
-            font            = "Feast of Flesh BB",
+            font            = "Dimitri",
             fontSize        = 40,
             labelColor      = { default={51, 51, 51,255}, over={102, 102, 102} },
             emboss          = true,
@@ -214,9 +218,9 @@ myButton[2] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/buy.png",
             overFile        = "button/buybutton/buyover.png",
-            label           = "  $ 1.99 = 1000 coin",
+            label           = "$ 1.99  = 700 coin",
             id              = "coin",
-            font            = "Feast of Flesh BB",
+            font            = "Dimitri",
             fontSize        = 40,
             labelColor      = { default={51, 51, 51,255}, over={102, 102, 102} },
             emboss          = true,
@@ -242,9 +246,9 @@ myButton[3] = external.widget.newButton
         {
             defaultFile     = "button/buybutton/buy.png",
             overFile        = "button/buybutton/buyover.png",
-            label           = "  $ 2.99 = 1500 coin",
+            label           = "$ 2.99 = 1200 coin",
             id              = "coin",
-            font            = "Feast of Flesh BB",
+            font            = "Dimitri",
             fontSize        = 40,
             labelColor      = { default={51, 51, 51,255}, over={102, 102, 102} },
             emboss          = true,
@@ -451,7 +455,8 @@ local function onSceneTouch(event)
                         time = 1000,
                         params = 
                         {
-                            scenename = "store"
+                            scenename = "store",
+                            soundv    = params.soundv,
                         }
                     }
         storyboard.gotoScene( "luafile.gametype", scenefrom ) 
@@ -526,7 +531,8 @@ iap = "close"
 goto = ""
 --path_ = system.pathForFile("records.db", system.DocumentsDirectory )
 --db = sqlite3.open( path_ ) 
-
+print(params.soundv)
+print(numvolume.soundv)
 sql = "SELECT * FROM item";
 for row in external.adshow.db:nrows(sql) do
     

@@ -89,6 +89,7 @@ scroller = external.widget.newScrollView
                 maskFile= mask_,
                 hideBackground = true,
                 hideScrollBar = true,
+                horizontalScrollDisabled = true,
             }
 scroller:setReferencePoint(display.TopCenterReferencePoint);            
 scroller.x = display.contentWidth / 2
@@ -102,6 +103,7 @@ scroller_1 = external.widget.newScrollView
                 maskFile= mask_,
                 hideBackground = true,
                 hideScrollBar = true,
+                horizontalScrollDisabled = true,
             }
 scroller_1:setReferencePoint(display.TopCenterReferencePoint);            
 scroller_1.x = display.contentWidth + display.contentWidth / 2
