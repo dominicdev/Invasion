@@ -24,73 +24,73 @@ local function none_1 (event)
     if event.phase == "down" and event.keyName == "back" and scenestats == true then
         audio.play(external.sfx.clicksound)
         local scenefrom = {
-                            effect  = "fade",
-                            time    = 500,
-                            params  = 
-                            {   scenename   = "gametype",
-                                soundv      = numvolume.soundv,
-                            }
-       }
+            effect  = "fade",
+            time    = 500,
+            params  = 
+            {   scenename   = "gametype",
+                soundv      = numvolume.soundv,
+                }
+            }
         storyboard.gotoScene( "luafile.menu",scenefrom)
+        end
+    return true
     end
-return true
-end
 
 local function onSceneTouch(event)
     
-        local switch = event.target
-        audio.play(external.sfx.clicksound)
-        
-        --adstatus.hideads ()
+    local switch = event.target
+    audio.play(external.sfx.clicksound)
+    
+    --adstatus.hideads ()
     if switch.id == "survival" and switch.stats == "unlocked" and event.phase == "ended" then
         local option = {
-                            effect  = "fade",
-                            time    = 500,
-                            params  = 
-                            {
-                                soundv = numvolume.soundv,
-                                scenename = "gametype",
-                                screenfrom = "survival",
-                            }
-       }
-       storyboard.gotoScene( "luafile.store",option)
+            effect  = "fade",
+            time    = 500,
+            params  = 
+            {
+                soundv = numvolume.soundv,
+                scenename = "gametype",
+                screenfrom = "survival",
+                }
+            }
+        storyboard.gotoScene( "luafile.store",option)
         --external.adshow.callflurry("Play Survival")
     elseif switch.id == "levels" and switch.stats == "unlocked" and event.phase == "ended" then
-           local scenefrom = {
-                            effect  = "fade",
-                            time    = 500,
-                            params  = 
-                            {   scenename = "gametype",
-                                soundv    = numvolume.soundv,
-                                level     = switch.level,
-                            }
-       }
+        local scenefrom = {
+            effect  = "fade",
+            time    = 500,
+            params  = 
+            {   scenename = "gametype",
+                soundv    = numvolume.soundv,
+                level     = switch.level,
+                }
+            }
         storyboard.gotoScene( "luafile.levels",scenefrom)
         --external.adshow.callflurry("Play Mission")
     elseif switch.id == "bonus" and switch.stats == "unlocked" and event.phase == "ended" then
-           local scenefrom = {
-                            effect  = "fade",
-                            time    = 500,
-                            params  = 
-                            {   scenename = "gametype",
-                                soundv    = numvolume.soundv,
-                                level     = switch.level,
-                            }
-       }
+        local scenefrom = {
+            effect  = "fade",
+            time    = 500,
+            params  = 
+            {   scenename = "gametype",
+                soundv    = numvolume.soundv,
+                level     = switch.level,
+            }
+                }
         storyboard.gotoScene( "luafile.bonus",scenefrom)
         goto = "bonus"
         external.adshow.loading("show")
         external.adshow.callflurry("Play Bonus")
     elseif switch.id == "back" or event.phase == "down" and event.keyName == "back" then
-           local scenefrom = {
-                            effect  = "fade",
-                            time    = 500,
-                            params  = 
-                            {
-                                scenename = "gametype",
-                                soundv    = numvolume.soundv,
-                            }
-       }
+        local scenefrom = {
+            effect  = "fade",
+            time    = 500,
+            params  = 
+            {
+                scenename = "gametype",
+                soundv    = numvolume.soundv,
+                }
+            }
         storyboard.gotoScene( "luafile.menu",scenefrom)
     elseif switch.id == "survival" and switch.stats == "locked" and event.phase == "ended" then
         external.adshow.storealert ("Finish the Mission 1 to Unlocked Survival")
@@ -98,117 +98,116 @@ local function onSceneTouch(event)
         external.adshow.storealert ("Finish the Mission 1 to Unlocked Mission 2")
     elseif switch.id == "bonus" and switch.stats == "locked" and event.phase == "ended" then
         external.adshow.storealert ("Finish the Mission 2 to Unlocked Mini Game")
+        end
+    
     end
-     
-end
 
 function scene:createScene( event )
-
-group = self.view
-bg = display.newImageRect("background/levelsScreen.png",display.contentWidth,display.contentHeight)
-bg.x = w_
-bg.y = h_
-group:insert(bg)
-Runtime:addEventListener( "key", none_1 )
-
-end
+    
+    group = self.view
+    bg = display.newImageRect("background/levelsScreen.png",display.contentWidth,display.contentHeight)
+    bg.x = w_
+    bg.y = h_
+    group:insert(bg)
+    Runtime:addEventListener( "key", none_1 )
+    
+    end
 
 function scene:willEnterScene(event)
-button = {
-         survival = nil,
-         mission_1  = nil,
-         mission_2  = nil,
-         back     = nil,
-         }    
-object_ = display.newGroup()    
-end
+    button = {
+        survival = nil,
+        mission_1  = nil,
+        mission_2  = nil,
+        back     = nil,
+        }    
+    object_ = display.newGroup()    
+    end
 
 function scene:enterScene( event )
-group = self.view  
-storyboard.purgeAll()
-storyboard.removeAll() 
-external.adshow.callrevmob("showpop")
-numvolume = event.params
-local y_ = 0
---local path = system.pathForFile("records.db",system.DocumentsDirectory  )
---db = external.sqlite3.open( path ) 
-
-scenestats = true
-count = 0
-sql = "SELECT * FROM gamestats ";
-local row
-for row in external.adshow.db:nrows(sql) do
-
-count = count + 1
-
-if row.stats == "unlocked" then
+    group = self.view  
+    storyboard.purgeAll()
+    storyboard.removeAll() 
+    external.adshow.callrevmob("showpop")
+    numvolume = event.params
+    local y_ = 0
+    --local path = system.pathForFile("records.db",system.DocumentsDirectory  )
+    --db = external.sqlite3.open( path ) 
     
-    if row.gametype == "mission_1" then
-        id_  = "levels"
-        level = 1
-        def_ = "button/woodbutton/m1btn.png"
-        over_= "button/woodbutton/m1btnover.png"
-    elseif row.gametype == "mission_2" then
-        id_  = "levels"
-        level = 2
-        def_ = "button/woodbutton/m2btn.png"
-        over_= "button/woodbutton/m2btnover.png"
-    elseif row.gametype == "survival" then
-        id_  = "survival"
-        level = 0
-        def_ = "button/woodbutton/survivalbtn.png"
-        over_= "button/woodbutton/survivalbtnover.png"
-    elseif row.gametype == "bonus" then
-        id_  = "bonus"
-        level = 0
-        def_ = "button/woodbutton/minigame.png"
-        over_= "button/woodbutton/minigameover.png"
-    end
-    textalign = "center"
-    textsize = 50
-elseif row.stats == "locked" then
-    if row.gametype == "mission_1" then
-       textlabel = " Mission 1"
-       
-    elseif row.gametype == "mission_2" then
-       textlabel = "  Mission 2" 
-       id_  = "levels"
-    elseif row.gametype == "survival" then
-       textlabel = "   Survival" 
-       id_  = "survival"
-    elseif row.gametype == "bonus" then
-       textlabel = "   Bonus" 
-       id_  = "bonus"
-    end
+    scenestats = true
+    count = 0
+    sql = "SELECT * FROM gamestats ";
+    local row
+    for row in external.adshow.db:nrows(sql) do
+        
+        count = count + 1
+        
+        if row.stats == "unlocked" then
+            
+            if row.gametype == "mission_1" then
+                id_  = "levels"
+                level = 1
+                def_ = "button/woodbutton/m1btn.png"
+                over_= "button/woodbutton/m1btnover.png"
+            elseif row.gametype == "mission_2" then
+                id_  = "levels"
+                level = 2
+                def_ = "button/woodbutton/m2btn.png"
+                over_= "button/woodbutton/m2btnover.png"
+            elseif row.gametype == "survival" then
+                id_  = "survival"
+                level = 0
+                def_ = "button/woodbutton/survivalbtn.png"
+                over_= "button/woodbutton/survivalbtnover.png"
+            elseif row.gametype == "bonus" then
+                id_  = "bonus"
+                level = 0
+                def_ = "button/woodbutton/minigame.png"
+                over_= "button/woodbutton/minigameover.png"
+                end
+            textalign = "center"
+            textsize = 50
+        elseif row.stats == "locked" then
+            if row.gametype == "mission_1" then
+                textlabel = " Mission 1"
+                
+            elseif row.gametype == "mission_2" then
+                textlabel = "  Mission 2" 
+                id_  = "levels"
+            elseif row.gametype == "survival" then
+                textlabel = "   Survival" 
+                id_  = "survival"
+            elseif row.gametype == "bonus" then
+                textlabel = "   Bonus" 
+                id_  = "bonus"
+                end
+            
+            def_ = "button/woodbutton/locked.png"
+            over_= "button/woodbutton/lockedover.png"
+            textalign = "left"
+            textsize = 35
+            level = 0
+            end
+        
+        button[count] = external.widget.newButton
+        {
+            defaultFile = def_,
+            overFile    = over_,
+            id          = id_,
+            width       = 250, 
+            height      = 80,
+            onRelease   = onSceneTouch,
+            }
+        button[count]:setReferencePoint(display.CenterReferencePoint)
+        button[count].x = w_
+        button[count].y = h_ + y_ - 160
+        button[count].stats = row.stats
+        button[count].level = level
+        
+        object_:insert(button[count])
+        y_ = y_ + 100
+        end
     
-    def_ = "button/woodbutton/locked.png"
-    over_= "button/woodbutton/lockedover.png"
-    
-    textalign = "left"
-    textsize = 35
-    level = 0
-end
-
-button[count] = external.widget.newButton
-    {
-    defaultFile = def_,
-    overFile    = over_,
-    id          = id_,
-    width       = 250, 
-    height      = 80,
-    onRelease   = onSceneTouch,
-    }
-button[count]:setReferencePoint(display.CenterReferencePoint)
-button[count].x = w_
-button[count].y = h_ + y_ - 160
-button[count].stats = row.stats
-button[count].level = level
-
-object_:insert(button[count])
-y_ = y_ + 100
-end
-
-button.back = external.widget.newButton
+    button.back = external.widget.newButton
     {
         defaultFile = "button/orange/home.png",
         overFile    = "button/orange/hometap.png",
@@ -217,41 +216,41 @@ button.back = external.widget.newButton
         height      = 80,
         emboss      = true,
         onRelease   = onSceneTouch,
-    }
-button.back.x = w_ - 240
-button.back.y = 80
-button.back.stats = "back"
-object_:insert(button.back)
-external.adshow.calltapfortap("show")
-
-timer.performWithDelay( 1000, function() 
-    if numvolume.scenename == "mainrestart" or numvolume.scenename == "buymenu"  then
-    external.adshow.loading("hide")  
+        }
+    button.back.x = w_ - 240
+    button.back.y = 80
+    button.back.stats = "back"
+    object_:insert(button.back)
+    external.adshow.calltapfortap("show")
+    
+    timer.performWithDelay( 1000, function() 
+        if numvolume.scenename == "mainrestart" or numvolume.scenename == "buymenu"  then
+            external.adshow.loading("hide")  
+            end
+        end,1)
+    
+    group:insert(object_)
+    --external.adshow.callrevmob("320x50")
     end
-end,1)
-
-group:insert(object_)
-external.adshow.callrevmob("320x50")
-end
 
 function scene:exitScene( event )
-external.adshow.calltapfortap("hide")
-Runtime:removeEventListener( "key", none_1 )
-object_:removeSelf()
-object_ = nil 
-external.adshow.callrevmob("hide")
-end
+    external.adshow.calltapfortap("hide")
+    Runtime:removeEventListener( "key", none_1 )
+    object_:removeSelf()
+    object_ = nil 
+    --external.adshow.callrevmob("hide")
+    end
 
 function scene:destroyScene( event )
-if goto == "bonus" then
-    audio.stop()
-end
-goto = ""
-group:removeSelf()
-group = nil 
-scenestats = false
-
-end
+    if goto == "bonus" then
+        audio.stop()
+        end
+    goto = ""
+    group:removeSelf()
+    group = nil 
+    scenestats = false
+    
+    end
 
 scene:addEventListener( "createScene", scene )
 scene:addEventListener("willEnterScene",scene)

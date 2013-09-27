@@ -67,6 +67,7 @@ local option =
                 time_     = time,
                 wave_     = wave,
                 tick_     = tick,
+                
                 }
         }
 storyboard.gotoScene( "luafile.game", option )

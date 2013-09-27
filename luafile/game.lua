@@ -198,7 +198,8 @@ local switch = event.target
                 time = 1000,
                 params = 
                 {
-                    scenename = "game"
+                    scenename = "game",
+                    soundv      = params.soundv,
                 }
             }
             storyboard.gotoScene( "luafile.menu",scenefrom )
@@ -210,14 +211,15 @@ local switch = event.target
                     time   = 1000,
                     params = 
                     {
-                        uscore  = score[2],
-                        utime   = time[2],
-                        ucar    = carup[2],
-                        ubarrel = barrel[10],
-                        ulevel  = level[2],
-                        ulaser  = carup[11],
-                        ucoin   = coin,
-                        gametype = "survival",
+                        uscore      = score[2],
+                        utime       = time[2],
+                        ucar        = carup[2],
+                        ubarrel     = barrel[10],
+                        ulevel      = level[2],
+                        ulaser      = carup[11],
+                        ucoin       = coin,
+                        gametype    = "survival",
+                        soundv      = params.soundv,
                         
                     }
                 }
@@ -361,7 +363,6 @@ end
 trans[6].id_2 = true
 end
 
-
 function functions.removerunner(event) -- REMOVEmaster
 
 local bossing = event.target
@@ -412,6 +413,13 @@ if event.phase == "began" then
         event.target.myName = nil
         audio.play(external.sfx.sound_1)
         boss.stats_ = false
+        numbers.bossingholder = numbers.bossingholder - 1
+        boss.starting = false
+        if numbers.bossingholder ~= 0 then
+        timer.resume(boss.starttime)
+        elseif numbers.bossingholder == 0 then
+            boss.starting = false
+        end
     elseif bossing.damage == -1 then
         bossing.damage = 0
     end
@@ -481,10 +489,10 @@ boss.locv  = math.random(1,5)
     elseif boss.locv == 4 then 
     elseif boss.locv == 5 then 
     end
-print("wtf_1")
+--print("wtf_1")
 end
 
-function functions.start()
+function functions.start ()
 boss.num = boss.num + 1
 boss[boss.num] = external.sprite.newSprite(external.spritefactory.boss_1);
 boss[boss.num]:setReferencePoint(display.CenterReferencePoint)
@@ -507,7 +515,9 @@ boss.move_ = transition.to(boss[boss.num],{time = boss.time_1,y = display.conten
 boss.timer_ = timer.performWithDelay (boss.time_1,none,1)
 boss.bol_ = true
 boss.stats_ = true
-boss.starting = false
+    if numbers.bossingholder ~= 0 then
+        timer.pause(boss.starttime)
+    end
 end
 
 function scene:createScene ( event )
@@ -543,63 +553,37 @@ human             = {};
 heart             = {};
 
 numbers       = {
-        barrelbacknum   = 0,
-        lasernumber     = 1,
-        cardeadnum      = 1,
-        nicehitnum      = 1,
-        numbermobs      = 0,
-        crackernum      = 0,
-        carrunnum       = 0,
-        mobcount        = 0,
-        barelnum        = 0,
-        flasnum         = 0,
-        deadnum         = 1,
-        loop            = 0,
-        deadmon         = 0,
+        barrelbacknum   = 0,    lasernumber     = 1,    cardeadnum      = 1,
+        nicehitnum      = 1,    numbermobs      = 0,    crackernum      = 0,
+        carrunnum       = 0,    mobcount        = 0,    barelnum        = 0,
+        flasnum         = 0,    deadnum         = 1,    loop            = 0,
+        deadmon         = 0,    bossing         = 0,    bossingholder   = nil,
             };
 
 
 master[1] = {
-        stats       = false;
-        stats2      = false;
-        humanstats  = false,
-        humanum     = 0,
-        humantime   = 0,
+        stats       = false,    stats2      = false,    humanstats  = false,
+        humanum     = 0,        humantime   = 0,
             };    
 master[2] = {
-        number      = 0;
-        deadnum     = 0;
+        number      = 0,    deadnum     = 0,
         
             };
             
 trans[6] = {
-        id_1        = false;
-        id_2        = false;
-        id_3        = false;
-        id_4        = false;
-        id_5        = false;
-        id_6        = nil,
+        id_1        = false;    id_2        = false;    id_3        = false;
+        id_4        = false;    id_5        = false;    id_6        = nil,
         id_7        = nil,
             };
 level[6] = {
-        time_       = nil,
-        time_2      = nil,
-        bol_        = false,
-        num_        = 0,
-        wavestats   = false,
+        time_       = nil,  time_2      = nil,  bol_        = false,
+        num_        = 0,    wavestats   = false,
             };
 display_ = {
-        dark             = nil,
-        fogleft          = nil,
-        fogright         = nil,
-        earlynight       = nil,
-        lateafternoon    = nil,
-        darkbol          = false,
-        fogleftbol       = false,
-        fogrightbol      = false,
-        earlynightbol    = false,
-        lateafternoonbol = false,
-        num              = 0,
+        dark             = nil,     fogleft          = nil,     fogright         = nil,
+        earlynight       = nil,     lateafternoon    = nil,     darkbol          = false,
+        fogleftbol       = false,   fogrightbol      = false,   earlynightbol    = false,
+        lateafternoonbol = false,   num              = 0,
             };
 
 coin            = value.coin_;
@@ -644,27 +628,13 @@ den[12] = 5;
 den[15] = .5;       
 
 boss = {
-    num         = 0,
-    time_1      = 1000,
-    move_       = nil,
-    move_1      = nil,
-    move_2      = nil,
-    bol_        = false,
-    bol_1       = false,
-    bol_2       = false,
-    pause       = false,
-    timer_      = nil,
-    timer_1     = nil,
-    timer_2     = nil,
-    timepause   = nil,
-    timepause_1 = nil,
-    timepause_2 = nil,
-    locx        = nil,
-    locy        = nil,
-    locz        = nil,
-    locv        = nil,
-    stats_      = false,
-    starting    = false,
+    num         = 0,        time_1      = 1000,     move_       = nil,
+    move_1      = nil,      move_2      = nil,      bol_        = false,
+    bol_1       = false,    bol_2       = false,    pause       = false,
+    timer_      = nil,      timer_1     = nil,      timer_2     = nil,
+    timepause   = nil,      timepause_1 = nil,      timepause_2 = nil,
+    locx        = nil,      locy        = nil,      locz        = nil,
+    locv        = nil,      stats_      = false,    starting    = false,
     starttime   = nil,
     }
 bullet =  {
@@ -1116,9 +1086,9 @@ trans[6].id_5 = false
 if hitting == "runner" then
     cardead[numbers.cardeadnum]= external.sprite.newSprite(external.spritefactory.spritedeadmob)
 if spriteid == "runner 1" then
-   cardead[numbers.cardeadnum]:prepare("dead_1")
+   cardead[numbers.cardeadnum]:prepare("dead_2")
 elseif spriteid == "runner 2" then
-    cardead[numbers.cardeadnum]:prepare("dead_2")
+    cardead[numbers.cardeadnum]:prepare("dead_3")
 elseif spriteid == "runner 3" then
     cardead[numbers.cardeadnum]:prepare("dead_3")
 elseif spriteid == "runner 4" then
@@ -1126,7 +1096,10 @@ elseif spriteid == "runner 4" then
 end
 elseif hitting == "master" then
 cardead[numbers.cardeadnum]= external.sprite.newSprite(external.spritefactory.spritedeadmob)
-cardead[numbers.cardeadnum]:prepare("dead_3")  
+cardead[numbers.cardeadnum]:prepare("dead_3") 
+elseif hitting == "ship" then
+cardead[numbers.cardeadnum]= external.sprite.newSprite(external.spritefactory.spritexplode)
+cardead[numbers.cardeadnum]:prepare("explode")
 end
 cardead[numbers.cardeadnum].x = left
 cardead[numbers.cardeadnum].y = right
@@ -1239,24 +1212,36 @@ if event.phase == "began" then
     end
     
     local availableChannel = audio.findFreeChannel()
-    print(availableChannel)
+    --print(availableChannel)
     if hit.damage == 0 then
         trans[6].id_5 = false
-        audio.setVolume(params.soundv, {channel = availableChannel})
-        audio.play(external.sfx.splat,{channel = availableChannel})
-        deadtable[numbers.deadnum] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
-        deadtable[numbers.deadnum].x = x1
-        deadtable[numbers.deadnum].y = y1
+        if hit.name == "ship" then
+            audio.setVolume(params.soundv, {channel = availableChannel})
+            audio.play(external.sfx.sound_1,{channel = availableChannel})
+            deadtable[numbers.deadnum] = external.sprite.newSprite(external.spritefactory.spritexplode)
+            deadtable[numbers.deadnum].x = x1
+            deadtable[numbers.deadnum].y = y1
+            deadtable[numbers.deadnum]:prepare("explode")  
+        else
+            audio.setVolume(params.soundv, {channel = availableChannel})
+            audio.play(external.sfx.splat,{channel = availableChannel})
+            deadtable[numbers.deadnum] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
+            deadtable[numbers.deadnum].x = x1
+            deadtable[numbers.deadnum].y = y1
 
-        if hit.id == "runner 1" then
-          deadtable[numbers.deadnum]:prepare("dead_2")  
-        elseif hit.id == "runner 2" then
-          deadtable[numbers.deadnum]:prepare("dead_3")
-        elseif hit.id == "runner 3" then
-          deadtable[numbers.deadnum]:prepare("dead_3")
-        elseif hit.id == "runner 4" then
-          deadtable[numbers.deadnum]:prepare("dead_4") 
-        end
+            if hit.id == "runner 1" then
+              deadtable[numbers.deadnum]:prepare("dead_2")  
+            elseif hit.id == "runner 2" then
+              deadtable[numbers.deadnum]:prepare("dead_3")
+            elseif hit.id == "runner 3" then
+              deadtable[numbers.deadnum]:prepare("dead_3")
+            elseif hit.id == "runner 4" then
+              deadtable[numbers.deadnum]:prepare("dead_4") 
+                end
+        
+            end
+        
+        
 
         deadtable[numbers.deadnum]:play()
         group[2]:insert(deadtable[numbers.deadnum])
@@ -1304,15 +1289,15 @@ local locationx = math.random(1,4)
 if locationx == 1 then
     mobrun[numbers.mobcount].x = (display.contentWidth/2) - (display.contentWidth*0.25) + mobrun[numbers.mobcount].width 
 elseif locationx == 2 then    
-    mobrun[numbers.mobcount].x = mobrun[numbers.mobcount].width
+    mobrun[numbers.mobcount].x = mobrun[numbers.mobcount].width + (mobrun[numbers.mobcount].width*0.5)
 elseif locationx == 3 then
     mobrun[numbers.mobcount].x = (display.contentWidth/2) + (display.contentWidth*0.25) - mobrun[numbers.mobcount].width
 elseif locationx == 4 then    
-    mobrun[numbers.mobcount].x = display.contentWidth - mobrun[numbers.mobcount].width
+    mobrun[numbers.mobcount].x = display.contentWidth - (mobrun[numbers.mobcount].width)
 end
 mobrun[numbers.mobcount].y = -mobrun[numbers.mobcount].height
 mobrun[numbers.mobcount]:play()
-external.physics.addBody(mobrun[numbers.mobcount],{density = den[5] , bounce = 0,firction = 0})
+external.physics.addBody(mobrun[numbers.mobcount],{density = den[5] , bounce = 0,firction = 0,isSensor = true})
 mobrun[numbers.mobcount].isFixedRotation = true
 mobrun[numbers.mobcount].myName = "runner"
 group[2]:insert(mobrun[numbers.mobcount])
@@ -1339,7 +1324,7 @@ if master[1].stats == true then
     mastersprite[masternumber]:prepare("alien_3")
     mastersprite[masternumber]:play()
     mastersprite[masternumber]:addEventListener("touch",masterremove)
-    external.physics.addBody(mastersprite[masternumber],{density = 5 , bounce = 0,firction = 0})
+    external.physics.addBody(mastersprite[masternumber],{density = 5 , bounce = 0,firction = 0,isSensor = true})
     mastersprite[masternumber].damage = den[11]
     mastersprite[masternumber].myName = "master"
     mastersprite[masternumber].id = "master" ..masternumber
@@ -1373,11 +1358,12 @@ mobrun[numbers.mobcount].x = xlocation
 mobrun[numbers.mobcount]:prepare("shipfront")  
 mobrun[numbers.mobcount]:play()
 mobrun[numbers.mobcount].id = "runner 1"
+mobrun[numbers.mobcount].name = "ship"
 mobrun[numbers.mobcount].damage = carpow[6]
 external.physics.addBody(mobrun[numbers.mobcount],{density = den[5] , bounce = 0,firction = 0,isSensor = true})
 mobrun[numbers.mobcount].isFixedRotation = true
 mobrun[numbers.mobcount].myName = "runner"
-group[9]:insert(mobrun[numbers.mobcount])
+group[8]:insert(mobrun[numbers.mobcount])
 mobrun[numbers.mobcount]:addEventListener("touch",removerunner)
 trans[5] = transition.to(mobrun[numbers.mobcount],{x = (math.random(20,(display.contentWidth - 50))),y = h - 400, time = 1000, onComplete = functions.move_1})--isSensor = true})
 mobrun[numbers.mobcount].isSensor = true
@@ -1590,6 +1576,10 @@ end
         master[1].stats = true
         level[6].bol_ = true
         level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
+        numbers.bossing = 5
+        numbers.bossingholder = numbers.bossing
+        boss.starttime = timer.performWithDelay(3000,functions.start,numbers.bossing)
+        boss.starting = true
     elseif level[4] == 3 then
         external.physics.setGravity(0,2)
         master[1].stats = true
@@ -1598,20 +1588,22 @@ end
     elseif level[4] == 4 then
         master[1].stats = true
         level[6].bol_ = true
-        level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
+        level[6].time_ = timer.performWithDelay(5000, functions.cracken, 4)
     elseif level[4] == 5 then
         den[15] = .5
         master[1].stats = true
         --lives[3] = lives[3] + 2
         tick2 = 1700
-        boss.starttime = timer.performWithDelay(10000,functions.start,1)
+        numbers.bossing = 5
+        numbers.bossingholder = numbers.bossing
+        boss.starttime = timer.performWithDelay(3000,functions.start,numbers.bossing)
         boss.starting = true
     elseif level[4] == 6 then
-        level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
+        level[6].time_ = timer.performWithDelay(3000, functions.cracken, 4)
         level[6].bol_ = true
         external.physics.setGravity(0,2.5)
     elseif level[4] == 7 then
-        level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
+        level[6].time_ = timer.performWithDelay(5000, functions.cracken, 4)
         level[6].bol_ = true
     elseif level[4] == 8 then
         master[1].stats = true
@@ -1628,7 +1620,9 @@ end
         --lives[3] = lives[3] + 2
         level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
         level[6].bol_ = true
-        boss.starttime = timer.performWithDelay(10000,functions.start,1)
+        numbers.bossing = 5
+        numbers.bossingholder = numbers.bossing
+        boss.starttime = timer.performWithDelay(3000,functions.start,numbers.bossing)
         boss.starting = true
     elseif level[4] == 11 then
         master[1].stats = true
@@ -1650,7 +1644,9 @@ end
         master[1].stats = true
         den[15] = .9
         --lives[3] = lives[3] + 2
-        boss.starttime = timer.performWithDelay(10000,functions.start,1)
+        numbers.bossing = 5
+        numbers.bossingholder = numbers.bossing
+        boss.starttime = timer.performWithDelay(10000,functions.start,numbers.bossing)
         boss.starting = true
     elseif level[4]== 16 then
         external.physics.setGravity(0,2.5)
@@ -1671,7 +1667,9 @@ end
         external.physics.setGravity(0,3.5)
         den[15] = 1.5
        -- lives[3] = lives[3] + 2
-       boss.starttime = timer.performWithDelay(10000,functions.start,1)
+       numbers.bossing = 5
+       numbers.bossingholder = numbers.bossing
+       boss.starttime = timer.performWithDelay(10000,functions.start,numbers.bossing)
         boss.starting = true
     elseif level[4] == 21 then
         external.physics.setGravity(0,1.5)
@@ -1695,7 +1693,9 @@ end
         den[15] = 2.5
         level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
         level[6].bol_ = true
-        boss.starttime = timer.performWithDelay(10000,functions.start,1)
+        numbers.bossing = 5
+        numbers.bossingholder = numbers.bossing
+        boss.starttime = timer.performWithDelay(10000,functions.start,numbers.bossing)
         boss.starting = true
     elseif level[4] == 26 then
         level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
@@ -1718,7 +1718,9 @@ end
         level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
         level[6].bol_ = true
         external.physics.setGravity(0,1.5)
-        boss.starttime = timer.performWithDelay(10000,functions.start,1)
+        numbers.bossing = 5
+        numbers.bossingholder = numbers.bossing
+        boss.starttime = timer.performWithDelay(10000,functions.start,numbers.bossing)
         boss.starting = true
     elseif level[4] == 31 then
         level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
@@ -1732,7 +1734,9 @@ end
         den[15] = .5
         level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
         level[6].bol_ = true
-        boss.starttime = timer.performWithDelay(10000,functions.start,1)
+        numbers.bossing = 5
+        numbers.bossingholder = numbers.bossing
+        boss.starttime = timer.performWithDelay(10000,functions.start,numbers.bossing)
         boss.starting = true
     elseif level[4] == 34 then
         level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
@@ -1741,7 +1745,9 @@ end
         master[1].stats = true
         level[6].time_ = timer.performWithDelay(15000, functions.cracken, 4)
         level[6].bol_ = true
-        boss.starttime = timer.performWithDelay(10000,functions.start,1)
+        numbers.bossing = 5
+        numbers.bossingholder = numbers.bossing
+        boss.starttime = timer.performWithDelay(10000,functions.start,numbers.bossing)
         boss.starting = true
     end
     
@@ -1779,16 +1785,16 @@ print(level[2].." "..display_.num)
 local function objectdel (objects_)
 objects_:removeSelf()
 objects_ = nil
-
 end
 
 display_.num = display_.num + 1
+
 if display_.num == 1 then
     if display_.earlynightbol == true then
         display_.earlynightbol = false
         transition.to(display_.earlynight,{alpha = 0,time = 3000,onComplete = objectdel});
     end
-display_.lateafternoon = display.newImageRect("background/lateafternoon.png",display.contentWidth,display.contentHeight)
+display_.lateafternoon = display.newImageRect("background/lateafternoon.png",display.contentWidth+50,display.contentHeight+50)
 display_.lateafternoon:setReferencePoint(display.CenterReferencePoint)  
 display_.lateafternoon.x =  w 
 display_.lateafternoon.y = h
@@ -1796,13 +1802,15 @@ display_.lateafternoon.alpha = 0
 group[9]:insert(display_.lateafternoon)
 transition.to(display_.lateafternoon,{alpha = 0.8,time = 3000});
 display_.lateafternoonbol = true
+
 elseif display_.num == 5 then   
 
-    if display_.lateafternoonbol == true then
-        transition.to(display_.lateafternoon,{alpha = 0,time = 3000,onComplete = objectdel});   
-        display_.lateafternoonbol = false
-    end
-display_.dark = display.newImageRect("background/dark.png",display.contentWidth,display.contentHeight)
+if display_.lateafternoonbol == true then
+    transition.to(display_.lateafternoon,{alpha = 0,time = 3000,onComplete = objectdel});   
+    display_.lateafternoonbol = false
+end
+
+display_.dark = display.newImageRect("background/dark.png",display.contentWidth+50,display.contentHeight+50)
 display_.dark:setReferencePoint(display.CenterReferencePoint)  
 display_.dark.x =  w 
 display_.dark.y = h
@@ -1810,36 +1818,35 @@ display_.dark.alpha = 0
 group[9]:insert(display_.dark)
 transition.to(display_.dark,{alpha = 0.8,time = 3000});
 display_.darkbol = true
+
 elseif display_.num == 10 then
 display_.num = 0
-
-display_.fogleft = display.newImageRect("background/fn-leftfog.png",display.contentWidth,display.contentHeight)
+display_.fogleft = display.newImageRect("background/fn-leftfog.png",display.contentWidth+50,display.contentHeight+50)
 display_.fogleft:setReferecePoint(display.CenterReferencePoint)  
 display_.fogleft.x =  w 
 display_.fogleft.y = h
 display_.fogleft.alpha = 0
 group[9]:insert(display_.fogleft)
  
-display_.fogright = display.newImageRect("background/fn-rightfog.png",display.contentWidth,display.contentHeight)
+display_.fogright = display.newImageRect("background/fn-rightfog.png",display.contentWidth+50,display.contentHeight+50)
 display_.fogright:setReferencePoint(display.CenterReferencePoint)  
 display_.fogright.x = w 
 display_.fogright.y = h
 display_.fogright.alpha = 0
 group[9]:insert(display_.fogright)
-
 transition.to(display_.fogleft,{alpha = 0.8,time = 3000});
 transition.to(display_.fogright,{alpha = 0.8,time = 3000});
-
 display_.fogrightbol = true
 display_.fogleftbol = true
+
 elseif display_.num == 15 then
-    if display_.fogrightbol == true and display_.fogleftbol == true then
-        transition.to(display_.fogleft,{alpha = 0,time = 3000,onComplete = objectdel});
-        transition.to(display_.fogright,{alpha = 0,time = 3000,onComplete = objectdel});
-        display_.fogrightbol = false
-        display_.fogleftbol = false
-    end
-display_.earlynight = display.newImageRect("background/earlynight.png",display.contentWidth,display.contentHeight)
+if display_.fogrightbol == true and display_.fogleftbol == true then
+    transition.to(display_.fogleft,{alpha = 0,time = 3000,onComplete = objectdel});
+    transition.to(display_.fogright,{alpha = 0,time = 3000,onComplete = objectdel});
+    display_.fogrightbol = false
+    display_.fogleftbol = false
+end
+display_.earlynight = display.newImageRect("background/earlynight.png",display.contentWidth+50,display.contentHeight+50)
 display_.earlynight:setReferencePoint(display.CenterReferencePoint)  
 display_.earlynight.x =  w 
 display_.earlynight.y = h
@@ -1891,7 +1898,7 @@ end
 
 end
 
-function functions.start ()
+function functions.start_ ()
 
 timer.performWithDelay(1000,gamecount,3)
 end
@@ -1960,7 +1967,7 @@ if "ended" == event.phase or (event.keyName == "back" and event.phase == "down")
     laserbutton[numbers.lasernumber]:removeEventListener( "touch", functions.onTouch )
     end
     
-    if boss.starting == true then
+    if boss.starting == true and numbers.bossingholder ~= 0 then
         timer.pause(boss.starttime) 
      end
     
@@ -2074,6 +2081,22 @@ if "ended" == event.phase or (event.keyName == "back" and event.phase == "down")
     game[1].y = h - 220
     group[5]:insert(game[1])
     
+    pausebutton:removeSelf()
+    pausebutton = nil
+    pausebutton = external.widget.newButton   
+        {
+        defaultFile     = "button/orange/play.png",
+        overFile        = "button/orange/pause.png",
+        id              = "Pause",
+        width           = 80, 
+        height          = 80,
+        onRelease       = functions.pausePhysics,
+        }
+    pausebutton:setReferencePoint(display.CenterReferencePoint)
+    pausebutton.x = display.contentWidth - 50
+    pausebutton.y = display.contentHeight - 50
+    group[8]:insert(pausebutton)
+    
     game[2] = external.widget.newButton
         {
             defaultFile     = "button/woodbutton/playagainbtn.png",
@@ -2126,7 +2149,7 @@ if "ended" == event.phase or (event.keyName == "back" and event.phase == "down")
         timer.resume(level[6].time_)
     end
     
-    if boss.starting == true then
+    if boss.starting == true and numbers.bossingholder ~= 0 then
         timer.resume(boss.starttime) 
      end
     
@@ -2255,6 +2278,22 @@ if "ended" == event.phase or (event.keyName == "back" and event.phase == "down")
     
     external.physics.start()
     isPaused = false
+    pausebutton:removeSelf()
+    pausebutton = nil
+    pausebutton = external.widget.newButton   
+        {
+        defaultFile     = "button/orange/pause.png",
+        overFile        = "button/orange/play.png",
+        id              = "Pause",
+        width           = 80, 
+        height          = 80,
+        onRelease       = functions.pausePhysics,
+        }
+    pausebutton:setReferencePoint(display.CenterReferencePoint)
+    pausebutton.x = display.contentWidth - 50
+    pausebutton.y = display.contentHeight - 50
+   
+    group[8]:insert(pausebutton)
     game[1]:removeSelf()
     game[2]:removeSelf()
     game[18]:removeSelf()
@@ -2494,7 +2533,7 @@ group[8]:insert(carpowbutton)
 pausebutton = external.widget.newButton   
     {
     defaultFile     = "button/orange/pause.png",
-    overFile        = "button/orange/pausetap.png",
+    overFile        = "button/orange/play.png",
     id              = "Pause",
     width           = 80, 
     height          = 80,
@@ -2680,11 +2719,21 @@ if( (event.object1.myName == "runner"   and event.object2.myName == "car")      
     (event.object1.myName =="car"       and event.object2.myName == "runner") ) or
   ( (event.object1.myName == "master"   and event.object2.myName == "car")      or 
     (event.object1.myName =="car"       and event.object2.myName == "master") ) then
+    
+    if event.object1.name == "ship" or event.object2.name == "ship" then
+        audio.play(external.sfx.sound_1)
+    else
+        audio.play(external.sfx.sound_2)
+    end
 
-audio.play(external.sfx.sound_2)
 
 if event.object2.myName == "runner" or event.object2.myName == "master" then
-    hitcar(event.object2.x,event.object2.y,event.object2.myName,event.object2.id)
+    if event.object2.name == "ship" then
+        hitcar(event.object2.x,event.object2.y,event.object2.name,event.object2.id)
+    else
+        hitcar(event.object2.x,event.object2.y,event.object2.myName,event.object2.id)
+        end
+    
     if event.object2.id == "runner 1" then
     score[2] = score[2] + 10
     elseif event.object2.id == "runner 2" then
@@ -2701,7 +2750,12 @@ if event.object2.myName == "runner" or event.object2.myName == "master" then
     event.object2.id = nil
     
 elseif event.object1.myName == "runner" or event.object1.myName == "master" then
-    hitcar(event.object1.x,event.object1.y,event.object1.myName,event.object1.id)
+    if event.object1.name == "ship" then
+        hitcar(event.object1.x,event.object1.y,event.object1.name,event.object1.id) 
+    else
+        hitcar(event.object1.x,event.object1.y,event.object1.myName,event.object1.id) 
+        end
+    
     if event.object1.id == "runner 1" then
     score[2] = score[2] + 5
     elseif event.object1.id == "runner 2" then
@@ -2950,7 +3004,7 @@ group[1]:insert(group[8])
 group[1]:insert(group[9])
 
 timer.performWithDelay(1000, function() 
-functions.start()
+functions.start_()
 external.adshow.loading("hide") 
 end, 1)
 
@@ -2993,11 +3047,11 @@ end
 
 external.physics.stop()
 if game[6] == true then
-print("wtf")
+--print("wtf")
 else
 game[6] = false
 Runtime:removeEventListener( "key", functions.pausePhysics )
-print("wtf_re")
+--print("wtf_re")
 end
 
 if environment == "simulator" then

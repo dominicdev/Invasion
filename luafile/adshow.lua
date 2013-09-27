@@ -153,7 +153,20 @@ file = io.open( adshow.path )
    else
       print("FILE Already Exist")
    end
+
 adshow.db = sqlite3.open( adshow.path )
+adshow.ads = nil
+local sql = "SELECT * FROM info";
+local row
+
+for row in adshow.db:nrows(sql) do
+    print(row.adstats)
+    if tostring(row.adstats) == "true" then
+        adshow.ads = true
+    else
+        adshow.ads = false
+    end
+end
 
 local _H = display.contentHeight
 local _W = display.contentWidth
@@ -173,26 +186,29 @@ function adshow.calladmob (banstats)
 
 end
 
-local banner = nil
-local RevMob = require("luafile.revmob")
+local RevMob = require("luafile.revmob")                                        
 local REVMOB_IDS = { ["Android"] = "51a6f392433111f6e90000f7", ["iPhone OS"] = "51a6f380433111f6e90000e8" }
 RevMob.startSession(REVMOB_IDS)
+local banner_1 = nil
+local banner_2 = nil
+local banner_3 = nil
 
 function adshow.callrevmob (bansize)
-    
-    if bansize == "320x50" then
-        banner = RevMob.createBanner({x = display.contentWidth / 2, y = _H - 50, width = _W, height = 100 })
-        banner:show()
-    elseif bansize == "fullscreen" then
---        banner = RevMob.createFullscreen() 
---        banner:show()
-    elseif bansize == "showpop" then
-        banner = RevMob.createPopup()
-        banner:show()
-    elseif bansize == "hide" then
-        banner:hide()
+    if adshow.ads == true then
+        if bansize == "320x50" then
+            banner_1 = RevMob.createBanner({x = display.contentWidth / 2, y = _H - 50, width = _W, height = 100 })
+            banner_1:show()
+        elseif bansize == "fullscreen" then
+            banner_2 = RevMob.createFullscreen() 
+            banner_2:show()
+        elseif bansize == "showpop" then
+            banner_3 = RevMob.createPopup()
+            banner_3:show()
+        elseif bansize == "hide" then
+            banner_1:hide()
+            end
+        end
     end
-end
 
 --local TOP = 1
 --local CENTER = 2
@@ -250,7 +266,6 @@ function adshow.callflurry (action)
         analytics.logEvent(action)
 end
 
-
 --local cb = require "luafile.chartboost"
 --
 --local cbappId = "4f7aa26ef77659d869000003"
@@ -297,8 +312,8 @@ function adshow.showmore (event)
 --    end
 --    network.request( "https://encrypted.google.com", "GET", networkListener )
 end
-local buyobjects = nil
 
+local buyobjects = nil
 function adshow.prestart (event)
 buyobjects = {}
 end

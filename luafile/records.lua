@@ -12,7 +12,7 @@ local number
 local name
 local stats
 local onTouched_
-
+local params
 local function onSceneTouch(event)
 switch = event.targe
 
@@ -30,7 +30,8 @@ local scenefrom =
             time = 600,
             params = 
                 {
-                    scenename = "records"
+                    scenename = "records",
+                    soundv      = params.soundv,
                 }
 
             } 
@@ -45,15 +46,16 @@ if event.keyName == "back" and event.phase == "down" then
             local t = event.index
             if t == 1 then
                 local scenefrom = 
-                                {
-                                effect = "fade",
-                                time = 600,
-                                params = 
-                                    {
-                                        scenename = "records"
-                                    }
+                        {
+                        effect = "fade",
+                        time = 600,
+                        params = 
+                            {
+                                scenename = "records",
+                                soundv      = params.soundv,
+                            }
 
-                                } 
+                        } 
                 storyboard.gotoScene( "luafile.menu", scenefrom  )
                 --adshow.inneractive ("hide") 
             end
@@ -83,18 +85,19 @@ number = {}
 storyboard.purgeAll()
 storyboard.removeAll() 
 stats = event.params
+params = event.params
 Runtime:addEventListener( "key", cancelstats );
 
 local color = 
             {
             highlight = 
-            {
-                r =0, g = 0, b = 0, a = 255
-            },
+                {
+                    r =0, g = 0, b = 0, a = 255
+                },
             shadow =
-            {
-                r = 0, g = 0, b = 0, a = 255
-            }
+                {
+                    r = 0, g = 0, b = 0, a = 255
+                }
             }    
 
 number[1] = stats.uscore;

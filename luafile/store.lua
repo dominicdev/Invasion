@@ -58,6 +58,8 @@ function functions.transactionCallback( event )
             coinnum = coinnum + 700
         elseif productID == products.three then  
             coinnum = coinnum + 1200
+        elseif productID == products.four then  
+        
         end
     
         local tablesave_1 = [[UPDATE item SET coin=']].. coinnum ..[[' WHERE id = 1]]
@@ -202,11 +204,11 @@ myButton[1] = external.widget.newButton
             emboss          = true,
             onRelease       = function (event) 
                 if event.phase == "ended" then
-                    if connection == true then
+                   -- if connection == true then
                         store.purchase({products.one})
-                    else
-                        external.adshow.storealert ("Network Error")
-                    end
+                    --else
+                     --   external.adshow.storealert ("Network Error")
+                    --end
                 end
             end,
         }
@@ -230,11 +232,11 @@ myButton[2] = external.widget.newButton
             emboss          = true,
             onRelease       = function (event) 
                 if event.phase == "ended" then
-                    if connection == true then
+                   -- if connection == true then
                         store.purchase({products.two})
-                    else
-                        external.adshow.storealert ("Network Error")
-                    end
+                    --
+                     --   external.adshow.storealert ("Network Error")
+                    --end
                 end
             end,
         }
@@ -476,6 +478,7 @@ local function onSceneTouch(event)
                     }
         storyboard.gotoScene( "luafile.levels", scenefrom ) 
         --adshow.calltapfortap("hide") 
+    
         end
             
     end
@@ -490,18 +493,21 @@ bg.y = h_
 group[1]:insert(bg)
 connection = false
 
-function functions.loadproducts (store_use)
+local function loadproducts (store_use)
+    
     if store_use == "apple" then
     products = {
             one     = "eight.app.studio.aliendisruption.myproductname1",
             two     = "eight.app.studio.aliendisruption.myproductname2",
             three   = "eight.app.studio.aliendisruption.myproductname3",
+            four    = "eight.app.studio.aliendisruption.myproductname3",
             }
     elseif store_use == "google" then
     products = {
             one     = "eight.app.studio.aliendisruption.myproductname1",
             two     = "eight.app.studio.aliendisruption.myproductname2",
             three   = "eight.app.studio.aliendisruption.myproductname3",
+            four    = "eight.app.studio.aliendisruption.myproductname4",
             }
     end
 end            
@@ -509,10 +515,10 @@ end
 -- Identifies the device and will initialize according to type.
 if store.availableStores.apple then
     store.init("apple", functions.transactionCallback)
-    functions.loadproducts ("apple")
+    loadproducts ("apple")
 elseif store.availableStores.google then
     store.init("google", functions.transactionCallback)
-    functions.loadproducts ("google")
+    loadproducts ("google")
 end
 
 Runtime:addEventListener( "key", none );
@@ -800,6 +806,7 @@ startbutton = external.widget.newButton
                     --adshow.calltapfortap("hide")
                     audio.stop()
                 end
+            external.adshow.callrevmob("hide")
             end,}
 startbutton.x = w_ 
 startbutton.y = display.contentHeight - (h_*.25)
@@ -821,11 +828,13 @@ backbutton = external.widget.newButton
  backbutton.alpha = 0
  transition.to(backbutton,{alpha = 1,time = 600})
 
+
 item[13]:setTextColor(0, 0, 0)
 item[14]:setTextColor(0, 0, 102)
 item[15]:setTextColor(0, 0, 102)
 item[16]:setTextColor(0, 0, 102)
 group[2]:insert(backbutton)
+--group[2]:insert(adsbutton)
 group[2]:insert(item[4])
 group[2]:insert(item[3])
 group[2]:insert(item[2])

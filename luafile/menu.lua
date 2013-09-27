@@ -1,5 +1,6 @@
 local external      = require "luafile.external"
 local storyboard    = require "storyboard"
+local store         = require "store"
 local w             = display.contentWidth / 2
 local h             = display.contentHeight / 2
 local scene         = storyboard.newScene()
@@ -11,16 +12,56 @@ local constatus
 local scenefrom
 local scroller
 local buttons
-local devname
+local adsbutton
 local texting
 local switch
 local group
 local popup
 local color
 local bg
+local products
 
-local function audiovolume (event)
+local function transactionCallback( event )
+    print("transactionCallback: Received event " .. tostring(event.name))
+    print("state: " .. tostring(event.transaction.state))
+    print("errorType: " .. tostring(event.transaction.errorType))
+    print("errorString: " .. tostring(event.transaction.errorString))
     
+    local productID= event.transaction.productIdentifier;
+    if event.transaction.state == "purchased" then
+        
+        external.adshow.storealert ("Product Purchased: "..productID)
+        local bolss = "false"
+        local tablesave_1 = [[UPDATE info SET adstats=']].. bolss ..[[' WHERE rowid = 1]]
+        external.adshow.db:exec( tablesave_1 )
+        external.adshow.callflurry("remove ads")
+           local function onComplete( event )
+                if "clicked" == event.action then
+                    local i = event.index
+                    if 1 == i then
+                    native.requestExit() 
+                    elseif 2 == i then
+                    end
+                end
+            end 
+          local alert = native.showAlert( "Exit", "Need to REOPEN the Game to removed ads", { "YES", "Later" }, onComplete )
+        native.showAlert("You Buy Product",productID, {"OK"})  
+        
+    elseif event.transaction.state == "restored" then
+        print("Product Restored", productID)
+    elseif event.transaction.state == "refunded" then
+        print("Product Refunded")
+    elseif event.transaction.state == "cancelled" then
+        print("Transaction cancelled")
+    elseif event.transaction.state == "failed" then
+        external.adshow.storealert ("Transaction Failed")
+    else
+        external.adshow.storealert ("Some unknown event occured. This should never happen.")
+    end
+    store.finishTransaction( event.transaction )
+end
+
+local function audiovolume (event)  
 if event.phase == "ended" then
     if event.target.id == "mute" then
         audio.setVolume( 0 )
@@ -28,16 +69,16 @@ if event.phase == "ended" then
         buttons.playpause = nil
         buttons.playpause = external.widget.newButton
             {
-            defaultFile = "button/audiobutton/mute.png",
-            overFile    = "button/audiobutton/play.png",
+            defaultFile = "button/orange/mute.png",
+            overFile    = "button/orange/playaudio.png",
             id          = "soundon",
             width       = 80, 
             height      = 80,
             emboss      = true,
             onRelease   = audiovolume,
             }
-        buttons.playpause.x = 60
-        buttons.playpause.y = 50
+        buttons.playpause.x = buttons.playpause.width
+        buttons.playpause.y = buttons.playpause.height
         group[2]:insert(buttons.playpause) 
         external.adshow.audiostats = false
     elseif event.target.id == "soundon" then
@@ -47,16 +88,16 @@ if event.phase == "ended" then
         buttons.playpause = nil
         buttons.playpause = external.widget.newButton
             {
-            defaultFile = "button/audiobutton/play.png",
-            overFile    = "button/audiobutton/mute.png",
+            defaultFile = "button/orange/playaudio.png",
+            overFile    = "button/orange/mute.png",
             id          = "mute",
             width       = 80, 
             height      = 80,
             emboss      = true,
             onRelease   = audiovolume,
             }
-        buttons.playpause.x = 60
-        buttons.playpause.y = 50
+        buttons.playpause.x = buttons.playpause.width
+        buttons.playpause.y = buttons.playpause.height
         group[2]:insert(buttons.playpause)
         external.adshow.audiostats = true
     end
@@ -65,8 +106,8 @@ end
 
 local function onSceneTouch(event)
     
-        switch = event.target
-        audio.play(external.sfx.clicksound)
+    switch = event.target
+    audio.play(external.sfx.clicksound)
     if switch.id == "game" then
         local option = {
                             effect  = "fade",
@@ -102,7 +143,6 @@ local function onSceneTouch(event)
         storyboard.gotoScene( "luafile.howto", scenefrom )
         external.adshow.callflurry("Instruction")
     end
-
 end
 
 local function ExitAppss (event)
@@ -113,9 +153,12 @@ if keyName == "back" and event.phase == "down" then
         if "clicked" == event.action then
             local i = event.index
             if 1 == i then
-                if devname == "Android" then
-                    native.requestExit()
-                end
+--                if devname == "Android" then
+--                    native.requestExit()
+--                else
+--                   
+--                end
+            native.requestExit() 
             elseif 2 == i then
             end
         end
@@ -133,16 +176,16 @@ elseif keyName == "volumeUp" and event.phase == "down" then
             buttons.playpause = nil
             buttons.playpause = external.widget.newButton
                 {
-                        defaultFile = "button/audiobutton/play.png",
-                        overFile    = "button/audiobutton/play.png",
+                        defaultFile = "button/orange/playaudio.png",
+                        overFile    = "button/orange/mute.png",
                         id          = "soundon",
                         width       = 80, 
                         height      = 80,
                         emboss      = true,
                         onRelease   = audiovolume,
                 }
-            buttons.playpause.x = 60
-            buttons.playpause.y = 50
+            buttons.playpause.x = buttons.playpause.width
+            buttons.playpause.y = buttons.playpause.height
             group[2]:insert(buttons.playpause) 
             
       end
@@ -156,16 +199,16 @@ elseif keyName == "volumeDown" and event.phase == "down" then
             buttons.playpause = nil
             buttons.playpause = external.widget.newButton
                 {
-                    defaultFile = "button/audiobutton/mute.png",
-                    overFile    = "button/audiobutton/play.png",
+                    defaultFile = "button/orange/mute.png",
+                    overFile    = "button/orange/playaudio.png",
                     id          = "soundon",
                     width       = 80, 
                     height      = 80,
                     emboss      = true,
                     onRelease   = audiovolume,
                 }
-            buttons.playpause.x = 60
-            buttons.playpause.y = 50
+            buttons.playpause.x = buttons.playpause.width
+            buttons.playpause.y = buttons.playpause.height
             group[2]:insert(buttons.playpause) 
       end
       audio.setVolume(numvolume)
@@ -199,17 +242,39 @@ timertrans = false
 constatus = false
 popup = false
 
+local function loadproducts (store_use)
+    if store_use == "apple" then
+    products = "eight.app.studio.aliendisruption.myproductname4"
+    elseif store_use == "google" then
+    products = "eight.app.studio.aliendisruption.myproductname4"   
+    end
+end            
+            
+-- Identifies the device and will initialize according to type.
+if store.availableStores.apple then
+    store.init("apple", transactionCallback)
+    loadproducts ("apple")
+elseif store.availableStores.google then
+    store.init("google", transactionCallback)
+    loadproducts ("google")
+end
+
 end
 
 function scene:enterScene(event)
-storyboard.purgeAll()
+--storyboard.purgeAll()
 storyboard.removeAll() 
+
 group[1] = self.view
 scenefrom = event.params
 Runtime:addEventListener( "key", ExitAppss )
 timertrans = false
+if external.backmusic == true then
+
 audio.play(external.sfx.backmusic,{loops = 99,channel = 1})
 audio.setVolume(0.3, {channel = 1})
+end
+
 
 scroller = external.widget.newScrollView
 {
@@ -435,30 +500,30 @@ if external.adshow.audiostats == true then
     
 buttons.playpause = external.widget.newButton
 {
-        defaultFile = "button/audiobutton/play.png",
-        overFile    = "button/audiobutton/mute.png",
+        defaultFile = "button/orange/playaudio.png",
+        overFile    = "button/orange/mute.png",
         id          = "mute",
         width       = 80, 
         height      = 80,
         emboss      = true,
         onRelease   = audiovolume,
     }
-buttons.playpause.x = 60
-buttons.playpause.y = 50
+buttons.playpause.x = buttons.playpause.width
+buttons.playpause.y = buttons.playpause.height
 
 elseif external.adshow.audiostats == false then
 buttons.playpause = external.widget.newButton
 {
-        defaultFile = "button/audiobutton/mute.png",
-        overFile    = "button/audiobutton/play.png",
+        defaultFile = "button/orange/mute.png",
+        overFile    = "button/orange/playaudio.png",
         id          = "soundon",
         width       = 80, 
         height      = 80,
         emboss      = true,
         onRelease   = audiovolume,
     }
-buttons.playpause.x = 60
-buttons.playpause.y = 50    
+buttons.playpause.x = buttons.playpause.width
+buttons.playpause.y = buttons.playpause.height    
 end
 
 buttons.highbutton = external.widget.newButton
@@ -503,6 +568,35 @@ buttons.storebutton.x = display.contentWidth - 10
 buttons.storebutton.y =  buttons.storebutton.height
 buttons.storebutton.alpha = 0
 
+adsbutton = external.widget.newButton
+        {
+            defaultFile     = "button/ads/adstap.png",
+            overFile        = "button/ads/adsover.png",
+            width           = 200, 
+            height          = 60,
+            onRelease       = function (event) 
+                if event.phase == "ended" then
+                    
+                    local function onComplete( event )
+                  
+                        if "clicked" == event.action then
+                            local i = event.index
+                            if 1 == i then
+                                store.purchase({products})
+                            elseif 2 == i then
+                            
+                            end
+                        end
+                    end 
+                  local alert = native.showAlert( "Remove Ads", "Remove Ads for $0.99, Are you Sure?", { "YES", "NO" }, onComplete )
+                end
+            end,
+        }
+adsbutton:setReferencePoint(display.TopRightReferencePoint)
+adsbutton.x = display.contentWidth 
+adsbutton.y = -13
+adsbutton.alpha  = 0
+
 timer.performWithDelay( 1000, function() 
 if (scenefrom.scenename == "gametype") or (scenefrom.scenename == "highscore") or (scenefrom.scenename == "howto") or (scenefrom.scenename == "store") then
 else
@@ -521,6 +615,9 @@ transition.to(buttons.insbutton, { delay = 500,time=1000, x= display.contentWidt
 transition.to(buttons.highbutton, { delay = 300,time=1000, x= display.contentWidth - 320, transition=easing.inOutQuad}) 
 transition.to(buttons.aboutbutton, { delay = 1000,time=2000, alpha = 1}) 
 transition.to(buttons.storebutton, { delay = 1000,time=2000, alpha = 0}) 
+if external.adshow.ads == true then
+    transition.to(adsbutton, { delay = 1000,time=2000, alpha = 1}) 
+end
 external.adshow.callrevmob("320x50")
 end, 1 )
 
@@ -532,6 +629,7 @@ function showpopevent(event)
 end
 
 Runtime:addEventListener( "touch", showpopevent )
+group[2]:insert(adsbutton) 
 group[2]:insert(buttons.playpause) 
 group[2]:insert(scroller)
 group[2]:insert(buttons.newbutton)
@@ -539,7 +637,7 @@ group[2]:insert(buttons.insbutton)
 group[2]:insert(buttons.highbutton)  
 group[2]:insert(buttons.storebutton)
 group[1]:insert(group[2])
-
+--external.adshow.callrevmob("fullscreen")
 end
 
 function scene:exitScene(event)
@@ -552,7 +650,7 @@ Runtime:removeEventListener( "key", ExitAppss )
 popup = false
 group[2]:removeSelf()
 group[2] = nil
-external.adshow.callrevmob("hide")
+--external.adshow.callrevmob("hide")
 
 end
 
