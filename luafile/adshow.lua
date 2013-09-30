@@ -6,6 +6,7 @@ local sqlite3    = require "sqlite3"
 local w_ = display.contentWidth / 2
 local h_ = display.contentHeight / 2 
 local file
+local row
 
 adshow.audiostats = true
 
@@ -155,17 +156,22 @@ file = io.open( adshow.path )
    end
 
 adshow.db = sqlite3.open( adshow.path )
-adshow.ads = nil
+
+local createTable = [[CREATE TABLE IF NOT EXISTS info (id INTEGER PRIMARY KEY, adstats );]]
+adshow.db:exec (createTable )
+
+adshow.ads = true
 local sql = "SELECT * FROM info";
 local row
 
 for row in adshow.db:nrows(sql) do
-    print(row.adstats)
+    
     if tostring(row.adstats) == "true" then
         adshow.ads = true
     else
         adshow.ads = false
     end
+
 end
 
 local _H = display.contentHeight
@@ -190,19 +196,22 @@ local RevMob = require("luafile.revmob")
 local REVMOB_IDS = { ["Android"] = "51a6f392433111f6e90000f7", ["iPhone OS"] = "51a6f380433111f6e90000e8" }
 RevMob.startSession(REVMOB_IDS)
 local banner_1 = nil
+banner_1 = RevMob.createBanner({x = display.contentWidth / 2, y = _H - 50, width = _W, height = 100 })
+banner_1:hide()
 local banner_2 = nil
+banner_2 = RevMob.createFullscreen()
+banner_2:hide()
 local banner_3 = nil
+banner_3 = RevMob.createPopup()
+banner_3:hide()
 
 function adshow.callrevmob (bansize)
     if adshow.ads == true then
         if bansize == "320x50" then
-            banner_1 = RevMob.createBanner({x = display.contentWidth / 2, y = _H - 50, width = _W, height = 100 })
             banner_1:show()
         elseif bansize == "fullscreen" then
-            banner_2 = RevMob.createFullscreen() 
             banner_2:show()
         elseif bansize == "showpop" then
-            banner_3 = RevMob.createPopup()
             banner_3:show()
         elseif bansize == "hide" then
             banner_1:hide()
@@ -251,6 +260,7 @@ print(addcoin)
 end
 
 --flurry 
+
 local analytics = require "analytics"
 local application_key
 local environment = system.getInfo( "platformName" )
@@ -262,8 +272,9 @@ elseif environment == "iPhone OS" then
     application_key = "9S8NM34YBGMZG3KCSKQT"
 end
 analytics.init(application_key )
+
 function adshow.callflurry (action)
-        analytics.logEvent(action)
+       analytics.logEvent(action)
 end
 
 --local cb = require "luafile.chartboost"
@@ -311,6 +322,31 @@ function adshow.showmore (event)
 --        end
 --    end
 --    network.request( "https://encrypted.google.com", "GET", networkListener )
+end
+
+
+local playhaven = require("plugin.playhaven")
+
+
+local playhavenListener = function(event)
+
+end
+
+local init_options = {
+    token = "bd6ee3ec8be1412291025eca1a00bc03",
+    secret = "7593d0fb0ecd4eae8e62dfc88f682fd3",
+    closeButton = system.pathForFile("button/close/close.png", system.ResourceDirectory),
+    closeButtonTouched = system.pathForFile("button/close/closetap.png", system.ResourceDirectory)
+}
+
+playhaven.init(playhavenListener, init_options)
+
+function adshow.callplayhaven (action)
+    if action == "fullscreen" and adshow.ads == true then
+        playhaven.contentRequest("announcement", true)
+    elseif action == "more_games" then
+        playhaven.contentRequest("more_games", true)
+    end
 end
 
 local buyobjects = nil

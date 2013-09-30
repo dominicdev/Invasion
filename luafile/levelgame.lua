@@ -1054,7 +1054,7 @@ function functions.removerunner(event)
                     audio.stop({channel = 19})
                     audio.fade({channel=19, time=2000, volume=0})
                     audio.play( external.sfx.sound_13,{loops= -1,channel = 18,volume = 0} )
-                    audio.fade({channel=18, time=3000, volume=0.5})
+                    audio.fade({channel=18, time=3000, volume=1})
                 end
             
         elseif hit.damage == 0 and hit.myname == "human" then
@@ -1458,13 +1458,12 @@ function functions.updatestatus ( )
                 bol.bosstats = true
                 bol.bols = "false"
                 end
-            local availableChannel = audio.findFreeChannel()
-                audio.setVolume((params.soundv/2), {channel = availableChannel})
-                audio.play( external.sfx.sound_13,{loops= -1,channel = availableChannel} )
+
+                audio.play( external.sfx.sound_13,{loops= -1,channel = 18} )
                 audio.stop({channel = 18})
                 audio.fade({channel=18, time=2000, volume=0})
                 audio.play( external.sfx.bigmonster,{loops= -1,channel = 19,volume = 0} )
-                audio.fade({channel=19, time=3000, volume=0.5})
+                audio.fade({channel=19, time=3000, volume=1})
             end
         bol.bigrun = true
         timer_.human = timer.performWithDelay(4000, functions.helphuman, 3)
@@ -1496,7 +1495,6 @@ function functions.updatestatus ( )
     end
 
 local function fencehit ()
-    print(number_.fencelife)
     if number_.fencelife == 4 then
         objects_.fence:removeSelf()
         objects_.fence.myname = nil
@@ -1505,6 +1503,7 @@ local function fencehit ()
         objects_.fence.x = w_;
         objects_.fence.y = h_ + 130;
         objects_.fence:play();
+        
         timer.performWithDelay(100, function() 
             
                 external.physics.addBody(objects_.fence,"static",{density = 0, bounce = 0,isSensor = true});
@@ -1520,9 +1519,10 @@ local function fencehit ()
         objects_.fence.x = w_;
         objects_.fence.y = h_ + 130;
         objects_.fence:play();
+        
         timer.performWithDelay(100, function()
             
-                external.physics.addBody(objects_.fence,"static",{density = 0, bounce = 0,isSensor = true});
+            external.physics.addBody(objects_.fence,"static",{density = 0, bounce = 0,isSensor = true});
             objects_.fence.myname = "fence";
             group[3]:insert(objects_.fence);
             end, 1)
@@ -1576,6 +1576,7 @@ function scene:willEnterScene (event)
         master      = nil,      bigmaster   = nil,      fence       = nil,
         fog_1       = nil,      fog_2       = nil,      fogmov      = nil,
         dark        = nil,      bunoscoin   = nil,      level       = nil,
+        closebutton = nil,      adsimage    = nil,
         }                   
     timer_      = {
         mob         = nil,      laser       = nil,      cartime     = nil,
@@ -2367,6 +2368,7 @@ function scene:enterScene (event)
                 elseif event.object1.myname == "bigmaster" then
                     number_.bignum = number_.bignum - 1
                     game_.killed = game_.killed + 1
+                    
                     end
                 event.object1:removeSelf()
                 event.object1.myname = nil
@@ -2384,6 +2386,7 @@ function scene:enterScene (event)
                 elseif event.object2.myname == "bigmaster" then
                     number_.bignum = number_.bignum - 1
                     game_.killed = game_.killed + 1
+                    
                     end
                 event.object2:removeSelf()
                 event.object2.myname = nil    
@@ -2554,7 +2557,7 @@ function scene:enterScene (event)
                 event.object1:removeSelf()
                 event.object1.myname = nil
                 end
-            audio.play( external.sfx.sound_1) 
+            audio.play(external.sfx.sound_1) 
             end
         
         end
@@ -2579,232 +2582,265 @@ function scene:enterScene (event)
             }
         }
     text_.count:setEmbossColor( colors )
-    
+
     timer.performWithDelay( 2000, function() 
-        external.adshow.loading("hide") 
-        
-        if game_.tutorial == "false" then
-            local monster_s
-            local monsters_ = false
-            local fing = false
-            local fingermove
-            local powertur
-            local displaytutorial 
-                local texttap   = display.newEmbossedText(" ", 10, 10, "BadaBoom BB", 50,{ 255, 255, 255, 255 });
-            texttap:setReferencePoint(display.CenterReferencePoint);
-            texttap.x = w_ ;  
-            texttap.y = display.contentHeight /2 - 200    
-            texttap.alpha = 0 
-            texttap:setTextColor( 255, 0, 0 )
-            group[3]:insert(texttap); 
-            
-            local colors = 
-            {
-                highlight = 
-                {
-                    r =235, g = 0, b = 80, a = 255
-                    },
-                shadow =
-                {
-                    r = 0, g = 0, b = 0, a = 255
-                    }
-                }
-            texttap:setEmbossColor( colors )
-            local finger = display.newImageRect("items/finger.png", 62, 83)
-            finger.x = w_+20
-            finger.y = display.contentHeight - 100
-            finger.alpha = 0
-            finger:scale( 2, 2)
-            group[3]:insert(finger)
-            
-            function functions.taptutorial_(event)
-                if fing == true then
-                    transition.cancel (fingermove)
-                    end
-                if monsters_ == true then
-                    transition.cancel (monster_s)
-                    end
-                local hit = event.target
-                local holder = hit.id  
-                if event.phase == "began" then
-                    local x1 = hit.x
-                    local y1 = hit.y
-                    audio.play(external.sfx.sound_2)
-                    number_.flasher = number_.flasher + 1;
-                    flash[number_.flasher] = external.sprite.newSprite(external.spritefactory.spriteflash)
-                    flash[number_.flasher].x = x1
-                    flash[number_.flasher].y = y1
-                    flash[number_.flasher]:prepare("flash")
-                    flash[number_.flasher]:play()
-                    group[3]:insert(flash[number_.flasher])
-                    flash[number_.flasher]:addEventListener( "sprite", functions.spriteListener )
-                    
-                    dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
-                    dead[number_.deadmon].x = x1
-                    dead[number_.deadmon].y = y1
-                    dead[number_.deadmon]:prepare("dead_2")
-                    dead[number_.deadmon]:play()
-                    group[2]:insert(dead[number_.deadmon])
-                    dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
-                    event.target:removeSelf() 
-                    event.target.myname = nil 
-                    finger:removeSelf()
-                    finger = nil
-                    texttap:removeSelf()
-                    texttap = nil
-                    local function endtutoria (event)
-                        game_.tutorial = "true"
-                        timer.performWithDelay(500, function()
-                            if count_ == 0 then
-                                text_.count:setText("R E A D Y")
-                                text_.count:setReferencePoint(display.CenterReferencePoint);
-                                text_.count.x = w_ ;
-                                local availableChannel = audio.findFreeChannel()
-                                    audio.setVolume(params.soundv, {channel = availableChannel})
-                                    audio.play(external.sfx.star, {channel = availableChannel})
-                            elseif count_ == 1 then
-                                text_.count:setText("S E T")
-                                text_.count:setReferencePoint(display.CenterReferencePoint);
-                                text_.count.x = w_ ;
-                                local availableChannel = audio.findFreeChannel()
-                                    audio.setVolume(params.soundv, {channel = availableChannel})
-                                    audio.play(external.sfx.star, {channel = availableChannel})
-                            elseif count_ == 2 then
-                                text_.count:setText("G O")
-                                text_.count:setReferencePoint(display.CenterReferencePoint);
-                                text_.count.x = w_ ;
-                                local availableChannel = audio.findFreeChannel()
-                                    audio.setVolume(params.soundv, {channel = availableChannel})
-                                    audio.play(external.sfx.star, {channel = availableChannel})
-                            elseif count_ == 3 then
-                                timer.performWithDelay(300, showobjects, 1)
-                                text_.count:setText("Game On!")
-                                text_.count:setReferencePoint(display.CenterReferencePoint);
-                                text_.count.x = w_ ;
-                                    transition.to(text_.count,{alpha = 0,time = 1000})
-                                local availableChannel = audio.findFreeChannel()
-                                    audio.setVolume(params.soundv, {channel = availableChannel})
-                                    audio.play(external.sfx.sound_9, {channel = availableChannel})
-                                local availableChannel = audio.findFreeChannel()
-                                    audio.setVolume((params.soundv/2), {channel = availableChannel})
-                                    audio.play( external.sfx.sound_13,{loops= -1,channel = availableChannel} )
-                                --udio.setVolume( 0.5, { channel=18} )
-                                Runtime:removeEventListener( "key", nonkey )
-                                Runtime:addEventListener( "key", pauseall )
-                                
-                                end
-                            
-                            count_ = count_ + 1   
-                            end,4)
-                        
-                        local tablesave_1 = [[UPDATE button SET tutorial =']]..game_.tutorial..[[' WHERE id =]]..1
-                        external.adshow.db:exec( tablesave_1) 
-                        print(tablesave_1)
-                        end
-                    
-                    timer.performWithDelay(1000, function() 
-                        endtutoria()
-                        end, 1)
-                    return true
-                    end
-                end
-            
-            function functions.fingermoving_ (objecter_)
-                --group[2]:insert(texttap)lay.contentHeight - 100  
-                fing = false
-                    fingermove = transition.to(finger,{x = w_+20 ,y = display.contentHeight - 100 ,delay = 500,time = 500,onComplete = functions.fingermoving}) 
-                fing = true
-                end 
-            
-            local tappings = false
-            function functions.fingermoving (objecter_)
-                texttap:setText("TAP TO KILL THE ALIEN")
+    external.adshow.loading("hide") 
+       external.stage  = external.stage + 1
+       
+       local function beforestarting ()
+            if game_.tutorial == "false" then
+                local monster_s
+                local monsters_ = false
+                local fing = false
+                local fingermove
+                local powertur
+                local displaytutorial 
+                    local texttap   = display.newEmbossedText(" ", 10, 10, "BadaBoom BB", 50,{ 255, 255, 255, 255 });
                 texttap:setReferencePoint(display.CenterReferencePoint);
-                texttap.x = w_+20 ;
-                texttap.alpha = 1
-                if tappings == false then
-                    monsters[number_.monster]:addEventListener("touch",functions.taptutorial_) 
-                    tappings = true
-                    end
-                fing = false
-                    fingermove = transition.to(finger,{x = monsters[number_.monster].x+20 ,y = monsters[number_.monster].y + 100,delay = 500,time = 500,onComplete = functions.fingermoving_}) 
-                fing = true
-                end
-            local function starttutorial_ (event)
-                
-                if event.phase == "began" then
-                    
-                    number_.monster = number_.monster + 1 
-                    monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_2)
-                    monsters[number_.monster]:prepare("alien_2") 
-                    monsters[number_.monster]:play()
-                    monsters[number_.monster].id = "tutorial"  
-                    monsters[number_.monster].y = -50
-                    monsters[number_.monster].x = display.contentWidth / 2 
-                        monster_s = transition.to(monsters[number_.monster],{y = display.contentHeight /2 ,delay = 500,time = 2500,onComplete = functions.fingermoving})
-                    monsters_ = true
-                    group[2]:insert(monsters[number_.monster])
-                    
-                    local function removedisplay_ ()
-                        displaytutorial:removeSelf()
-                        displaytutorial = nil  
+                texttap.x = w_ ;  
+                texttap.y = display.contentHeight /2 - 200    
+                texttap.alpha = 0 
+                texttap:setTextColor( 255, 0, 0 )
+                group[3]:insert(texttap); 
+
+                local colors = 
+                {
+                    highlight = 
+                    {
+                        r =235, g = 0, b = 80, a = 255
+                        },
+                    shadow =
+                    {
+                        r = 0, g = 0, b = 0, a = 255
+                        }
+                    }
+                texttap:setEmbossColor( colors )
+                local finger = display.newImageRect("items/finger.png", 62, 83)
+                finger.x = w_+20
+                finger.y = display.contentHeight - 100
+                finger.alpha = 0
+                finger:scale( 2, 2)
+                group[3]:insert(finger)
+
+                function functions.taptutorial_(event)
+                    if fing == true then
+                        transition.cancel (fingermove)
                         end
-                    
-                        transition.to(displaytutorial,{x = display.contentWidth*2,time = 1000,transition=easing.linear,onComplete = removedisplay_})
-                    finger.alpha = 1
+                    if monsters_ == true then
+                        transition.cancel (monster_s)
+                        end
+                    local hit = event.target
+                    local holder = hit.id  
+                    if event.phase == "began" then
+                        local x1 = hit.x
+                        local y1 = hit.y
+                        audio.play(external.sfx.sound_2)
+                        number_.flasher = number_.flasher + 1;
+                        flash[number_.flasher] = external.sprite.newSprite(external.spritefactory.spriteflash)
+                        flash[number_.flasher].x = x1
+                        flash[number_.flasher].y = y1
+                        flash[number_.flasher]:prepare("flash")
+                        flash[number_.flasher]:play()
+                        group[3]:insert(flash[number_.flasher])
+                        flash[number_.flasher]:addEventListener( "sprite", functions.spriteListener )
+
+                        dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritedeadmob)
+                        dead[number_.deadmon].x = x1
+                        dead[number_.deadmon].y = y1
+                        dead[number_.deadmon]:prepare("dead_2")
+                        dead[number_.deadmon]:play()
+                        group[2]:insert(dead[number_.deadmon])
+                        dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
+                        event.target:removeSelf() 
+                        event.target.myname = nil 
+                        finger:removeSelf()
+                        finger = nil
+                        texttap:removeSelf()
+                        texttap = nil
+                        local function endtutoria (event)
+                            game_.tutorial = "true"
+                            timer.performWithDelay(500, function()
+                                if count_ == 0 then
+                                    text_.count:setText("R E A D Y")
+                                    text_.count:setReferencePoint(display.CenterReferencePoint);
+                                    text_.count.x = w_ ;
+                                    local availableChannel = audio.findFreeChannel()
+                                        audio.setVolume(params.soundv, {channel = availableChannel})
+                                        audio.play(external.sfx.star, {channel = availableChannel})
+                                elseif count_ == 1 then
+                                    text_.count:setText("S E T")
+                                    text_.count:setReferencePoint(display.CenterReferencePoint);
+                                    text_.count.x = w_ ;
+                                    local availableChannel = audio.findFreeChannel()
+                                        audio.setVolume(params.soundv, {channel = availableChannel})
+                                        audio.play(external.sfx.star, {channel = availableChannel})
+                                elseif count_ == 2 then
+                                    text_.count:setText("G O")
+                                    text_.count:setReferencePoint(display.CenterReferencePoint);
+                                    text_.count.x = w_ ;
+                                    local availableChannel = audio.findFreeChannel()
+                                        audio.setVolume(params.soundv, {channel = availableChannel})
+                                        audio.play(external.sfx.star, {channel = availableChannel})
+                                elseif count_ == 3 then
+                                    timer.performWithDelay(300, showobjects, 1)
+                                    text_.count:setText("Game On!")
+                                    text_.count:setReferencePoint(display.CenterReferencePoint);
+                                    text_.count.x = w_ ;
+                                        transition.to(text_.count,{alpha = 0,time = 1000})
+                                    local availableChannel = audio.findFreeChannel()
+                                        audio.setVolume(params.soundv, {channel = availableChannel})
+                                        audio.play(external.sfx.sound_9, {channel = availableChannel})
+                                        audio.setVolume(1, {channel = 18})
+                                        audio.play( external.sfx.sound_13,{loops= -1,channel = 18} )
+                                    --udio.setVolume( 0.5, { channel=18} )
+                                    Runtime:removeEventListener( "key", nonkey )
+                                    Runtime:addEventListener( "key", pauseall )
+
+                                    end
+
+                                count_ = count_ + 1   
+                                end,4)
+
+                            local tablesave_1 = [[UPDATE button SET tutorial =']]..game_.tutorial..[[' WHERE id =]]..1
+                            external.adshow.db:exec( tablesave_1) 
+                            print(tablesave_1)
+                            end
+
+                        timer.performWithDelay(1000, function() 
+                            endtutoria()
+                            end, 1)
+                        return true
+                        end
                     end
+
+                function functions.fingermoving_ (objecter_)
+                    --group[2]:insert(texttap)lay.contentHeight - 100  
+                    fing = false
+                        fingermove = transition.to(finger,{x = w_+20 ,y = display.contentHeight - 100 ,delay = 500,time = 500,onComplete = functions.fingermoving}) 
+                    fing = true
+                    end 
+
+                local tappings = false
+                function functions.fingermoving (objecter_)
+                    texttap:setText("TAP TO KILL THE ALIEN")
+                    texttap:setReferencePoint(display.CenterReferencePoint);
+                    texttap.x = w_+20 ;
+                    texttap.alpha = 1
+                    if tappings == false then
+                        monsters[number_.monster]:addEventListener("touch",functions.taptutorial_) 
+                        tappings = true
+                        end
+                    fing = false
+                        fingermove = transition.to(finger,{x = monsters[number_.monster].x+20 ,y = monsters[number_.monster].y + 100,delay = 500,time = 500,onComplete = functions.fingermoving_}) 
+                    fing = true
+                    end
+                local function starttutorial_ (event)
+
+                    if event.phase == "began" then
+
+                        number_.monster = number_.monster + 1 
+                        monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.alien_2)
+                        monsters[number_.monster]:prepare("alien_2") 
+                        monsters[number_.monster]:play()
+                        monsters[number_.monster].id = "tutorial"  
+                        monsters[number_.monster].y = -50
+                        monsters[number_.monster].x = display.contentWidth / 2 
+                            monster_s = transition.to(monsters[number_.monster],{y = display.contentHeight /2 ,delay = 500,time = 2500,onComplete = functions.fingermoving})
+                        monsters_ = true
+                        group[2]:insert(monsters[number_.monster])
+
+                        local function removedisplay_ ()
+                            displaytutorial:removeSelf()
+                            displaytutorial = nil  
+                            end
+
+                            transition.to(displaytutorial,{x = display.contentWidth*2,time = 1000,transition=easing.linear,onComplete = removedisplay_})
+                        finger.alpha = 1
+                        end
+                    end
+
+                displaytutorial = display.newImageRect("background/instructions.png",display.contentWidth,display.contentHeight)
+                displaytutorial:setReferencePoint(display.CenterReferencePoint);
+                displaytutorial.x = display.contentWidth /2
+                displaytutorial.y = display.contentHeight / 2
+                displaytutorial:addEventListener("touch",starttutorial_) 
+                group[2]:insert(displaytutorial)
+            else
+
+                timer.performWithDelay(800, function()
+
+                    if count_ == 0 then
+                        text_.count:setText("R E A D Y")
+                        text_.count:setReferencePoint(display.CenterReferencePoint);
+                        text_.count.x = w_ ; 
+                        local availableChannel = audio.findFreeChannel()
+                            audio.setVolume(params.soundv, {channel = availableChannel})
+                            audio.play(external.sfx.star, {channel = availableChannel})
+                    elseif count_ == 1 then
+                        text_.count:setText("S E T")
+                        text_.count:setReferencePoint(display.CenterReferencePoint);
+                        text_.count.x = w_ ;
+                        local availableChannel = audio.findFreeChannel()
+                            audio.setVolume(params.soundv, {channel = availableChannel})
+                            audio.play(external.sfx.star, {channel = availableChannel})
+                    elseif count_ == 2 then
+                        text_.count:setText("G O")
+                        text_.count:setReferencePoint(display.CenterReferencePoint);
+                        text_.count.x = w_ ;
+                        local availableChannel = audio.findFreeChannel()
+                            audio.setVolume(params.soundv, {channel = availableChannel})
+                            audio.play(external.sfx.star, {channel = availableChannel})
+                    elseif count_ == 3 then
+                        timer.performWithDelay(300, showobjects, 1)
+                        text_.count:setText("Game On!")
+                        text_.count:setReferencePoint(display.CenterReferencePoint);
+                        text_.count.x = w_ ;
+                            transition.to(text_.count,{alpha = 0,time = 1000})
+                        audio.play(external.sfx.sound_9)
+                            audio.play( external.sfx.sound_13,{loops= -1,channel = 18} )
+                            audio.setVolume( 0.6, { channel=18} )
+                        Runtime:removeEventListener( "key", nonkey )
+                        Runtime:addEventListener( "key", pauseall )
+                        end
+
+                    count_ = count_ + 1   
+                    end,4)
                 end
+         end
+        if external.stage == 3 and external.adshow.ads == true then
+           print("wtf")
+           external.stage = 0
+
+        objects_.adsimage = display.newImageRect("items/hello.png", display.contentWidth*.80, display.contentHeight*0.70)
+        objects_.adsimage:setReferencePoint(display.CenterReferencePoint)
+        objects_.adsimage.x = display.contentWidth*0.5
+        objects_.adsimage.y = display.contentHeight*0.5
+
+        objects_.closebutton = external.widget.newButton   
+            {
+                defaultFile     = "button/close/close.png",
+                overFile        = "button/close/closetap.png",
+                id              = "close",
+                width           = 48, 
+                height          = 48,
+                onRelease       = function (event)
+                    if event.phase == "ended" then
+                        objects_.adsimage:removeSelf()
+                        objects_.adsimage = nil
+                        objects_.closebutton:removeSelf()
+                        objects_.closebutton = nil
+                        beforestarting ()
+                        end
+             end,
+             }
+         objects_.closebutton:setReferencePoint(display.TopRightReferencePoint)
+         objects_.closebutton.x = objects_.adsimage.x + (objects_.adsimage.width*.5) 
+         objects_.closebutton.y = objects_.adsimage.y - objects_.adsimage.height/2 - objects_.closebutton.height + (objects_.closebutton.width)
             
-            displaytutorial = display.newImageRect("background/instructions.png",display.contentWidth,display.contentHeight)
-            displaytutorial:setReferencePoint(display.CenterReferencePoint);
-            displaytutorial.x = display.contentWidth /2
-            displaytutorial.y = display.contentHeight / 2
-            displaytutorial:addEventListener("touch",starttutorial_) 
-            group[2]:insert(displaytutorial)
-        else
-            
-            timer.performWithDelay(800, function()
-                
-                if count_ == 0 then
-                    text_.count:setText("R E A D Y")
-                    text_.count:setReferencePoint(display.CenterReferencePoint);
-                    text_.count.x = w_ ; 
-                    local availableChannel = audio.findFreeChannel()
-                        audio.setVolume(params.soundv, {channel = availableChannel})
-                        audio.play(external.sfx.star, {channel = availableChannel})
-                elseif count_ == 1 then
-                    text_.count:setText("S E T")
-                    text_.count:setReferencePoint(display.CenterReferencePoint);
-                    text_.count.x = w_ ;
-                    local availableChannel = audio.findFreeChannel()
-                        audio.setVolume(params.soundv, {channel = availableChannel})
-                        audio.play(external.sfx.star, {channel = availableChannel})
-                elseif count_ == 2 then
-                    text_.count:setText("G O")
-                    text_.count:setReferencePoint(display.CenterReferencePoint);
-                    text_.count.x = w_ ;
-                    local availableChannel = audio.findFreeChannel()
-                        audio.setVolume(params.soundv, {channel = availableChannel})
-                        audio.play(external.sfx.star, {channel = availableChannel})
-                elseif count_ == 3 then
-                    timer.performWithDelay(300, showobjects, 1)
-                    text_.count:setText("Game On!")
-                    text_.count:setReferencePoint(display.CenterReferencePoint);
-                    text_.count.x = w_ ;
-                        transition.to(text_.count,{alpha = 0,time = 1000})
-                    audio.play(external.sfx.sound_9)
-                        audio.play( external.sfx.sound_13,{loops= -1,channel = 18} )
-                        audio.setVolume( 0.6, { channel=18} )
-                    Runtime:removeEventListener( "key", nonkey )
-                    Runtime:addEventListener( "key", pauseall )
-                    end
-                
-                count_ = count_ + 1   
-                end,4)
-            end
-        
-        end,1)
-    
+        else 
+            beforestarting ()
+        end
+    end,1)
     group[1]:insert(group[4])
     group[1]:insert(group[2])
     group[1]:insert(group[3])
@@ -2814,54 +2850,40 @@ function scene:enterScene (event)
     end
 
 function scene:exitScene (event)
-    
+    external.adshow.loading("show")
     if bol.fog == true then
         transition.cancel(objects_.fogmov)
         end
-    
-    external.adshow.loading("show")
-    
     if bol.carstart == true and game_.pause == false then
         timer.cancel(timer_.cartime)  
-        
         end
-    
     if bol.mobrun == true and game_.pause == false then
         timer.cancel(timer_.mob)
         external.physics.stop()
         audio.stop()
-        
         end
-    
     if bol.laser == true and game_.pause == false then
         timer.cancel(timer_.laser)
         end
-    
     if bol.masrun == true and game_.pause == false then
         timer.cancel(timer_.master)
         end
-    
     if bol.bigrun == true and game_.pause == false then
         timer.cancel(timer_.bigmas)
         end
-    
     Runtime:removeEventListener( "key", pauseall )
-    
     local environment = system.getInfo("environment")
     if environment == "simulator" then
         print("You're in the simulator.")
     else 
         system.deactivate("multitouch")
         end
-    
     if bol.star == true then
         transition.cancel(timer_.star)
         end
-    
     end
 
 function scene:destroyScene(event)
-    
     group[2]:removeSelf()
     group[2] = nil
     group[3]:removeSelf()
@@ -2875,13 +2897,12 @@ function scene:destroyScene(event)
     group[1]:removeSelf()
     group[1] = nil
     print("destroy group")
-    
     end
 
-scene:addEventListener("createScene", scene )
+scene:addEventListener("createScene",scene)
 scene:addEventListener("willEnterScene",scene)
-scene:addEventListener("enterScene", scene )
-scene:addEventListener("exitScene", scene )
-scene:addEventListener("destroyScene", scene )
+scene:addEventListener("enterScene",scene)
+scene:addEventListener("exitScene",scene)
+scene:addEventListener("destroyScene",scene)
 
 return scene

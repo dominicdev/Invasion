@@ -79,7 +79,10 @@ end
 function scene:enterScene( event )
 group[1] = self.view
 group[2] = display.newGroup()
-dis = {}
+dis = {
+        adsimage = nil,
+        closebutton = nil,
+        }
 cal = {}
 number = {}
 storyboard.purgeAll()
@@ -211,6 +214,32 @@ dis[10].x = w
 dis[10].y = dis[7].y + 70
 group[2]:insert(dis[10])
 
+dis.adsimage = display.newImageRect("items/hello.png", display.contentWidth*.80, display.contentHeight*0.70)
+dis.adsimage:setReferencePoint(display.CenterReferencePoint)
+dis.adsimage.x = display.contentWidth*0.5
+dis.adsimage.y = display.contentHeight*0.5
+group[2]:insert(dis.adsimage)
+
+dis.closebutton = external.widget.newButton   
+    {
+        defaultFile     = "button/close/close.png",
+        overFile        = "button/close/closetap.png",
+        id              = "close",
+        width           = 48, 
+        height          = 48,
+        onRelease       = function (event)
+            if event.phase == "ended" then
+                dis.adsimage:removeSelf()
+                dis.adsimage = nil
+                dis.closebutton:removeSelf()
+                dis.closebutton = nil
+                end
+     end,
+     }
+dis.closebutton:setReferencePoint(display.TopRightReferencePoint)
+dis.closebutton.x = dis.adsimage.x + (dis.adsimage.width*.5) 
+dis.closebutton.y = dis.adsimage.y - dis.adsimage.height/2 - dis.closebutton.height + (dis.closebutton.width)
+group[2]:insert(dis.closebutton)
 function onTouched_(event)
 native.setKeyboardFocus(nil)
 end

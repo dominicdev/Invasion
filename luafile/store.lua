@@ -20,6 +20,7 @@ local colortimer
 local connection
 local finallaser 
 local buybutton
+local adsbutton
 local numvolume
 local barrelnum
 local lasernum 
@@ -52,13 +53,13 @@ function functions.transactionCallback( event )
     
     if event.transaction.state == "purchased" then
         external.adshow.storealert ("Product Purchased: "..productID)
-        if productID == products.one then
+        if productID == "myproductname1" then
             coinnum = coinnum + 250
-        elseif productID == products.two then
+        elseif productID == "myproductname2" then
             coinnum = coinnum + 700
-        elseif productID == products.three then  
+        elseif productID == "myproductname3" then  
             coinnum = coinnum + 1200
-        elseif productID == products.four then  
+        --elseif productID == products.four then  
         
         end
     
@@ -80,7 +81,7 @@ function functions.transactionCallback( event )
     else
         external.adshow.storealert ("Some unknown event occured. This should never happen.")
     end
-    store.finishTransaction( event.transaction )
+    store.finishTransaction(event.transaction)
 end
 
 local function none ()
@@ -514,7 +515,7 @@ end
             
 -- Identifies the device and will initialize according to type.
 if store.availableStores.apple then
-    store.init("apple", functions.transactionCallback)
+    store.init("apple", functions.transactionCallback_1)
     loadproducts ("apple")
 elseif store.availableStores.google then
     store.init("google", functions.transactionCallback)
@@ -733,6 +734,40 @@ buybutton.y = display.contentHeight - (h_*.25)
 buybutton.alpha = 0
 group[2]:insert(buybutton)
 
+adsbutton = external.widget.newButton
+        {
+            defaultFile     = "button/ads/adstap.png",
+            overFile        = "button/ads/adsover.png",
+            width           = 200, 
+            height          = 60,
+            onRelease       = function (event) 
+                if event.phase == "ended" then
+                    
+                    local function onComplete( event )
+                  
+                        if "clicked" == event.action then
+                            local i = event.index
+                            if 1 == i then
+                                external.store.purchase({external.products})
+                            elseif 2 == i then
+                            
+                            end
+                        end
+                    end 
+                  local alert = native.showAlert( "Remove Ads", "Remove Ads for $0.99, Are you Sure?", { "YES", "NO" }, onComplete )
+                end
+            end,
+        }
+adsbutton:setReferencePoint(display.TopRightReferencePoint)
+adsbutton.x = display.contentWidth 
+adsbutton.y = -13
+adsbutton.alpha = 0
+group[2]:insert(adsbutton)
+if external.adshow.ads == true then
+    transition.to(adsbutton, { time=1000, alpha = 1}) 
+end
+
+
 startbutton = external.widget.newButton
         {
             defaultFile     = "button/buybutton/storestartbtn.png",
@@ -810,7 +845,7 @@ startbutton = external.widget.newButton
             end,}
 startbutton.x = w_ 
 startbutton.y = display.contentHeight - (h_*.25)
-startbutton.alpha = 1
+
 group[2]:insert(startbutton)
 
 backbutton = external.widget.newButton

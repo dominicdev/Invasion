@@ -1,6 +1,5 @@
 local external      = require "luafile.external"
 local storyboard    = require "storyboard"
-local store         = require "store"
 local w             = display.contentWidth / 2
 local h             = display.contentHeight / 2
 local scene         = storyboard.newScene()
@@ -19,47 +18,6 @@ local group
 local popup
 local color
 local bg
-local products
-
-local function transactionCallback( event )
-    print("transactionCallback: Received event " .. tostring(event.name))
-    print("state: " .. tostring(event.transaction.state))
-    print("errorType: " .. tostring(event.transaction.errorType))
-    print("errorString: " .. tostring(event.transaction.errorString))
-    
-    local productID= event.transaction.productIdentifier;
-    if event.transaction.state == "purchased" then
-        
-        external.adshow.storealert ("Product Purchased: "..productID)
-        local bolss = "false"
-        local tablesave_1 = [[UPDATE info SET adstats=']].. bolss ..[[' WHERE rowid = 1]]
-        external.adshow.db:exec( tablesave_1 )
-        external.adshow.callflurry("remove ads")
-           local function onComplete( event )
-                if "clicked" == event.action then
-                    local i = event.index
-                    if 1 == i then
-                    native.requestExit() 
-                    elseif 2 == i then
-                    end
-                end
-            end 
-          local alert = native.showAlert( "Exit", "Need to REOPEN the Game to removed ads", { "YES", "Later" }, onComplete )
-        native.showAlert("You Buy Product",productID, {"OK"})  
-        
-    elseif event.transaction.state == "restored" then
-        print("Product Restored", productID)
-    elseif event.transaction.state == "refunded" then
-        print("Product Refunded")
-    elseif event.transaction.state == "cancelled" then
-        print("Transaction cancelled")
-    elseif event.transaction.state == "failed" then
-        external.adshow.storealert ("Transaction Failed")
-    else
-        external.adshow.storealert ("Some unknown event occured. This should never happen.")
-    end
-    store.finishTransaction( event.transaction )
-end
 
 local function audiovolume (event)  
 if event.phase == "ended" then
@@ -241,40 +199,23 @@ buttons = {
 timertrans = false
 constatus = false
 popup = false
-
-local function loadproducts (store_use)
-    if store_use == "apple" then
-    products = "eight.app.studio.aliendisruption.myproductname4"
-    elseif store_use == "google" then
-    products = "eight.app.studio.aliendisruption.myproductname4"   
-    end
-end            
-            
--- Identifies the device and will initialize according to type.
-if store.availableStores.apple then
-    store.init("apple", transactionCallback)
-    loadproducts ("apple")
-elseif store.availableStores.google then
-    store.init("google", transactionCallback)
-    loadproducts ("google")
-end
-
+           
+        
 end
 
 function scene:enterScene(event)
---storyboard.purgeAll()
+storyboard.purgeAll()
 storyboard.removeAll() 
-
 group[1] = self.view
 scenefrom = event.params
 Runtime:addEventListener( "key", ExitAppss )
 timertrans = false
 if external.backmusic == true then
-
+external.backmusic = false
 audio.play(external.sfx.backmusic,{loops = 99,channel = 1})
 audio.setVolume(0.3, {channel = 1})
-end
 
+end
 
 scroller = external.widget.newScrollView
 {
@@ -555,7 +496,7 @@ onRelease = function(event)
             else
                 print ( "Connected" )
                 external.adshow.showmore()
-                external.adshow.calltapfortap ("appwall")
+                external.adshow.callplayhaven ("more_games")
             end
         end
         network.request( "https://encrypted.google.com", "GET", networkListener )
@@ -582,7 +523,7 @@ adsbutton = external.widget.newButton
                         if "clicked" == event.action then
                             local i = event.index
                             if 1 == i then
-                                store.purchase({products})
+                                external.store.purchase({external.products})
                             elseif 2 == i then
                             
                             end
