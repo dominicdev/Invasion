@@ -77,7 +77,7 @@ local function onSceneTouch(event)
                             }
        }
        storyboard.gotoScene( "luafile.gametype",option)
-        external.adshow.callflurry("New Game")
+        --external.adshow.callflurry("New Game")
        elseif switch.id == "highscore" then
            local scenefrom = {
                             effect  = "fade",
@@ -111,11 +111,6 @@ if keyName == "back" and event.phase == "down" then
         if "clicked" == event.action then
             local i = event.index
             if 1 == i then
---                if devname == "Android" then
---                    native.requestExit()
---                else
---                   
---                end
             native.requestExit() 
             elseif 2 == i then
             end
@@ -177,7 +172,7 @@ elseif keyName == "volumeDown" and event.phase == "down" then
 end
 
 function scene:createScene(event)
-external.adshow.callflurry("MENU")
+
 group = {}
 group[1] = self.view
 group[2] = display.newGroup()
@@ -231,7 +226,6 @@ scroller:setReferencePoint(display.CenterReferencePoint)
 scroller.x = (w/2) - 10
 scroller.y = scroller.y  + h - 30
 
---texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\nDeveloper:\nDominic Wagas\n\nGraphic Artist:\nBea Jimenez \n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
 texting = display.newEmbossedText("Team\n8 Apps Studio\n\nOur Site:\nwww.8appstudio.com\n\n", 10, 10,640, 0,  "BadaBoom BB", 28,{ 0, 0, 0, 255 });
 texting:setReferencePoint(display.BottomCenterReferencePoint);
 texting.x =  texting.width/2 + 20 
@@ -277,6 +271,7 @@ buttons.aboutbutton = external.widget.newButton
             texting.y = scroller.height + texting.height
             timerstop = transition.to(texting,{time = 3000,y = texting.height + 50,alpha = 0.9,onComplete = aboutustop})
             timertrans = true   
+            --external.adshow.callrevmob("open")
         end
     end,
 }
@@ -304,11 +299,11 @@ buttons.facebutton = external.widget.newButton
 
                     local function networkListener_1( event )
                         if ( event.isError ) then
-                               -- --print( "Network error!")
+
                                 external.adshow.storealert ("Network Error")
                         else
                                 system.openURL("https://www.facebook.com/8AppStudio?ref=stream")
-                                -- print ( "Connected share" )      
+       
                         end
                     end
                     if constatus == false then
@@ -365,6 +360,7 @@ buttons.twitbutton = external.widget.newButton
                     external.adshow.storealert ("Network Error")
                 else
                     print ( "Connected" )
+                    
                     system.openURL("https://twitter.com/8appstudio")
 
                 end
@@ -506,15 +502,15 @@ end,
 }
 buttons.storebutton:setReferencePoint(display.CenterRightReferencePoint)
 buttons.storebutton.x = display.contentWidth - 10
-buttons.storebutton.y =  buttons.storebutton.height
+buttons.storebutton.y =  buttons.storebutton.height *0.8
 buttons.storebutton.alpha = 0
 
 adsbutton = external.widget.newButton
         {
             defaultFile     = "button/ads/adstap.png",
             overFile        = "button/ads/adsover.png",
-            width           = 200, 
-            height          = 60,
+            width           = 130, 
+            height          = 100,
             onRelease       = function (event) 
                 if event.phase == "ended" then
                     
@@ -534,8 +530,8 @@ adsbutton = external.widget.newButton
             end,
         }
 adsbutton:setReferencePoint(display.TopRightReferencePoint)
-adsbutton.x = display.contentWidth 
-adsbutton.y = -13
+adsbutton.x = display.contentWidth - (adsbutton.width*0.25)
+adsbutton.y = -(adsbutton.height*0.25)
 adsbutton.alpha  = 0
 
 timer.performWithDelay( 1000, function() 

@@ -80,7 +80,9 @@ local function screengo (event)
                             }
                         }
                     storyboard.gotoScene( "luafile.menu",option)
-                    external.adshow.callflurry("Quit GaveOVER")
+                    external.backmusic = true
+                   external.adshow.callflurry("Quit mini-game","game_over")
+                   
                 elseif bol.savego == "restart_over" then
       
                     local option = 
@@ -94,7 +96,7 @@ local function screengo (event)
                         }
                     }
                  storyboard.gotoScene( "luafile.mainrestart",option)
-                 external.adshow.callflurry("Restart GaveOVER")
+                 external.adshow.callflurry("Restart", "GaveOVER")
                  end
             end
         end 
@@ -114,7 +116,8 @@ local function screengo (event)
                 }
             }
          storyboard.gotoScene( "luafile.menu",option)
-         external.adshow.callflurry("Quit Bonus")
+         external.backmusic = true
+         external.adshow.callflurry("Quit mini-game","stop_game")
          elseif event.target.id == "restart" then
             local option = 
             {
@@ -127,7 +130,7 @@ local function screengo (event)
                 }
             }
          storyboard.gotoScene( "luafile.mainrestart",option)
-         external.adshow.callflurry("Restart Bonus")
+         --external.adshow.callflurry("Restart Bonus")
         elseif event.target.id == "menu_over"  then
             if  bol.save == true then
                     local option = 
@@ -141,7 +144,8 @@ local function screengo (event)
                             }
                         }
                     storyboard.gotoScene( "luafile.menu",option)
-                    external.adshow.callflurry("Quit GaveOVER")
+                    external.backmusic = true
+                    external.adshow.callflurry("Restart", "GaveOVER")
             else
                 local alert = native.showAlert( "Record not Saved", "Name not Save,Are You Sure?", { "YES", "NO" }, onComplete ) 
                 bol.savego = event.target.id
@@ -160,7 +164,7 @@ local function screengo (event)
                         }
                     }
                  storyboard.gotoScene( "luafile.mainrestart",option)
-                 external.adshow.callflurry("Restart GaveOVER")
+                 external.adshow.callflurry("Restart", "GaveOVER")
             else
                 local alert = native.showAlert( "Record not Saved", "Name not Save,Are You Sure?", { "YES", "NO" }, onComplete )  
                 bol.savego = event.target.id
@@ -304,8 +308,8 @@ local function savename (event)
 
         local tablefill =[[INSERT INTO records2 VALUES (NULL,']] ..display_.textname.text.. [[',']] .. num.score .. [[',']].. map.dif ..[[');]]
         external.adshow.db:exec(tablefill)
-        print(tablefill)
-
+        external.adshow.callflurry("Mini-Game",{name = display_.textname.text})
+   
         display_.textname:removeSelf()
         display_.textname = nil
         display_.savebutton:removeSelf()
@@ -907,6 +911,8 @@ display_ =
         savebutton      = nil,
         levels          = nil,
         minibg          = nil,
+        adsimage        = nil,
+        closebutton     = nil,
         }
 map = 
     {
@@ -1248,6 +1254,7 @@ pop_4()
 end 
 
 local function start ()
+    
 time_.play_1 = timer.performWithDelay(2500,holeline_1,0)
 time_.play_2 = timer.performWithDelay(3000,holeline_2,0)
 time_.play_3 = timer.performWithDelay(3500,holeline_3,0)
@@ -1313,11 +1320,16 @@ text_.id = nil
 text_ = nil
 end
 local count_ = 0
+
 timer.performWithDelay( 2000, function() 
+    
     if params.scenename == "mainrestart" or params.scenename == "gametype" then
         external.adshow.loading("hide")
     end
+
+local function selectlevel ()
 local function countstart (event)
+    
     if event.phase == "ended" then
         timer.performWithDelay(500, function()
         if count_ == 0 then
@@ -1363,21 +1375,21 @@ local function countstart (event)
         num.speed_3 = 700
         num.speed_4 = 900
         num.addcoin = 1
-        external.adshow.callflurry("Play Bonus Easy Mode")
+        external.adshow.callflurry("Play Bonus",{Difficulty = "Easy Mode"})
     elseif event.target.id == "medium" then
         num.speed_1 = 550
         num.speed_2 = 500
         num.speed_3 = 650
         num.speed_4 = 600
         num.addcoin = 2
-        external.adshow.callflurry("Play Bonus Medium Mode")
+        external.adshow.callflurry("Play Bonus",{Difficulty = "Medium Mode"})
     elseif event.target.id == "hard" then
         num.speed_1 = 400
         num.speed_2 = 400
         num.speed_3 = 450
         num.speed_4 = 450
         num.addcoin = 3
-        external.adshow.callflurry("Play Bonus Hard Mode")
+        external.adshow.callflurry("Play Bonus",{Difficulty = "Hard Mode"})
     end
     map.dif = event.target.id
     display_.easybutton:removeSelf()
@@ -1444,7 +1456,44 @@ display_.hardbutton:setReferencePoint(display.TopCenterReferencePoint)
 display_.hardbutton.x =  w_
 display_.hardbutton.y = (display_.mediumbutton.height/2) + display_.mediumbutton.y + 30
 group.group_6:insert(display_.hardbutton)
+
+end
+
+external.stage = external.stage + 1
+if external.stage == 3 and external.adshow.ads == true then
+    
+    external.stage = 0
+    display_.adsimage = display.newImageRect("items/hello.png", display.contentWidth*.80, display.contentHeight*0.70)
+    display_.adsimage:setReferencePoint(display.CenterReferencePoint)
+    display_.adsimage.x = display.contentWidth*0.5
+    display_.adsimage.y = display.contentHeight*0.5
+    
+    display_.closebutton = external.widget.newButton   
+    {
+        defaultFile     = "button/close/close.png",
+        overFile        = "button/close/closetap.png",
+        id              = "close",
+        width           = 48, 
+        height          = 48,
+        onRelease       = function (event)
+            if event.phase == "ended" then
+                display_.adsimage:removeSelf()
+                display_.adsimage = nil
+                display_.closebutton:removeSelf()
+                display_.closebutton = nil
+                selectlevel ()
+                end
+            end,
+        }
+    display_.closebutton:setReferencePoint(display.TopRightReferencePoint)
+    display_.closebutton.x = display_.adsimage.x + (display_.adsimage.width*.5) 
+    display_.closebutton.y = display_.adsimage.y - display_.adsimage.height/2 - display_.closebutton.height + (display_.closebutton.width)
+else
+    selectlevel ()
+    end
+
 end,1)
+
 
 display_.pausebutton = external.widget.newButton
 {

@@ -1,5 +1,3 @@
-
-display.setStatusBar(display.HiddenStatusBar)
 local external   = require "luafile.external"
 local storyboard = require "storyboard"
 local scene      = storyboard.newScene()
@@ -247,13 +245,10 @@ external.adshow.db:exec( addcoin )
 
                                 }
                             }
-             storyboard.gotoScene( "luafile.gametype",scenefrom)       
-
-
+            storyboard.gotoScene( "luafile.gametype",scenefrom)   
+             external.backmusic = true
             elseif rowid == 40 and level == 2 then
-
             local openlevel = "bonus"
-
             local tablesave_1 = [[UPDATE gamestats SET stats =']]..unlocked..[[' WHERE gametype =']]..openlevel..[[']]
             external.adshow.db:exec( tablesave_1) 
 
@@ -267,7 +262,7 @@ external.adshow.db:exec( addcoin )
                                     }
                                 }
              storyboard.gotoScene( "luafile.gametype",scenefrom)   
-
+             external.backmusic = true
             else
             local tablesave = [[UPDATE item SET car=']].. params.car ..[[',barrel=']]..params.barrel..[[',laser=']]..params.laser..[[' WHERE id = 1]]
             external.adshow.db:exec( tablesave )

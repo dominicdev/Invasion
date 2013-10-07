@@ -154,6 +154,7 @@ local function onSceneTouch (event)
                 }
             }
         storyboard.gotoScene( "luafile.menu",option)
+        external.backmusic = true
         end
     end
 
@@ -519,7 +520,7 @@ local function pauseall (event)
             
             objects_.pause = external.widget.newButton   
             {
-                defaultFile     = "button/orange/pausetap.png",
+                defaultFile     = "button/orange/play.png",
                 overFile        = "button/orange/pause.png",
                 id              = "Pause",
                 width           = 80, 
@@ -671,7 +672,7 @@ local function pauseall (event)
             objects_.pause = external.widget.newButton   
             {
                 defaultFile     = "button/orange/pause.png",
-                overFile        = "button/orange/pausetap.png",
+                overFile        = "button/orange/play.png",
                 id              = "Pause",
                 width           = 80, 
                 height          = 80,
@@ -910,7 +911,9 @@ local function carrunning ( )
         objects_.carpow:setEnabled(true) 
         number_.carpow = 0
         end
-    audio.play(external.sfx.sound_3)
+        local availableChannel = audio.findFreeChannel()
+            audio.setVolume( params.soundv, {channel= availableChannel } )
+            audio.play(external.sfx.sound_3,{channel = availableChannel})
     end
 
 function functions.spriteListener (event)
@@ -951,7 +954,9 @@ function functions.removerunner(event)
                 elseif holder == "runner 1" then 
                     dead[number_.deadmon]:prepare("dead_3")  
                     end
-                audio.play(external.sfx.splat)
+                local availableChannel = audio.findFreeChannel()
+                    audio.setVolume( params.soundv, {channel= availableChannel } )
+                    audio.play(external.sfx.splat,{channel = availableChannel})
             elseif hit.name == "mover" then
                 dead[number_.deadmon] = external.sprite.newSprite(external.spritefactory.spritexplode)
                 dead[number_.deadmon]:prepare("explode") 
@@ -991,7 +996,9 @@ function functions.removerunner(event)
             event.target.myname = nil
             number_.mastermon = number_.mastermon - 1
             game_.killed = game_.killed + 1 
-            audio.play(external.sfx.splat)
+            local availableChannel = audio.findFreeChannel()
+            audio.setVolume( params.soundv, {channel= availableChannel } )
+            audio.play(external.sfx.splat,{channel = availableChannel}) 
             
         elseif hit.damage == 0 and hit.myname == "bossing" then
             
@@ -1074,7 +1081,9 @@ function functions.removerunner(event)
             dead[number_.deadmon]:addEventListener( "sprite", functions.spriteListener )
             event.target:removeSelf() 
             event.target.myname = nil
-            audio.play( external.sfx.humanfail) 
+            local availableChannel = audio.findFreeChannel()
+            audio.setVolume( params.soundv, {channel= availableChannel } )
+            audio.play(external.sfx.humanfail,{channel = availableChannel}) 
             life[number_.life]:removeSelf()
             number_.life = number_.life - 1
             end    
@@ -1169,7 +1178,7 @@ function functions.bigmastercall ( )
     monsters[number_.monster]:play()
     monsters[number_.monster].id = "bigmaster" 
     monsters[number_.monster].damage = number_.bigdamage
-        external.physics.addBody(monsters[number_.monster] ,{density = 0, bounce = 0,firction = 0})
+        external.physics.addBody(monsters[number_.monster] ,{density = 0, bounce = 0,firction = 0,isSensor = true})
     monsters[number_.monster].isFixedRotation = true
     monsters[number_.monster]:applyForce(0, number_.bigspeed+5, monsters[number_.monster].x , monsters[number_.monster].y)
     monsters[number_.monster].myname = "bigmaster";
@@ -1183,12 +1192,16 @@ function functions.helphuman ( )
     number_.monster = number_.monster + 1 
     local humanused = math.random(1,2)
     if humanused == 1 then
-        audio.play(external.sfx.boy)
+        local availableChannel = audio.findFreeChannel()
+            audio.setVolume( params.soundv, {channel= availableChannel } )
+            audio.play(external.sfx.boy,{channel = availableChannel})
         monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.spriteboy)
         monsters[number_.monster]:prepare("boy")  
         monsters[number_.monster].id = "boy" 
     elseif humanused == 2 then
-        audio.play(external.sfx.girl)
+        local availableChannel = audio.findFreeChannel()
+            audio.setVolume( params.soundv, {channel= availableChannel } )
+            audio.play(external.sfx.girl,{channel = availableChannel}) 
         monsters[number_.monster] =  external.sprite.newSprite(external.spritefactory.spritegirl)
         monsters[number_.monster]:prepare("girl")  
         monsters[number_.monster].id = "girl"   
@@ -1203,7 +1216,6 @@ function functions.helphuman ( )
     monsters[number_.monster].myname = "human";
     monsters[number_.monster]:addEventListener("touch",functions.removerunner)
     group[6]:insert(monsters[number_.monster]) 
-    audio.play( external.sfx.human) 
     number_.human = number_.human + 1
     if number_.human == 3 then
         bol.human = false
@@ -1238,7 +1250,6 @@ function functions.helphuman_2 ( )
     monsters[number_.monster].myname = "human";
     monsters[number_.monster]:addEventListener("touch",functions.removerunner)
     group[6]:insert(monsters[number_.monster]) 
-    audio.play( external.sfx.human) 
     number_.human_2 = number_.human_2 + 1
     if number_.human_2 == 3 then
         bol.human_2 = false
@@ -1282,6 +1293,7 @@ function functions.movingmonster ( )
         end
     if bol.movrun == true then
         timer.pause(timer_.movmob)   
+       
         end
     
     
@@ -1439,7 +1451,7 @@ function functions.updatestatus ( )
         objects_.master:setFillColor(102, 102, 102, 255)
         end
     
-    if number_.movnum == 0 then
+    if number_.movnum == 0 and bol.movrun == true then
         bol.movrun = false  
         end
     
@@ -1474,9 +1486,10 @@ function functions.updatestatus ( )
         gameoverscreen ()  
         game_.stats = true
         Runtime:removeEventListener("enterFrame", functions.updatestatus)
+        game_.over = true
         end
     
-    if game_.killed == number_.monsterleft then
+    if game_.killed == number_.monsterleft and game_.over == false then
         winnerscreen ()
         game_.stats = true
         Runtime:removeEventListener("enterFrame", functions.updatestatus)
@@ -1494,7 +1507,8 @@ function functions.updatestatus ( )
     
     end
 
-local function fencehit ()
+function functions.fencehit ()
+    
     if number_.fencelife == 4 then
         objects_.fence:removeSelf()
         objects_.fence.myname = nil
@@ -1503,14 +1517,11 @@ local function fencehit ()
         objects_.fence.x = w_;
         objects_.fence.y = h_ + 130;
         objects_.fence:play();
-        
-        timer.performWithDelay(100, function() 
-            
+        local backfence = timer.performWithDelay(100, function() 
                 external.physics.addBody(objects_.fence,"static",{density = 0, bounce = 0,isSensor = true});
             objects_.fence.myname = "fence";
             group[3]:insert(objects_.fence);
             end, 1)
-        
     elseif number_.fencelife == 2 then
         objects_.fence:removeSelf()
         objects_.fence.myname = nil
@@ -1519,14 +1530,11 @@ local function fencehit ()
         objects_.fence.x = w_;
         objects_.fence.y = h_ + 130;
         objects_.fence:play();
-        
-        timer.performWithDelay(100, function()
-            
+        local backfence = timer.performWithDelay(100, function()
             external.physics.addBody(objects_.fence,"static",{density = 0, bounce = 0,isSensor = true});
             objects_.fence.myname = "fence";
             group[3]:insert(objects_.fence);
             end, 1)
-        
     elseif number_.fencelife == 0 and bol.fence == true then
         objects_.fence:removeSelf()
         objects_.fence.myname = nil
@@ -1544,7 +1552,8 @@ function scene:createScene (event)
     end
 
 function scene:willEnterScene (event)
-    
+audio.reserveChannels(18)
+audio.reserveChannels(19)
     group[2]    = display.newGroup()
     group[3]    = display.newGroup()
     group[4]    = display.newGroup()
@@ -2021,7 +2030,7 @@ function scene:enterScene (event)
     objects_.pause = external.widget.newButton   
     {
         defaultFile     = "button/orange/pause.png",
-        overFile        = "button/orange/pausetap.png",
+        overFile        = "button/orange/play.png",
         id              = "Pause",
         width           = 80, 
         height          = 80,
@@ -2092,7 +2101,9 @@ function scene:enterScene (event)
         
         local locbarrel = event.target
         if event.phase == "ended" and number_.barrelP ~= 0 and game_.pause == true and game_.stats == false then
-            audio.play(external.sfx.sound_6)
+            local availableChannel = audio.findFreeChannel()
+                audio.setVolume( 1, {channel= availableChannel } )
+                audio.play(external.sfx.sound_6,{channel = availableChannel})
             number_.barrel = number_.barrel + 1
             barrel[number_.barrel] = display.newImageRect("button/barrelbut/barrel.png", 64, 64)
             barrel[number_.barrel].x = locbarrel.x
@@ -2115,7 +2126,9 @@ function scene:enterScene (event)
     
     local function explodeevent(locx,locy) -- EXPLODE
         shakingeffect ()
-        audio.play(external.sfx.sound_1)
+        local availableChannel = audio.findFreeChannel()
+                audio.setVolume( 1, {channel= availableChannel } )
+                audio.play(external.sfx.sound_1,{channel = availableChannel})
         number_.exnum = number_.exnum + 1
         explodemon[number_.exnum] = external.sprite.newSprite(external.spritefactory.spritexplode)
         explodemon[number_.exnum].x = locx
@@ -2129,7 +2142,9 @@ function scene:enterScene (event)
     
     local function barrelexplode(locx,locy) -- EXPLODE
         shakingeffect () 
-        audio.play(external.sfx.sound_1)
+        local availableChannel = audio.findFreeChannel()
+                audio.setVolume( 1, {channel= availableChannel } )
+                audio.play(external.sfx.sound_1,{channel = availableChannel})
         number_.exnum = number_.exnum + 1
         explodemon[number_.exnum] = external.sprite.newSprite(external.spritefactory.spritexplode)
         explodemon[number_.exnum].x = locx
@@ -2171,8 +2186,10 @@ function scene:enterScene (event)
             if number_.fencelife == - 1 then
                 number_.fencelife = 0 
                 end
-                audio.play(external.sfx.sound_4, { channel=21 })
-            fencehit()
+                local availableChannel = audio.findFreeChannel()
+                audio.setVolume( 1, {channel= availableChannel } )
+                audio.play(external.sfx.sound_5,{channel = availableChannel})
+            functions.fencehit()
             end
         
         if ((event.object1.myname == "barrel" and event.object2.myname == "bullet") or 
@@ -2286,8 +2303,11 @@ function scene:enterScene (event)
             if number_.fencelife == - 1 then
                 number_.fencelife = 0 
                 end
-                audio.play(external.sfx.sound_4, { channel=21 })
-            fencehit()
+            
+                local availableChannel = audio.findFreeChannel()
+                audio.setVolume( 1, {channel= availableChannel } )
+                audio.play(external.sfx.sound_4,{channel = availableChannel})
+            functions.fencehit()
             end
         
         if ((event.object1.myname == "end" and event.object2.myname == "runnerers") or 
@@ -2433,7 +2453,9 @@ function scene:enterScene (event)
                 event.object2:applyForce(event.object1.dir,0 , event.object1.x + 10 , event.object1.y) 
                 end
             if event.phase == "began" then
-                audio.play(external.sfx.sound_5)
+                local availableChannel = audio.findFreeChannel()
+                audio.setVolume( 1, {channel= availableChannel } )
+                audio.play(external.sfx.sound_5,{channel = availableChannel})
                 end
             end
         
@@ -2557,7 +2579,9 @@ function scene:enterScene (event)
                 event.object1:removeSelf()
                 event.object1.myname = nil
                 end
-            audio.play(external.sfx.sound_1) 
+            local availableChannel = audio.findFreeChannel()
+            audio.setVolume( 1, {channel= availableChannel } )
+            audio.play(external.sfx.sound_1,{channel = availableChannel})
             end
         
         end
@@ -2634,7 +2658,9 @@ function scene:enterScene (event)
                     if event.phase == "began" then
                         local x1 = hit.x
                         local y1 = hit.y
-                        audio.play(external.sfx.sound_2)
+                        local availableChannel = audio.findFreeChannel()
+                        audio.setVolume( 1, {channel= availableChannel } )
+                        audio.play(external.sfx.sound_2,{channel = availableChannel})
                         number_.flasher = number_.flasher + 1;
                         flash[number_.flasher] = external.sprite.newSprite(external.spritefactory.spriteflash)
                         flash[number_.flasher].x = x1
@@ -2692,7 +2718,6 @@ function scene:enterScene (event)
                                         audio.play(external.sfx.sound_9, {channel = availableChannel})
                                         audio.setVolume(1, {channel = 18})
                                         audio.play( external.sfx.sound_13,{loops= -1,channel = 18} )
-                                    --udio.setVolume( 0.5, { channel=18} )
                                     Runtime:removeEventListener( "key", nonkey )
                                     Runtime:addEventListener( "key", pauseall )
 
@@ -2847,6 +2872,12 @@ function scene:enterScene (event)
     group[1]:insert(group[6])
     group[1]:insert(group[5])
     Runtime:addEventListener("collision", functions.collisionevent)
+--    timer.performWithDelay(3000,function()        
+--        group[1].xScale = 0.5
+--        group[1].yScale = 0.5
+--        group[1].x = 200
+--        group[1].y = 200
+--        end,1)
     end
 
 function scene:exitScene (event)

@@ -1,25 +1,23 @@
-local external   = require "luafile.external"
+local external      = require "luafile.external"
 local storyboard    = require( "storyboard" )
-local scene      = storyboard.newScene()
-local fullnamet = {};
-local scoret = {};
-local color = {};
-local wave = {};
-local cover = {}
-local fullnamet_1 = {};
-local scoret_1  = {};
-local color_1  = {};
-local wave_1  = {};
-local cover_1  = {}
+local scene         = storyboard.newScene()
+local fullnamet     = {};
+local scoret        = {};
+local color         = {};
+local wave          = {};
+local cover         = {}
+local fullnamet_1   = {};
+local scoret_1      = {};
+local color_1       = {};
+local wave_1        = {};
+local cover_1       = {}
 local w = display.contentWidth / 2
 local h = display.contentHeight / 2
-local deletebutton
+local button = nil
 local deleterecord
 local screenGroup
 local scroller_1
-local backbutton
 local background
-local surbutton
 local scroller
 local rowplace
 local easing_1
@@ -33,6 +31,7 @@ local mask_
 local count
 local sql
 local row
+
 local function onSceneTouch(event)
     
     if event.phase == "ended" or event.keyName == "back" and event.phase == "down" then
@@ -57,6 +56,12 @@ background = display.newImageRect("background/recordsceen.png",display.contentWi
 background.x = w
 background.y = h
 screenGroup:insert(background)
+button = {
+        deletebutton    = nil,
+        surbutton       = nil,
+        backbutton      = nil,
+        showleader      = nil,
+            }
 end
 
 function scene:enterScene( event )
@@ -229,7 +234,7 @@ rowplace = rowplace + 170
 
 end
 
-backbutton = external.widget.newButton
+button.backbutton = external.widget.newButton
         {
         defaultFile = "button/orange/home.png",
         overFile    = "button/orange/hometap.png",
@@ -238,12 +243,12 @@ backbutton = external.widget.newButton
         emboss      = true,
         onRelease   = onSceneTouch,
         }
- backbutton.x = w - 240
- backbutton.y = 80
- backbutton.alpha = 0
-screenGroup:insert(backbutton);
+ button.backbutton.x = w - 240
+ button.backbutton.y = 80
+ button.backbutton.alpha = 0
+screenGroup:insert(button.backbutton);
 
-deletebutton = external.widget.newButton
+button.deletebutton = external.widget.newButton
         {
          defaultFile    = "button/woodbutton/deleteallbtn.png",
          overFile       = "button/woodbutton/deleteallbtnover.png",
@@ -252,11 +257,11 @@ deletebutton = external.widget.newButton
          height         = 63,
          onRelease      = deleterecord
         }
-deletebutton:setReferencePoint(display.CenterRightReferencePoint)        
-deletebutton.x = display.contentWidth - 30
-deletebutton.y = 70
-deletebutton.alpha = 0
-screenGroup:insert(deletebutton);
+button.deletebutton:setReferencePoint(display.CenterRightReferencePoint)        
+button.deletebutton.x = display.contentWidth - 30
+button.deletebutton.y = 70
+button.deletebutton.alpha = 0
+screenGroup:insert(button.deletebutton);
 
 function easing_1 (event)
     if event.phase == "ended" and event.target.id == "showrush" then
@@ -267,7 +272,7 @@ function easing_1 (event)
             local function changeoil (object)
             object:removeSelf()
             object = nil  
-            surbutton = external.widget.newButton
+            button.surbutton = external.widget.newButton
                     {
                     defaultFile = "button/orange/left.png",
                     overFile    = "button/orange/lefttap.png",
@@ -277,13 +282,13 @@ function easing_1 (event)
                     emboss      = true,
                     onRelease   = easing_1,
                     }
-            surbutton.x = 80
-            surbutton.y = h + 30;
-            surbutton.alpha = 0
-            screenGroup:insert(surbutton);
-            transition.to(surbutton,{time = 1500,alpha = 1}) 
+            button.surbutton.x = 80
+            button.surbutton.y = h + 30;
+            button.surbutton.alpha = 0
+            screenGroup:insert(button.surbutton);
+            transition.to(button.surbutton,{time = 1500,alpha = 1}) 
             end
-            transition.to(surbutton,{x = 80,time = 100,transition=easing.outExpo,alpha = 0,onComplete = changeoil}) 
+            transition.to(button.surbutton,{x = 80,time = 100,transition=easing.outExpo,alpha = 0,onComplete = changeoil}) 
         elseif surcon == false then
             transition.to(group.rushgroup,{x = display.contentWidth / 2 + 50,time = 1000,transition=easing.outExpo})
             transition.to(group.surgroup,{x = 0,time = 1000,transition=easing.outExpo})
@@ -291,7 +296,7 @@ function easing_1 (event)
             local function changeoil (object)
             object:removeSelf()
             object = nil
-            surbutton = external.widget.newButton
+            button.surbutton = external.widget.newButton
                     {
                     defaultFile = "button/orange/right.png",
                     overFile    = "button/orange/righttap.png",
@@ -301,17 +306,17 @@ function easing_1 (event)
                     emboss      = true,
                     onRelease   = easing_1,
                     }
-            surbutton.x = display.contentWidth - 80
-            surbutton.y = h + 30;
-            surbutton.alpha = 0
-            screenGroup:insert(surbutton);
-            transition.to(surbutton,{time = 1500,alpha = 1}) 
+            button.surbutton.x = display.contentWidth - 80
+            button.surbutton.y = h + 30;
+            button.surbutton.alpha = 0
+            screenGroup:insert(button.surbutton);
+            transition.to(button.surbutton,{time = 1500,alpha = 1}) 
             end
-            transition.to(surbutton,{x = display.contentWidth - 80,time = 100,transition=easing.outExpo,alpha = 0,onComplete = changeoil}) 
+            transition.to(button.surbutton,{x = display.contentWidth - 80,time = 100,transition=easing.outExpo,alpha = 0,onComplete = changeoil}) 
         end  
     end
 end
-surbutton = external.widget.newButton
+button.surbutton = external.widget.newButton
         {
         defaultFile = "button/orange/right.png",
         overFile    = "button/orange/righttap.png",
@@ -321,14 +326,47 @@ surbutton = external.widget.newButton
         emboss      = true,
         onRelease   = easing_1,
         }
-surbutton.x = display.contentWidth - 80
-surbutton.y = h + 30;
-surbutton.alpha = 1
-screenGroup:insert(surbutton);
+button.surbutton.x = display.contentWidth - 80
+button.surbutton.y = h + 30;
+button.surbutton.alpha = 1
+screenGroup:insert(button.surbutton);
+
+button.showleader = external.widget.newButton
+        {
+        defaultFile = "button/trophy/trophy.png",
+        overFile    = "button/trophy/trophyover.png",
+        width       = 80, 
+        height      = 100,
+        emboss      = true,
+        onRelease   = function (event) 
+            if event.phase == "ended" then
+                local function onComplete(event)
+                    if "clicked" == event.action then
+                        audio.play(external.sfx.clicksound)
+                        local t = event.index
+                        if t == 1 then
+                            external.showLeaderboards()
+                        elseif t == 2 then
+                            external.showAchievements()
+                        elseif t == 3 then
+                            
+                            end
+                        end
+                    end
+                    local alert = native.showAlert( "View Stats", "Select to View Online Records", { "Leaderboards", "Achievements", "Cancel" }, onComplete )
+                end
+        end,
+        }
+button.showleader:setReferencePoint(display.TopRightReferencePoint)  
+button.showleader.x = display.contentWidth - 30
+button.showleader.y = button.deletebutton.y + button.deletebutton.height
+button.showleader.alpha = 0
+screenGroup:insert(button.showleader);
 
 timer.performWithDelay( 500, function() 
-transition.to(deletebutton,{alpha = 1,time = 500})
-transition.to(backbutton,{alpha = 1,time = 500})
+transition.to(button.showleader,{alpha = 1,time = 500})
+transition.to(button.deletebutton,{alpha = 1,time = 500})
+transition.to(button.backbutton,{alpha = 1,time = 500})
 end, 1 )
 
 screenGroup:insert(group.surgroup)

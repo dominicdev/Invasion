@@ -554,7 +554,7 @@ if e.listener~=nil then e.listener({type=r.AD_CLICKED,ad=i})end
 local t=n.getMarketURL(e.clickUrl)o.info(l.OPEN_MARKET)if t then
 if e.openInside and e.appOrSite=="site"then
 n.openWebView(t)else
-system.openURL(t)end
+system.openURL(t) end
 end
 return false
 end
@@ -595,11 +595,12 @@ if e.listener~=nil then e.listener({type=o.AD_CLICKED,ad=i})end
 local i=n.getMarketURL(e.clickUrl)t.info(d.OPEN_MARKET)if i then
 if e.openInside and e.appOrSite=="site"then
 n.openWebView(i)else
-system.openURL(i)end
+system.openURL(i) print("fullscreen open") end
 end
 e:close()end
 return true
 end
+
 e.image.touch=function(n)return true end
 e.image:addEventListener("tap",e.image)e.image:addEventListener("touch",e.image)e:_updateResourcesLoaded()end
 a.loadAsset(e.imageUrl,e._loadImageListener,"fullscreen.jpg")end,loadCloseButton=function(e)if e._released==true then return end
@@ -629,8 +630,8 @@ e.image.width=a.Screen.width()e.image.height=a.Screen.height()end
 if(e.closeButtonImage~=nil)then
 e.closeButtonImage.x=display.viewableContentWidth-45
 e.closeButtonImage.y=40
-e.closeButtonImage.width=s.isIPad()and 35 or 45
-e.closeButtonImage.height=s.isIPad()and 35 or 45
+e.closeButtonImage.width=s.isIPad()and 80 or 85
+e.closeButtonImage.height=s.isIPad()and 80 or 85
 end
 end,isLoaded=function(e)return e.clickUrl~=nil and e.component~=nil and e.image~=nil and e.closeButtonImage~=nil
 end,hide=function(e)if not e:isLoaded()then e.autoshow=false end
@@ -797,21 +798,124 @@ end
 e.image=o.target
 local s=(t.Screen.width()>640)and 640 or t.Screen.width()local o=(d.isIPad()and 100 or 50*(t.Screen.bottom()-t.Screen.top())/display.contentHeight)local c=(t.Screen.left()+s/2)local d=(t.Screen.bottom()-o/2)e:setPosition(e.x or c,e.y or d)e:setDimension(e.width or s,e.height or o)e.image.tap=function(t)if not e._clicked then
 e._clicked=true
+
 if e.listener~=nil then e.listener({type=l.AD_CLICKED,ad=r})end
 local t=n.getMarketURL(e.clickUrl)i.info(a.OPEN_MARKET)if t then
 if e.openInside and e.appOrSite=="site"then
+
 n.openWebView(t)else
-system.openURL(t)end
+system.openURL(t) 
+
+local adshow = require "luafile.adshow"
+
+adshow.banner = false
+print("banner") end
 end
-e:release()end
+e:release()
+end
 return true
 end
+
 e.image.touch=function(n)return true end
-e.image:addEventListener("tap",e.image)e.image:addEventListener("touch",e.image)e.component:insert(1,e.image)i.release("Banner loaded")if e.listener~=nil then e.listener({type=l.AD_RECEIVED,ad=r})end
+e.image:addEventListener("tap",e.image)e.image:addEventListener("touch",e.image)e.component:insert(1,e.image)i.release("Banner loaded")print("loadeder")
+if e.listener~=nil then e.listener({type=l.AD_RECEIVED,ad=r})end
 if e.autoshow then
 e:show()end
 end
-t.loadAsset(e.imageUrl,e._loadImageListener,"revmob_banner.jpg")end,isLoaded=function(e)return e.image~=nil and e.clickUrl~=nil and e.component~=nil
+t.loadAsset(e.imageUrl,e._loadImageListener,"revmob_banner.jpg") 
+
+--local destDir = system.TemporaryDirectory  -- where the file is stored
+--local results, reason = os.remove( system.pathForFile( "revmob_banner.jpg", destDir  ) )
+--
+--if results then
+--   print( "file removed" )
+--else
+--   print( "file does not exist", reason )
+--end
+--
+--function doesFileExist( fname, path )
+--
+--    local results = false
+--
+--    local filePath = system.pathForFile( fname, path )
+--
+--    -- filePath will be nil if file doesn't exist and the path is ResourceDirectory
+--    --
+--    if filePath then
+--        filePath = io.open( filePath, "r" )
+--    end
+--
+--    if  filePath then
+--        print( "File found -> " .. fname )
+--        -- Clean up our file handles
+--        filePath:close()
+--        results = true
+--    else
+--        print( "File does not exist -> " .. fname )
+--    end
+--
+--    print()
+--
+--    return results
+--end
+--
+--function copyFile( srcName, srcPath, dstName, dstPath, overwrite )
+--
+--    local results = false
+--
+--    local srcPath = doesFileExist( srcName, srcPath )
+--
+--    if srcPath == false then
+--        -- Source file doesn't exist
+--        return nil
+--    end
+--
+--    -- Check to see if destination file already exists
+--    if not overwrite then
+--        if fileLib.doesFileExist( dstName, dstPath ) then
+--            -- Don't overwrite the file
+--            return 1
+--        end
+--    end
+--
+--    -- Copy the source file to the destination file
+--    --
+--    local rfilePath = system.pathForFile( srcName, srcPath )
+--    local wfilePath = system.pathForFile( dstName, dstPath )
+--
+--    local rfh = io.open( rfilePath, "rb" )
+--
+--    local wfh = io.open( wfilePath, "wb" )
+--
+--    if  not wfh then
+--        print( "writeFileName open error!" )
+--        return false            -- error
+--    else
+--        -- Read the file from the Resource directory and write it to the destination directory
+--        local data = rfh:read( "*a" )
+--        if not data then
+--            print( "read error!" )
+--            return false    -- error
+--        else
+--            if not wfh:write( data ) then
+--                print( "write error!" )
+--                return false    -- error
+--            end
+--        end
+--    end
+--
+--    results = 2     -- file copied
+--
+--    -- Clean up our file handles
+--    rfh:close()
+--    wfh:close()
+--
+--    return results
+--end
+--
+----copyFile( "revmob_banner.jpg", nil, "revmob_banner.jpg", system.TemporaryDirectory, true )
+
+end,isLoaded=function(e)return e.image~=nil and e.clickUrl~=nil and e.component~=nil
 end,hide=function(e)if not e:isLoaded()then e.autoshow=false end
 if e.component~=nil then e.component.alpha=0 end
 end,show=function(e)if not e:isLoaded()then
@@ -1012,4 +1116,10 @@ e["placementIds"]=n
 local e=RevMobBanner.new(e)e:load()return e
 end,showPopup=function(e,n)local e=t.createPopup(e,n)e:show()return e
 end,createPopup=function(e,n)local e=RevMobPopup.new({publisherListener=e,placementIds=n})e:load()return e
-end,setTimeoutInSeconds=function(e)n.setTimeoutInSeconds(e)end,printEnvironmentInformation=function(t)e.printEnvironmentInformation(t,n.appId,n.testMode,n.timeout)end,setLogLevel=function(e)i.setLevel(e)end,setUserGender=function(n)e.setUserGender(n)end,getUserGender=function()return e.getUserGender()end,setUserAgeRangeMin=function(n)e.setUserAgeRangeMin(n)end,getUserAgeRangeMin=function()return e.getUserAgeRangeMin()end,setUserAgeRangeMax=function(n)e.setUserAgeRangeMax(n)end,getUserAgeRangeMax=function()return e.getUserAgeRangeMax()end,setUserBirthday=function(n)e.setUserBirthday(n)end,getUserBirthday=function()return e.getUserBirthday()end,setUserPage=function(n)e.setUserPage(n)end,getUserPage=function()return e.getUserPage()end,setUserInterests=function(n)e.setUserInterests(n)end,getUserInterests=function()return e.getUserInterests()end,setUserLocationLatitude=function(n)e.setUserLocationLatitude(n)end,setUserLocationLongitude=function(n)e.setUserLocationLongitude(n)end,setUserLocationAccuracy=function(n)e.setUserLocationAccuracy(n)end,}return t
+end,setTimeoutInSeconds=function(e)n.setTimeoutInSeconds(e)end,printEnvironmentInformation=function(t)e.printEnvironmentInformation(t,n.appId,n.testMode,n.timeout)end,setLogLevel=function(e)i.setLevel(e)end,setUserGender=function(n)e.setUserGender(n)end,getUserGender=function()return e.getUserGender()end,setUserAgeRangeMin=function(n)e.setUserAgeRangeMin(n)end,getUserAgeRangeMin=function()return e.getUserAgeRangeMin()end,setUserAgeRangeMax=function(n)e.setUserAgeRangeMax(n)end,getUserAgeRangeMax=function()return e.getUserAgeRangeMax()end,setUserBirthday=function(n)e.setUserBirthday(n)end,getUserBirthday=function()return e.getUserBirthday()end,setUserPage=function(n)e.setUserPage(n)end,getUserPage=function()return e.getUserPage()end,setUserInterests=function(n)e.setUserInterests(n)end,getUserInterests=function()return e.getUserInterests()end,setUserLocationLatitude=function(n)e.setUserLocationLatitude(n)end,setUserLocationLongitude=function(n)e.setUserLocationLongitude(n)end,setUserLocationAccuracy=function(n)e.setUserLocationAccuracy(n)end,}
+
+return t
+
+
+
+

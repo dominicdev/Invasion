@@ -14,7 +14,6 @@ local cancelbutton
 local closebutton
 local startbutton
 local finalbarrel 
-local updatecoin_
 local backbutton
 local colortimer
 local connection
@@ -44,6 +43,7 @@ local iap
 local bg
 
 function functions.transactionCallback( event )
+    
     print("transactionCallback: Received event " .. tostring(event.name))
     print("state: " .. tostring(event.transaction.state))
     print("errorType: " .. tostring(event.transaction.errorType))
@@ -53,14 +53,13 @@ function functions.transactionCallback( event )
     
     if event.transaction.state == "purchased" then
         external.adshow.storealert ("Product Purchased: "..productID)
-        if productID == "myproductname1" then
+        if productID == "coin200pcs" or productID == products.one then
             coinnum = coinnum + 250
-        elseif productID == "myproductname2" then
+        elseif productID == "coin700pcs" or productID == products.two then
             coinnum = coinnum + 700
-        elseif productID == "myproductname3" then  
+        elseif productID == "coin1200pcs" or productID == products.three then  
             coinnum = coinnum + 1200
         --elseif productID == products.four then  
-        
         end
     
         local tablesave_1 = [[UPDATE item SET coin=']].. coinnum ..[[' WHERE id = 1]]
@@ -68,7 +67,7 @@ function functions.transactionCallback( event )
         item[13]:setReferencePoint(display.CenterLeftReferencePoint)
         item[13].text = coinnum
         item[13].x = w_ - 80
-        external.adshow.callflurry("Purchased a Product")
+        external.adshow.callflurry("Purchased a Product",productID)
         native.showAlert("You Buy Product",productID, {"OK"})  
     elseif event.transaction.state == "restored" then
         print("Product Restored", productID)
@@ -87,11 +86,6 @@ end
 local function none ()
     
 return true   
-end
-
-function updatecoin_ ()
-    
-    
 end
 
 local function removeiap ()
@@ -139,8 +133,7 @@ if event.keyName == "back" and event.phase == "down" and iap == "close" then
                     }
                 }
     storyboard.gotoScene( "luafile.gametype", scenefrom )  
-    --db:close()
-    --adshow.calltapfortap("hide") 
+
     external.adshow.callflurry("Start Survival")
     elseif params.screenfrom == "mission" then
        audio.play(external.sfx.clicksound)
@@ -156,9 +149,8 @@ if event.keyName == "back" and event.phase == "down" and iap == "close" then
                     }
                 }
     storyboard.gotoScene( "luafile.levels", scenefrom )  
-    --db:close()
-    --adshow.calltapfortap("hide")    
-    external.adshow.callflurry("Start Mission")
+ 
+    external.adshow.callflurry("Start Mission",params.level)
     
     end
     return true
@@ -322,10 +314,11 @@ local function popupsforcoin (coinstats)
             end
         end
     end
-local alert =   native.showAlert("Need More Coins?","You Would Like to buy more coins?", { "YES", "NO" }, onComplete)  
-buybutton.alpha = 0
-cancelbutton.alpha = 0
-startbutton.alpha = 0      
+--local alert =   native.showAlert("Need More Coins?","You Would Like to buy more coins?", { "YES", "NO" }, onComplete)  
+--buybutton.alpha = 0
+--cancelbutton.alpha = 0
+--startbutton.alpha = 0      
+external.adshow.storealert ("No More Coins")
 end
 
 local function additem (event)
@@ -346,9 +339,9 @@ local switch = event.target
                 pugong = carnum + 2
                if pugong <= 35 then
                 coinnum = coinnum - 20
-                item[13]:setReferencePoint(display.CenterLeftReferencePoint)
                 item[13].text = coinnum
-                item[13].x = w_ - 80  
+                item[13]:setReferencePoint(display.CenterRightReferencePoint)
+                item[13].x = w_ + (item[12].width*0.50) - 10  
                 
                 carnum = carnum + 2
                 item[14]:setReferencePoint(display.CenterLeftReferencePoint)
@@ -375,9 +368,9 @@ local switch = event.target
                 pugong = barrelnum + 2
                if pugong <= 35 then
                 coinnum = coinnum - 25
-                item[13]:setReferencePoint(display.CenterLeftReferencePoint)
                 item[13].text = coinnum
-                item[13].x = w_ - 80 
+                item[13]:setReferencePoint(display.CenterRightReferencePoint)
+                item[13].x = w_ + (item[12].width*0.50) - 10
 
                 barrelnum = barrelnum + 2
                 item[15]:setReferencePoint(display.CenterLeftReferencePoint)
@@ -404,9 +397,9 @@ local switch = event.target
                     pugong = lasernum + 2
                if pugong <= 35 then
                     coinnum = coinnum - 50
-                    item[13]:setReferencePoint(display.CenterLeftReferencePoint)
                     item[13].text = coinnum
-                    item[13].x = w_ - 80 
+                    item[13]:setReferencePoint(display.CenterRightReferencePoint)
+                    item[13].x = w_ + (item[12].width*0.50) - 10
 
                     lasernum = lasernum + 2
                     item[16].text = lasernum
@@ -424,7 +417,7 @@ local switch = event.target
             
         elseif switch.id == "coin" then   
             --adshow.inapppurchase("buycoin")
-            buycoins_ ()
+            --buycoins_ ()
        end
        
     end
@@ -437,8 +430,6 @@ local function onSceneTouch(event)
 
     if switch.id == "buy" then
    
---        path = system.pathForFile("records.db", system.DocumentsDirectory)
---        db = sqlite3.open( path ) 
         local tablesave_ = [[UPDATE item SET car=']].. carnum ..[[',barrel=']]..barrelnum..[[',laser=']]..lasernum..[[',coin=']]..coinnum..[[' WHERE id = 1]]
         external.adshow.db:exec( tablesave_ )
         
@@ -465,7 +456,7 @@ local function onSceneTouch(event)
         storyboard.gotoScene( "luafile.gametype", scenefrom ) 
         --adshow.calltapfortap("hide") 
         elseif params.screenfrom == "mission" then
-           -- print(params.level)
+
             local scenefrom = 
                     {
                         effect = "slideRight",
@@ -505,12 +496,13 @@ local function loadproducts (store_use)
             }
     elseif store_use == "google" then
     products = {
-            one     = "eight.app.studio.aliendisruption.myproductname1",
-            two     = "eight.app.studio.aliendisruption.myproductname2",
-            three   = "eight.app.studio.aliendisruption.myproductname3",
+            one     = "eight.app.studio.aliendisruption.coin200pcs",
+            two     = "eight.app.studio.aliendisruption.coin700pcs",
+            three   = "eight.app.studio.aliendisruption.coin1200pcs",
             four    = "eight.app.studio.aliendisruption.myproductname4",
             }
     end
+
 end            
             
 -- Identifies the device and will initialize according to type.
@@ -537,8 +529,7 @@ storyboard.purgeAll()
 storyboard.removeAll() 
 iap = "close"
 goto = ""
---path_ = system.pathForFile("records.db", system.DocumentsDirectory )
---db = sqlite3.open( path_ ) 
+
 print(params.soundv)
 print(numvolume.soundv)
 sql = "SELECT * FROM item";
@@ -555,21 +546,19 @@ time      = row.time
 tick      = row.tick
 
 end
---print(lasernum)
---db:close()
 
 finallaser  = lasernum
 finalcar    = carnum
 finalbarrel = barrelnum
 
 item[12] = display.newImageRect("items/money.png",190,76)
-item[12]:setReferencePoint(display.CenterRightReferencePoint)
-item[12].x = w_ + 25
+item[12]:setReferencePoint(display.CenterReferencePoint)
+item[12].x = w_ 
 item[12].y = h_ - 80
 
 item[13] = display.newText(coinnum,0,0,"BadaBoom BB",40)
-item[13]:setReferencePoint(display.CenterLeftReferencePoint)
-item[13].x = w_ - 80
+item[13]:setReferencePoint(display.CenterRightReferencePoint)
+item[13].x = w_ + (item[12].width*0.50) - 10
 item[13].y = item[12].y
 
 item[20] = external.widget.newButton
@@ -587,7 +576,7 @@ item[20] = external.widget.newButton
 item[20]:setReferencePoint(display.CenterLeftReferencePoint)
 item[20].x = w_ + 70
 item[20].y = item[12].y
-
+item[20].alpha = 0
 item[2] = display.newImageRect("items/itemcar.png",250,76)
 item[2]:setReferencePoint(display.CenterReferencePoint)
 item[2].x = w_ - 100
@@ -670,8 +659,6 @@ cancelbutton = external.widget.newButton
             onRelease       = function (event)
             
             if event.phase == "ended" then
---                db = sqlite3.open( path_ ) 
-
                 sql = "SELECT * FROM item";
                 for row in external.adshow.db:nrows(sql) do
 
@@ -687,11 +674,9 @@ cancelbutton = external.widget.newButton
 
                 end
 
-                --db:close()
-                
                 item[13].text = coinnum
-                item[13]:setReferencePoint(display.CenterLeftReferencePoint)
-                item[13].x = w_ - 80
+                item[13]:setReferencePoint(display.CenterRightReferencePoint)
+                item[13].x = w_ + (item[12].width*0.50) - 10
                 
                 item[14].text = carnum
                 item[14]:setReferencePoint(display.CenterLeftReferencePoint)
@@ -738,8 +723,8 @@ adsbutton = external.widget.newButton
         {
             defaultFile     = "button/ads/adstap.png",
             overFile        = "button/ads/adsover.png",
-            width           = 200, 
-            height          = 60,
+            width           = 130, 
+            height          = 100,
             onRelease       = function (event) 
                 if event.phase == "ended" then
                     
@@ -759,8 +744,8 @@ adsbutton = external.widget.newButton
             end,
         }
 adsbutton:setReferencePoint(display.TopRightReferencePoint)
-adsbutton.x = display.contentWidth 
-adsbutton.y = -13
+adsbutton.x = display.contentWidth - (adsbutton.width*0.25)
+adsbutton.y = -(adsbutton.height*0.25)
 adsbutton.alpha = 0
 group[2]:insert(adsbutton)
 if external.adshow.ads == true then
@@ -869,7 +854,6 @@ item[14]:setTextColor(0, 0, 102)
 item[15]:setTextColor(0, 0, 102)
 item[16]:setTextColor(0, 0, 102)
 group[2]:insert(backbutton)
---group[2]:insert(adsbutton)
 group[2]:insert(item[4])
 group[2]:insert(item[3])
 group[2]:insert(item[2])

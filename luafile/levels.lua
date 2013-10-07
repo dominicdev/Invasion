@@ -56,7 +56,7 @@ local function onSceneTouch(event)
                             }
        }
        storyboard.gotoScene( "luafile.gametype",option)
-        --adshow.callflurry("Start Game")
+        
     elseif switch.id == "start" and switch.status_ == "unlocked" then
         goto = "start"
            local scenefrom = {
@@ -93,7 +93,7 @@ local function onSceneTouch(event)
                             }
        }
         storyboard.gotoScene( "luafile.store",scenefrom)
-        --audio.stop()
+        external.adshow.callflurry("Start Mission", {mission = switch.level} )
     end
      
 end
@@ -135,6 +135,13 @@ object_ = display.newGroup()
 storyboard.purgeAll()
 storyboard.removeAll() 
 level = numvolume.level
+
+if external.backmusic == true then
+    external.backmusic = false
+    audio.play(external.sfx.backmusic,{loops = 99,channel = 1})
+    audio.setVolume(0.3, {channel = 1})
+
+    end
 
 --print(params.soundv)
 print(numvolume.soundv)

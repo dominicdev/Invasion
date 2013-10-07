@@ -79,8 +79,10 @@ local function onSceneTouch(event)
                 }
         storyboard.gotoScene( "luafile.bonus",scenefrom)
         goto = "bonus"
+        
         external.adshow.loading("show")
         external.adshow.callflurry("Play Bonus")
+        external.adshow.callrevmob("hide")
     elseif switch.id == "back" or event.phase == "down" and event.keyName == "back" then
         local scenefrom = {
             effect  = "fade",
@@ -115,10 +117,11 @@ function scene:createScene( event )
 
 function scene:willEnterScene(event)
     button = {
-        survival = nil,
-        mission_1  = nil,
-        mission_2  = nil,
-        back     = nil,
+        survival    = nil,
+        mission_1   = nil,
+        mission_2   = nil,
+        back        = nil,
+        morebutton  = nil,
         }    
     object_ = display.newGroup()    
     end
@@ -130,9 +133,12 @@ function scene:enterScene( event )
     external.adshow.callrevmob("showpop")
     numvolume = event.params
     local y_ = 0
-    --local path = system.pathForFile("records.db",system.DocumentsDirectory  )
-    --db = external.sqlite3.open( path ) 
-    
+    if external.backmusic == true then
+    external.backmusic = false
+    audio.play(external.sfx.backmusic,{loops = 99,channel = 1})
+    audio.setVolume(0.3, {channel = 1})
+
+    end
     scenestats = true
     count = 0
     sql = "SELECT * FROM gamestats ";
@@ -207,6 +213,37 @@ function scene:enterScene( event )
         y_ = y_ + 100
         end
     
+    button.morebutton = external.widget.newButton
+        {
+        defaultFile = "button/woodbutton/moregamesbtn.png",
+        overFile    = "button/woodbutton/moregamesbtnover.png",
+        width       = 211, 
+        height      = 50,
+        onRelease = function(event)
+            audio.play(external.sfx.clicksound)
+            if event.phase == "ended" then
+                local function networkListener( event )
+                    if ( event.isError ) then
+                        print( "Network error!")
+                        external.adshow.storealert ("Network Error")
+                    else
+                        print ( "Connected" )
+                        external.adshow.showmore("more_games")
+                        external.adshow.callflurry("Show more games",name.text)
+                        --external.adshow.callplayhaven ("more_games")
+                    end
+                end
+                network.request( "https://encrypted.google.com", "GET", networkListener )
+                external.adshow.storealert ("Check internet connection")
+            end
+        end,
+        }
+        button.morebutton:setReferencePoint(display.CenterRightReferencePoint)
+        button.morebutton.x = display.contentWidth - 10
+        button.morebutton.y =  button.morebutton.height *0.8
+        button.morebutton.alpha = 1
+        object_:insert(button.morebutton)
+    
     button.back = external.widget.newButton
     {
         defaultFile = "button/orange/home.png",
@@ -230,7 +267,6 @@ function scene:enterScene( event )
         end,1)
     
     group:insert(object_)
-    --external.adshow.callrevmob("320x50")
     end
 
 function scene:exitScene( event )
@@ -238,7 +274,6 @@ function scene:exitScene( event )
     Runtime:removeEventListener( "key", none_1 )
     object_:removeSelf()
     object_ = nil 
-    --external.adshow.callrevmob("hide")
     end
 
 function scene:destroyScene( event )

@@ -203,7 +203,7 @@ local switch = event.target
                 }
             }
             storyboard.gotoScene( "luafile.menu",scenefrom )
-            
+            external.backmusic = true
     elseif switch.id == "quit_2" then
         local stats = 
                 {
@@ -2460,6 +2460,7 @@ group[7]:insert(restartbutton)
 
 laserbutton[numbers.lasernumber].x = display.contentWidth - 60;
 laserbutton[numbers.lasernumber].y = h + (h/2) - 30;
+external.adshow.callflurry("Survival End",{wave = tostring(level[2])})
 end
 
 laserbutton[numbers.lasernumber]  = display.newImageRect("button/laser/laser_1.png" ,display.contentWidth*0.125, display.contentHeight*0.0416666666666667)
@@ -3007,7 +3008,13 @@ timer.performWithDelay(1000, function()
 functions.start_()
 external.adshow.loading("hide") 
 end, 1)
-
+--    timer.performWithDelay(3000,function() 
+--        
+--        group[1].xScale = 0.5
+--        group[1].yScale = 0.5
+--        group[1].x = 200
+--        group[1].y = 200
+--        end,1)
 
 Runtime:addEventListener( "key", none )
 end

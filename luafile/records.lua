@@ -13,6 +13,7 @@ local name
 local stats
 local onTouched_
 local params
+
 local function onSceneTouch(event)
 switch = event.targe
 
@@ -77,42 +78,43 @@ group[1]:insert(bg)
 end
 
 function scene:enterScene( event )
-group[1] = self.view
-group[2] = display.newGroup()
-dis = {
-        adsimage = nil,
+group[1]    = self.view
+group[2]    = display.newGroup()
+dis         = {
+        adsimage    = nil,
         closebutton = nil,
+        subbutton   = nil,
         }
-cal = {}
-number = {}
+cal         = {}
+number      = {}
 storyboard.purgeAll()
 storyboard.removeAll() 
-stats = event.params
-params = event.params
+stats       = event.params
+params      = event.params
 Runtime:addEventListener( "key", cancelstats );
 
 local color = 
+        {
+        highlight = 
             {
-            highlight = 
-                {
-                    r =0, g = 0, b = 0, a = 255
-                },
-            shadow =
-                {
-                    r = 0, g = 0, b = 0, a = 255
-                }
-            }    
+                r = 0, g = 0, b = 0, a = 255
+            },
+        shadow =
+            {
+                r = 0, g = 0, b = 0, a = 255
+            }
+        }    
 
-number[1] = stats.uscore;
-number[2] = stats.utime;
-number[3] = stats.ucar;
-number[4] = stats.ubarrel;
-number[8] = stats.ulaser;
-number[9] = stats.ulevel
-number[10] = stats.ulives
-number[5] = stats.uscore + (stats.utime * 100) + (stats.ucar * 500) + (stats.ubarrel * 1000) + (stats.ulaser * 5000);
-number[6] = stats.ulevel*5
-number[7] = stats.ucoin + number[6]
+number[1]   = stats.uscore;
+number[2]   = stats.utime;
+number[3]   = stats.ucar;
+number[4]   = stats.ubarrel;
+number[8]   = stats.ulaser;
+number[9]   = stats.ulevel
+number[10]  = stats.ulives
+number[5]   = stats.uscore + (stats.utime * 100) + (stats.ucar * 500) + (stats.ubarrel * 1000) + (stats.ulaser * 5000);
+number[6]   = stats.ulevel*5
+number[7]   = stats.ucoin + number[6]
 
 dis[9] = display.newEmbossedText("+"..number[6].." Coins", 10, 10, "Dimitri", 40,{ 255, 255, 255, 255 });
 dis[9]:setReferencePoint(display.CenterReferencePoint)
@@ -210,17 +212,39 @@ dis[10] = external.widget.newButton
             onRelease       = onSceneTouch,
         }
 dis[10]:setReferencePoint(display.CenterReferencePoint)
-dis[10].x = w
+dis[10].x = w --+ dis[10].width + 30
 dis[10].y = dis[7].y + 70
 group[2]:insert(dis[10])
 
-dis.adsimage = display.newImageRect("items/hello.png", display.contentWidth*.80, display.contentHeight*0.70)
-dis.adsimage:setReferencePoint(display.CenterReferencePoint)
-dis.adsimage.x = display.contentWidth*0.5
-dis.adsimage.y = display.contentHeight*0.5
-group[2]:insert(dis.adsimage)
+dis.subbutton = external.widget.newButton
+        {
+            defaultFile     = "button/woodbutton/submitbtn.png",
+            overFile        = "button/woodbutton/submitbtnover.png",
+            id              = "submit",
+            width           = 180, 
+            height          = 63,
+            onRelease       = function (event)
+            if event.phase == "ended" then
+                external.gameNetworkSetup()
+                end
+            end,
+        }
+dis.subbutton:setReferencePoint(display.CenterLeftReferencePoint)
+dis.subbutton.x = w - dis.subbutton.width - 30
+dis.subbutton.y = dis[7].y + 70
+group[2]:insert(dis.subbutton)
+dis.subbutton.alpha = 0
 
-dis.closebutton = external.widget.newButton   
+if external.adshow.ads == true then
+    dis[10].alpha = 0
+    dis.subbutton.alpha = 0
+    dis.adsimage = display.newImageRect("items/hello.png", display.contentWidth*.80, display.contentHeight*0.70)
+    dis.adsimage:setReferencePoint(display.CenterReferencePoint)
+    dis.adsimage.x = display.contentWidth*0.5
+    dis.adsimage.y = display.contentHeight*0.5
+    group[2]:insert(dis.adsimage)
+    
+    dis.closebutton = external.widget.newButton   
     {
         defaultFile     = "button/close/close.png",
         overFile        = "button/close/closetap.png",
@@ -233,18 +257,25 @@ dis.closebutton = external.widget.newButton
                 dis.adsimage = nil
                 dis.closebutton:removeSelf()
                 dis.closebutton = nil
+                dis[10].alpha = 1
+                dis.subbutton.alpha = 0
                 end
-     end,
-     }
-dis.closebutton:setReferencePoint(display.TopRightReferencePoint)
-dis.closebutton.x = dis.adsimage.x + (dis.adsimage.width*.5) 
-dis.closebutton.y = dis.adsimage.y - dis.adsimage.height/2 - dis.closebutton.height + (dis.closebutton.width)
-group[2]:insert(dis.closebutton)
+            end,
+        }
+    dis.closebutton:setReferencePoint(display.TopRightReferencePoint)
+    dis.closebutton.x = dis.adsimage.x + (dis.adsimage.width*.5) 
+    dis.closebutton.y = dis.adsimage.y - dis.adsimage.height/2 - dis.closebutton.height + (dis.closebutton.width)
+    group[2]:insert(dis.closebutton)
+else
+    dis[10].alpha = 1   
+    dis.subbutton.alpha = 0
+    end
+
+
 function onTouched_(event)
 native.setKeyboardFocus(nil)
 end
 Runtime:addEventListener( "touch", onTouched_ )
-----adshow.inneractive ("show")
 timer.performWithDelay(1000, function ()
 external.adshow.loading("hide") 
 name.alpha = 1
@@ -255,20 +286,20 @@ group[1]:insert(group[2])
 end
 
 function scene:exitScene( event )
-    
+external.adshow.loading("show")      
 external.adshow.callflurry("End The Survival",{name = name.text})
 
 Runtime:removeEventListener( "touch", onTouched_ )
 Runtime:removeEventListener( "key", cancelstats );
 group[2]:removeSelf()
 group[2] = nil
-
+external.backmusic = true
 end
 
 function scene:destroyScene( event )
 
 print("game destroy via gameover")
-external.adshow.loading("show")  
+
 group[1]:removeSelf()
 group[1] = nil
 end
